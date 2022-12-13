@@ -4,6 +4,9 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import People from './pages/People'
 import Places from './pages/Places'
+import MyPlaces from './pages/MyPlaces'
+import Register from './pages/Register'
+import Explore from './pages/Explore'
 
 const App = () => {
   return (
@@ -11,7 +14,10 @@ const App = () => {
       <Route path='/' element={<Home />}>
         <Route index element={<Places />} />
         <Route path='people' element={<People />} />
+        <Route path='explore/:search' element={<Explore />} />
+        <Route path='MyPlaces' element={<MyPlaces />} />
       </Route>
+      <Route path='register' element={<Register />} />
     </Routes>
   )
 }

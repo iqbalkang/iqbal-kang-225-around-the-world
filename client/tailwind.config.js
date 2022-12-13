@@ -10,6 +10,21 @@ module.exports = {
         accent: '#FF7474',
         ['dark-yellow']: '#F9C80E',
         ['dark-gray']: '#444',
+        ['dark-white']: '#aaa',
+        ['dark-brown']: '#3E1E1E',
+      },
+      animation: {
+        loading: 'loading 1s infinite',
+      },
+      keyframes: {
+        loading: {
+          '0%, 100%': {
+            transform: 'translateX(-100%) rotate(45deg)',
+          },
+          '50%': {
+            transform: 'translateX(100%) rotate(45deg)',
+          },
+        },
       },
     },
   },

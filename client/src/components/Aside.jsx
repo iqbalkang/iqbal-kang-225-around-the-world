@@ -1,9 +1,22 @@
 import React from 'react'
 import logo from '../images/logo.svg'
 import plane from '../images/plane.svg'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../features/user/userSlice'
 
 const Aside = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { user } = useSelector(store => store.user)
+
+  const handleAuth = () => {
+    if (!user) return navigate('/register')
+
+    dispatch(logout())
+    return navigate('/people')
+  }
+
   return (
     <aside className='hidden absolute h-full bg-accent text-white md:block md:relative'>
       {/* aside inner container to wrap logo and navigation links */}
@@ -26,10 +39,7 @@ const Aside = () => {
             </li>
 
             <li>
-              <Link
-                to='/people'
-                className='inline-flex items-center group relative'
-              >
+              <Link to='/people' className='inline-flex items-center group relative'>
                 <span> People </span>
                 <span className='active-link'>
                   <img src={plane} alt='' />
@@ -47,7 +57,7 @@ const Aside = () => {
             </li>
 
             <li>
-              <Link to='/' className='inline-flex items-center group relative'>
+              <Link to='/explore/search' className='inline-flex items-center group relative'>
                 <span> Explore </span>
                 <span className='active-link'>
                   <img src={plane} alt='' />
@@ -56,7 +66,7 @@ const Aside = () => {
             </li>
 
             <li>
-              <Link to='/' className='inline-flex items-center group relative'>
+              <Link to='/myPlaces' className='inline-flex items-center group relative'>
                 <span> My Places </span>
                 <span className='active-link'>
                   <img src={plane} alt='' />
@@ -76,9 +86,9 @@ const Aside = () => {
         </nav>
 
         {/* auth button */}
-        <Link to='/' className='mr-10 hover:tracking-widest duration-200'>
-          Login
-        </Link>
+        <button className='mr-5 hover:tracking-widest duration-200' onClick={handleAuth}>
+          {user ? 'Logout' : 'Login'}
+        </button>
       </div>
     </aside>
   )

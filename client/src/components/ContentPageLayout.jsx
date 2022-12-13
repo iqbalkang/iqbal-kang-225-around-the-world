@@ -1,19 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Gmap from '../components/Gmap'
 import { BiRightArrow } from 'react-icons/bi'
 import Place from '../components/Place'
 import { motion } from 'framer-motion'
-import { useDispatch, useSelector } from 'react-redux'
-import { getAllPlaces } from '../features/places/PlacesThunks'
 
-const Places = () => {
-  const dispatch = useDispatch()
-  const { places } = useSelector(store => store.places)
-
-  useEffect(() => {
-    dispatch(getAllPlaces())
-  }, [])
-
+const ContentPageLayout = ({ userPlaces }) => {
   return (
     <motion.section
       className='h-full bg-slate-100 flex flex-col'
@@ -36,7 +27,7 @@ const Places = () => {
 
           {/* places content container */}
           <div className='flex gap-4 flex-1 overflow-scroll'>
-            {places.map((place, index) => (
+            {userPlaces.map((place, index) => (
               <Place key={index} {...place} />
             ))}
           </div>
@@ -50,4 +41,4 @@ const Places = () => {
   )
 }
 
-export default Places
+export default ContentPageLayout
