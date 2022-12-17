@@ -4,13 +4,17 @@ import { AiTwotoneStar, AiFillHeart } from 'react-icons/ai'
 import taj from '../images/taj.jpg'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteUserFavorite, postUserFavorite } from '../features/places/PlacesThunks'
+import { useEffect } from 'react'
 
-const Place = ({ title, country, rating, description, _id: placeID }) => {
+const Place = ({ title, country, rating, description, _id: placeID, isFavorite, name }) => {
+  const dispatch = useDispatch()
   const [isDescVisible, setIsDescVisible] = useState(true)
   const toggleDescription = () => setIsDescVisible(prevState => !prevState)
 
   const favoriteHandler = placeID => {
-    console.log(placeID)
+    !isFavorite ? dispatch(postUserFavorite({ placeID })) : dispatch(deleteUserFavorite(placeID))
   }
 
   return (
@@ -25,7 +29,7 @@ const Place = ({ title, country, rating, description, _id: placeID }) => {
             className='absolute top-5 right-5 bg-white rounded-full w-6 h-6 flex items-center justify-center'
             onClick={() => favoriteHandler(placeID)}
           >
-            <AiFillHeart className='text-accent' />
+            <AiFillHeart className={`${isFavorite ? 'text-accent' : 'text-dark-gray'}`} />
           </button>
 
           {/* search icon */}
@@ -44,7 +48,7 @@ const Place = ({ title, country, rating, description, _id: placeID }) => {
           <p className='max-w-sm'>{description}</p>
           <div className='text-right'>
             <Link to='people' className='uppercase text-accent font-bold text-xs'>
-              bala
+              {name?.firstName}
             </Link>
           </div>
         </div>

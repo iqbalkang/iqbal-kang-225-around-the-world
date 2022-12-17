@@ -7,17 +7,14 @@ import { HiChevronDown } from 'react-icons/hi'
 import AccentButton from '../components/AccentButton'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { postPlace } from '../features/user/userThunk'
-import {
-  handleChange,
-  openModal,
-} from '../features/exploreInputsSlice/exploreInputsSlice'
+import { postPlace } from '../features/places/PlacesThunks'
+import { handleChange, openModal } from '../features/exploreInputsSlice/exploreInputsSlice'
 import Stars from '../components/Stars'
 import Modal from '../components/Modal'
 
 const Explore = () => {
   const dispatch = useDispatch()
-  const state = useSelector(store => store.exploreInputs)
+  const inputState = useSelector(store => store.exploreInputs)
   const { user, isLoading } = useSelector(store => store.user)
 
   const onChangeHandler = e => {
@@ -29,21 +26,17 @@ const Explore = () => {
     e.preventDefault()
 
     if (!user) return dispatch(openModal())
-    dispatch(postPlace(state))
+    dispatch(postPlace({ place: inputState, userID: user.id }))
   }
 
   return (
     <section className='h-full flex flex-col bg-slate-100 items-center'>
-      {state.modalOpen &&
-        ReactDOM.createPortal(<Modal />, document.getElementById('modal-root'))}
+      {inputState.modalOpen && ReactDOM.createPortal(<Modal />, document.getElementById('modal-root'))}
       <Gmap />
 
       {/* form container */}
 
-      <form
-        className='flex-1 space-y-2 w-full max-w-[900px] p-6'
-        onSubmit={handleSubmit}
-      >
+      <form className='flex-1 space-y-2 w-full max-w-[900px] p-6' onSubmit={handleSubmit}>
         <button className='mx-auto block'>
           <HiChevronDown size={24} />
         </button>
@@ -57,7 +50,7 @@ const Explore = () => {
                 input={input}
                 index={index}
                 onChange={onChangeHandler}
-                value={state[input.label]}
+                value={inputState[input.label]}
               />
             )
           })}
@@ -65,9 +58,7 @@ const Explore = () => {
           <div className='row-start-2 col-start-2 sm:self-end flex gap-6 items-center'>
             <Stars />
             <AccentButton isLoading={isLoading}>
-              {isLoading && (
-                <div className='h-4 w-4 rounded-full border-2 border-b-accent animate-spin'></div>
-              )}
+              {isLoading && <div className='h-4 w-4 rounded-full border-2 border-b-accent animate-spin'></div>}
               add place
             </AccentButton>
           </div>

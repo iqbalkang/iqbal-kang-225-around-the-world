@@ -48,8 +48,8 @@ const Aside = () => {
             </li>
 
             <li>
-              <Link to='/' className='inline-flex items-center group relative'>
-                <span> Favourites </span>
+              <Link to='/favorites' className='inline-flex items-center group relative'>
+                <span> Favorites </span>
                 <span className='active-link'>
                   <img src={plane} alt='' />
                 </span>
@@ -86,9 +86,9 @@ const Aside = () => {
         </nav>
 
         {/* auth button */}
-        <button className='mr-5 hover:tracking-widest duration-200' onClick={handleAuth}>
+        <Link to='/register' className='mr-5 hover:tracking-widest duration-200' onClick={handleAuth}>
           {user ? 'Logout' : 'Login'}
-        </button>
+        </Link>
       </div>
     </aside>
   )

@@ -28,38 +28,38 @@ export const getAllUsers = createAsyncThunk('user/getAllUsers', async (_, thunkA
   }
 })
 
-export const getUserPlaces = createAsyncThunk('user/getUserPlaces', async (place, thunkAPI) => {
-  try {
-    const { data } = await customFetch.get('/places/getUserPlaces', {})
-    console.log(data)
-    return data
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
-  }
-})
+// export const getUserPlaces = createAsyncThunk('user/getUserPlaces', async (place, thunkAPI) => {
+//   try {
+//     const { data } = await customFetch.get('/places', {})
+//     console.log(data)
+//     return data
+//   } catch (error) {
+//     return thunkAPI.rejectWithValue(error.response.data.message)
+//   }
+// })
 
-export const getPlaces = createAsyncThunk('user/getPlaces', async (place, thunkAPI) => {
-  try {
-    const { data } = await customFetch.get('/places', {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
-    return data
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
-  }
-})
+// export const getUserPlaces = createAsyncThunk('user/getUserPlaces', async (userID, thunkAPI) => {
+//   try {
+//     const { data } = await customFetch.get(`/places/${userID}`, {
+//       headers: {
+//         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+//       },
+//     })
+//     return data
+//   } catch (error) {
+//     return thunkAPI.rejectWithValue(error.response.data.message)
+//   }
+// })
 
-export const postPlace = createAsyncThunk('user/postPlace', async (place, thunkAPI) => {
-  try {
-    const { data } = await customFetch.post('/places', place, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
-    console.log(data)
-  } catch (error) {
-    console.log(error.response)
-  }
-})
+// export const postPlace = createAsyncThunk('user/postPlace', async ({ place, userID }, thunkAPI) => {
+//   try {
+//     const { data } = await customFetch.post(`/places/${userID}`, place, {
+//       headers: {
+//         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+//       },
+//     })
+//     console.log(data)
+//   } catch (error) {
+//     console.log(error.response)
+//   }
+// })

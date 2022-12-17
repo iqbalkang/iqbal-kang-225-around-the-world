@@ -7,6 +7,7 @@ import Places from './pages/Places'
 import MyPlaces from './pages/MyPlaces'
 import Register from './pages/Register'
 import Explore from './pages/Explore'
+import Favorites from './pages/Favorites'
 
 const App = () => {
   return (
@@ -15,7 +16,8 @@ const App = () => {
         <Route index element={<Places />} />
         <Route path='people' element={<People />} />
         <Route path='explore/:search' element={<Explore />} />
-        <Route path='MyPlaces' element={<MyPlaces />} />
+        <Route path='myPlaces' element={<MyPlaces />} />
+        <Route path='favorites' element={<Favorites />} />
       </Route>
       <Route path='register' element={<Register />} />
     </Routes>

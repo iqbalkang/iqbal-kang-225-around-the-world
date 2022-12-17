@@ -4,7 +4,7 @@ import { BiRightArrow } from 'react-icons/bi'
 import Place from '../components/Place'
 import { motion } from 'framer-motion'
 
-const ContentPageLayout = ({ userPlaces }) => {
+const ContentPageLayout = ({ userPlaces, user }) => {
   return (
     <motion.section
       className='h-full bg-slate-100 flex flex-col'
@@ -28,7 +28,7 @@ const ContentPageLayout = ({ userPlaces }) => {
           {/* places content container */}
           <div className='flex gap-4 flex-1 overflow-scroll'>
             {userPlaces.map((place, index) => (
-              <Place key={index} {...place} />
+              <Place key={index} {...place} {...user} />
             ))}
           </div>
           {/* right arrow */}

@@ -9,9 +9,10 @@ import { getAllPlaces } from '../features/places/PlacesThunks'
 const Places = () => {
   const dispatch = useDispatch()
   const { places } = useSelector(store => store.places)
+  const { user } = useSelector(store => store.user)
 
   useEffect(() => {
-    dispatch(getAllPlaces())
+    dispatch(getAllPlaces(user.id))
   }, [])
 
   return (
@@ -37,7 +38,7 @@ const Places = () => {
           {/* places content container */}
           <div className='flex gap-4 flex-1 overflow-scroll'>
             {places.map((place, index) => (
-              <Place key={index} {...place} />
+              <Place key={index} {...place} {...user} />
             ))}
           </div>
           {/* right arrow */}

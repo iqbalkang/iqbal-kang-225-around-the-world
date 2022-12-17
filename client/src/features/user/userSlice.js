@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { loginUser, registerUser, getPlaces, getAllUsers } from './userThunk'
+import { loginUser, registerUser, getAllUsers } from './userThunk'
 import { getLocalStorage, setLocalStorage, removeLocalStorage } from '../../utils/localStorage/localStorage'
 
 const initialState = {
   user: getLocalStorage('user'),
   isLoading: false,
-  userPlaces: [],
+
   allUsers: [],
 }
 
@@ -59,19 +59,6 @@ const userSlice = createSlice({
         state.allUsers = payload
       })
       .addCase(getAllUsers.rejected, (state, { payload }) => {
-        state.isLoading = false
-        console.log(payload)
-      })
-
-      // get places
-      .addCase(getPlaces.pending, state => {
-        state.isLoading = true
-      })
-      .addCase(getPlaces.fulfilled, (state, { payload: { places } }) => {
-        state.isLoading = false
-        state.userPlaces = places
-      })
-      .addCase(getPlaces.rejected, (state, { payload }) => {
         state.isLoading = false
         console.log(payload)
       })
