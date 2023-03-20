@@ -2,8 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import ExploreFormRow from '../components/ExploreFormRow'
 import Gmap from '../components/Gmap'
-import inputs from '../utils/data/explore-inputs'
+import exploreInputs from '../utils/data/explore-inputs'
 import { HiChevronDown } from 'react-icons/hi'
+
 import AccentButton from '../components/AccentButton'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,59 +12,108 @@ import { postPlace } from '../features/places/PlacesThunks'
 import { handleChange, openModal } from '../features/exploreInputsSlice/exploreInputsSlice'
 import Stars from '../components/Stars'
 import Modal from '../components/Modal'
+import FormRow from '../components/FormRow'
+import { useState } from 'react'
+import Label from '../components/Label'
+import { MdOutlineLocationSearching } from 'react-icons/md'
+import FlexContainer from '../components/FlexContainer'
+import ImageUploader from '../components/ImageUploader'
+import PlacesAutoComplete from '../components/PlacesAutoComplete'
+
+const initialState = {
+  country: '',
+  title: '',
+  description: '',
+  rating: 0,
+  image: null,
+}
 
 const Explore = () => {
   const dispatch = useDispatch()
-  const inputState = useSelector(store => store.exploreInputs)
+  // const inputState = useSelector(store => store.exploreInputs)
   const { user, isLoading } = useSelector(store => store.user)
 
+  const [selectedImage, setSelectedImage] = useState('')
+  const [address, setAddress] = useState('')
+  const [coordinates, setCoordinates] = useState(null)
+  const [values, setValues] = useState(initialState)
+
   const onChangeHandler = e => {
-    const { name, value } = e.target
-    dispatch(handleChange({ name, value }))
+    const { name, value, files } = e.target
+
+    if (name === 'image') {
+      const image = files[0]
+      setSelectedImage(URL.createObjectURL(image))
+      return setValues({ ...values, image })
+    }
+
+    setValues({ ...values, [name]: value })
+  }
+
+  const updateRating = rating => {
+    setValues({ ...values, rating })
   }
 
   const handleSubmit = e => {
     e.preventDefault()
 
-    if (!user) return dispatch(openModal())
-    dispatch(postPlace({ place: inputState, userID: user.id }))
+    const formData = new FormData()
+
+    formData.append('address', address)
+    formData.append('lat', coordinates.lat)
+    formData.append('lng', coordinates.lng)
+
+    for (let key in values) {
+      formData.append(key, values[key])
+    }
+
+    // if (!user) return dispatch(openModal())
+    dispatch(postPlace(formData))
+    setAddress('')
+    setCoordinates(null)
+    setValues(initialState)
   }
 
+  const generatePropsObject = (index, input) => {
+    return {
+      index: index,
+      input: input,
+      onChange: onChangeHandler,
+      value: values[input.label],
+      inputClassName: 'p-1 text-dark-gray',
+      flexClassName: 'gap-1',
+    }
+  }
+
+  const renderExploreInputs = exploreInputs.map((input, index) => {
+    const propsObj = generatePropsObject(index, input)
+    return <FormRow key={index} {...propsObj} />
+  })
+
   return (
-    <section className='h-full flex flex-col bg-slate-100 items-center'>
-      {inputState.modalOpen && ReactDOM.createPortal(<Modal />, document.getElementById('modal-root'))}
-      <Gmap />
+    <section className='h-full grid grid-cols-[2fr,8fr]'>
+      {/* left side form inputs */}
+      <FlexContainer center className='bg-dark-gray px-4'>
+        <form className='space-y-4' onSubmit={handleSubmit}>
+          <ImageUploader onChange={onChangeHandler} selectedImage={selectedImage} />
 
-      {/* form container */}
+          <PlacesAutoComplete address={address} setAddress={setAddress} setCoordinates={setCoordinates} />
 
-      <form className='flex-1 space-y-2 w-full max-w-[900px] p-6' onSubmit={handleSubmit}>
-        <button className='mx-auto block'>
-          <HiChevronDown size={24} />
-        </button>
+          {renderExploreInputs}
 
-        <div className='flex flex-col sm:grid grid-cols-2 gap-6'>
-          {inputs.map((input, index) => {
-            if (index === 0) return null
-            return (
-              <ExploreFormRow
-                key={index}
-                input={input}
-                index={index}
-                onChange={onChangeHandler}
-                value={inputState[input.label]}
-              />
-            )
-          })}
+          <FlexContainer alignCenter>
+            <p>How much would you rate this place?</p>
+            <Stars handleRating={updateRating} />
+          </FlexContainer>
 
-          <div className='row-start-2 col-start-2 sm:self-end flex gap-6 items-center'>
-            <Stars />
-            <AccentButton isLoading={isLoading}>
-              {isLoading && <div className='h-4 w-4 rounded-full border-2 border-b-accent animate-spin'></div>}
-              add place
-            </AccentButton>
-          </div>
-        </div>
-      </form>
+          <AccentButton small full primary isLoading={isLoading}>
+            add place
+          </AccentButton>
+        </form>
+      </FlexContainer>
+
+      {/* right side google map */}
+      <Gmap coordinates={coordinates} />
     </section>
   )
 }

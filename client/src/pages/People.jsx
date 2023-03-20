@@ -15,12 +15,7 @@ const People = () => {
   const { allUsers } = useSelector(store => store.user)
 
   return (
-    <motion.section
-      className='h-full bg-gray-800 p-6'
-      initial={{ x: '100vw' }}
-      animate={{ x: '0' }}
-      transition={{ type: 'tween', duration: 0.15 }}
-    >
+    <section className='h-full bg-gray-800'>
       <div className='container mx-auto'>
         <h2 className='text-accent text-3xl font-bold mb-4'>People</h2>
 
@@ -30,7 +25,7 @@ const People = () => {
           })}
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }
 

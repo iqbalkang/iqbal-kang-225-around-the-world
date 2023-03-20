@@ -1,9 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import customFetch from '../../utils/axios/customFetch'
 
-export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (userID, thunkAPI) => {
+export const postPlace = createAsyncThunk('places/postPlace', async (formData, thunkAPI) => {
   try {
-    const { data } = await customFetch.get(`/places/all/${userID}`)
+    const { data } = await customFetch.post(`/places`, formData, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (_, thunkAPI) => {
+  try {
+    const { data } = await customFetch.get(`/places`)
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
@@ -20,19 +33,6 @@ export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async (use
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
-  }
-})
-
-export const postPlace = createAsyncThunk('places/postPlace', async ({ place, userID }, thunkAPI) => {
-  try {
-    const { data } = await customFetch.post(`/places/${userID}`, place, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
-    console.log(data)
-  } catch (error) {
-    console.log(error.response)
   }
 })
 

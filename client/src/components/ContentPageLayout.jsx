@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Gmap from '../components/Gmap'
 import { BiRightArrow } from 'react-icons/bi'
 import Place from '../components/Place'
 import { motion } from 'framer-motion'
 
 const ContentPageLayout = ({ userPlaces, user }) => {
+  const [coordinates, setCoordinates] = useState()
+  const updateMapCenter = coords => setCoordinates(coords)
+
   return (
     <motion.section
       className='h-full bg-slate-100 flex flex-col'
@@ -12,7 +15,7 @@ const ContentPageLayout = ({ userPlaces, user }) => {
       animate={{ x: '0' }}
       transition={{ type: 'tween', duration: 0.15 }}
     >
-      <Gmap />
+      <Gmap coordinates={coordinates} />
 
       <div className=' flex-1 p-6 pb-0 flex flex-col'>
         {/* title */}
@@ -28,7 +31,7 @@ const ContentPageLayout = ({ userPlaces, user }) => {
           {/* places content container */}
           <div className='flex gap-4 flex-1 overflow-scroll'>
             {userPlaces.map((place, index) => (
-              <Place key={index} {...place} {...user} />
+              <Place key={index} {...place} {...user} updateMapCenter={updateMapCenter} />
             ))}
           </div>
           {/* right arrow */}

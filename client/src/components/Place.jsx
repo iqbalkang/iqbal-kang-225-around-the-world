@@ -7,27 +7,31 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteUserFavorite, postUserFavorite } from '../features/places/PlacesThunks'
 import { useEffect } from 'react'
+import FlexContainer from './FlexContainer'
 
-const Place = ({ title, country, rating, description, _id: placeID, isFavorite, name }) => {
+const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, image, updateCoordinates }) => {
+  console.log(country, rating)
   const dispatch = useDispatch()
   const [isDescVisible, setIsDescVisible] = useState(true)
   const toggleDescription = () => setIsDescVisible(prevState => !prevState)
 
-  const favoriteHandler = placeID => {
-    !isFavorite ? dispatch(postUserFavorite({ placeID })) : dispatch(deleteUserFavorite(placeID))
-  }
+  // const favoriteHandler = placeID => {
+  //   !isFavorite ? dispatch(postUserFavorite({ placeID })) : dispatch(deleteUserFavorite(placeID))
+  // }
+
+  const handleCoordinatesClick = () => updateCoordinates({ lat, lng })
 
   return (
-    <article className='flex-shrink-0'>
+    <article onClick={handleCoordinatesClick} className='flex-shrink-0 cursor-pointer'>
       {/* container for photo and place description */}
-      <div className='flex gap-2'>
+      <div className='flex gap-2 h-60'>
         {/* container for place image, favorite & search */}
-        <div className='relative w-48 min-h-[240px] bg-red-300  rounded-3xl shadow-md overflow-hidden'>
-          <img src={taj} alt='place' className='h-full object-cover' />
+        <div className='relative w-48 full  rounded-3xl shadow-md overflow-hidden'>
+          <img src={image} alt='place' className='h-full object-cover' />
           {/* favourite container */}
           <button
             className='absolute top-5 right-5 bg-white rounded-full w-6 h-6 flex items-center justify-center'
-            onClick={() => favoriteHandler(placeID)}
+            // onClick={() => favoriteHandler(placeID)}
           >
             <AiFillHeart className={`${isFavorite ? 'text-accent' : 'text-dark-gray'}`} />
           </button>
@@ -48,7 +52,7 @@ const Place = ({ title, country, rating, description, _id: placeID, isFavorite, 
           <p className='max-w-sm'>{description}</p>
           <div className='text-right'>
             <Link to='people' className='uppercase text-accent font-bold text-xs'>
-              {name?.firstName}
+              {title}
             </Link>
           </div>
         </div>
@@ -56,19 +60,30 @@ const Place = ({ title, country, rating, description, _id: placeID, isFavorite, 
       {/* container for place info */}
       <div className='p-2'>
         <h3 className='card-heading'>{title}</h3>
-        <div className='flex gap-6 '>
-          <div className='flex items-center'>
-            <BiMap />
-            <p className='capitalize'>{country}</p>
-          </div>
-          <div className='flex items-center'>
-            <AiTwotoneStar className='text-dark-yellow' />
-            <p className='capitalize'>{rating}.0</p>
-          </div>
-        </div>
+        <CountryAndRating rating={rating} country={country} />
       </div>
     </article>
   )
 }
 
 export default Place
+
+const CountryAndRating = ({ country, rating }) => {
+  return (
+    <FlexContainer>
+      <ValueWithIcon value={country}>
+        <BiMap />
+      </ValueWithIcon>
+      <ValueWithIcon value={rating}>
+        <AiTwotoneStar className='text-dark-yellow' />
+      </ValueWithIcon>
+    </FlexContainer>
+  )
+}
+
+const ValueWithIcon = ({ children, value }) => (
+  <div className='flex items-center'>
+    {children}
+    <p className='capitalize'>{value}</p>
+  </div>
+)

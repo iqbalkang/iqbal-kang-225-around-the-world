@@ -1,21 +1,21 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import Aside from '../components/Aside'
+import FlexContainer from '../components/FlexContainer'
+import Navbar from '../components/Navbar'
 
 import SmallNavbar from '../components/SmallNavbar'
 
 const Home = () => {
   return (
-    <div className='font-josefin bg-black relative h-screen w-screen md:grid md:grid-cols-[250px,1fr]'>
-      <Aside />
+    <FlexContainer col className='gap-0 h-screen min-h-screen text-white font-josefin'>
+      <Navbar />
 
-      <main className='h-full text-dark-gray'>
+      <main className='flex-1 bg-red-400'>
         {/* hamburger menu and logo nav for small screens, hides at medium */}
-        <SmallNavbar />
-
+        {/* <SmallNavbar /> */}
         <Outlet />
       </main>
-    </div>
+    </FlexContainer>
   )
 }
 

@@ -6,7 +6,6 @@ import EmptyPageLayout from '../components/EmptyPageLayout'
 
 const MyPlaces = () => {
   const dispatch = useDispatch()
-  console.log('ran')
 
   const { user } = useSelector(store => store.user)
   const { userPlaces } = useSelector(store => store.places)

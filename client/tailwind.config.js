@@ -8,10 +8,11 @@ module.exports = {
       },
       colors: {
         accent: '#FF7474',
-        ['dark-yellow']: '#F9C80E',
-        ['dark-gray']: '#444',
-        ['dark-white']: '#aaa',
-        ['dark-brown']: '#3E1E1E',
+        'dark-yellow': '#F9C80E',
+        'dark-gray': '#444',
+        'light-gray': '#aaa',
+        'off-white': '#fffafa',
+        'dark-brown': '#3E1E1E',
       },
       animation: {
         loading: 'loading 1s infinite',

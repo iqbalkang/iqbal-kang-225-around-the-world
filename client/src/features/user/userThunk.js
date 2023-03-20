@@ -3,8 +3,8 @@ import customFetch from '../../utils/axios/customFetch'
 
 export const registerUser = createAsyncThunk('user/registerUser', async (user, thunkAPI) => {
   try {
-    const { data } = await customFetch.post('/register', user)
-    return data.user
+    const { data } = await customFetch.post('/authentication/register', user)
+    return data
   } catch (err) {
     return thunkAPI.rejectWithValue(err.response.data.message)
   }
@@ -12,8 +12,8 @@ export const registerUser = createAsyncThunk('user/registerUser', async (user, t
 
 export const loginUser = createAsyncThunk('user/loginUser', async (user, thunkAPI) => {
   try {
-    const { data } = await customFetch.post('/login', user)
-    return data.user
+    const { data } = await customFetch.post('/authentication/login', user)
+    return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
   }

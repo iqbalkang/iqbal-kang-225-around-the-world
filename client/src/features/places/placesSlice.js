@@ -1,5 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { deleteUserFavorite, getAllPlaces, getUserFavorite, getUserPlaces, postUserFavorite } from './PlacesThunks'
+import {
+  deleteUserFavorite,
+  getAllPlaces,
+  getUserFavorite,
+  getUserPlaces,
+  postPlace,
+  postUserFavorite,
+} from './PlacesThunks'
+import { toast } from 'react-toastify'
 
 const initialState = {
   places: [],
@@ -13,12 +21,34 @@ const placesSlice = createSlice({
   initialState,
   extraReducers: builder => {
     builder
-      .addCase(getAllPlaces.pending, state => {
-        state.isLoading = false
-      })
-      .addCase(getAllPlaces.fulfilled, (state, { payload: { places } }) => {
+
+      // post place
+      .addCase(postPlace.pending, state => {
         state.isLoading = true
+      })
+      .addCase(postPlace.fulfilled, (state, { payload }) => {
+        const { place, message } = payload
+        state.isLoading = false
+        state.userPlaces = [...state.userPlaces, place]
+        toast.success(message)
+      })
+      .addCase(postPlace.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // get all places
+      .addCase(getAllPlaces.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getAllPlaces.fulfilled, (state, { payload }) => {
+        const { places } = payload
+        state.isLoading = false
         state.places = places
+      })
+      .addCase(getAllPlaces.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
       })
 
       // get user places
@@ -58,7 +88,6 @@ const placesSlice = createSlice({
         state.isLoading = true
       })
       .addCase(deleteUserFavorite.fulfilled, (state, { payload: { deletedPlace } }) => {
-        // console.log(deletedPlace)
         state.isLoading = false
         const updatedFavPlaceIndex = state.userPlaces.findIndex(place => place._id === deletedPlace.placeID)
         console.log(updatedFavPlaceIndex)

@@ -3,14 +3,15 @@ import { AiFillStar } from 'react-icons/ai'
 import { useDispatch } from 'react-redux'
 import { handleRating } from '../features/exploreInputsSlice/exploreInputsSlice'
 
-const Stars = () => {
+const Stars = ({ handleRating }) => {
   const dispatch = useDispatch()
   const [rating, setRating] = useState(null)
   const [hover, setHover] = useState(null)
 
   const onClickHandler = ratingValue => {
     setRating(ratingValue)
-    dispatch(handleRating(ratingValue))
+    handleRating(ratingValue)
+    // dispatch(handleRating(ratingValue))
   }
 
   return (

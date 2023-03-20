@@ -1,9 +1,20 @@
 import React from 'react'
 import userImage from '../images/user.png'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserPlaces } from '../features/places/PlacesThunks'
+import { Link } from 'react-router-dom'
 
-const Person = ({ firstName, lastName, userPlaces }) => {
+const Person = ({ firstName, lastName, userPlaces, _id }) => {
+  const dispatch = useDispatch()
+
+  const handleClick = () => dispatch(getUserPlaces(_id))
+
   return (
-    <article className='max-w-lg lg:max-w-max flex gap-2 items-center bg-white rounded-xl p-4 shadow-md'>
+    <Link
+      to='/myPlaces'
+      className='max-w-lg lg:max-w-max flex gap-2 items-center bg-white rounded-xl p-4 shadow-md cursor-pointer'
+      onClick={handleClick}
+    >
       {/* left info col */}
       <div>
         <h3 className='card-heading'>
@@ -18,7 +29,7 @@ const Person = ({ firstName, lastName, userPlaces }) => {
       </div>
       {/* right photo col */}
       <img src={userImage} alt='user' className='w-28 h-36 shrink-0 object-cover rounded-xl' />
-    </article>
+    </Link>
   )
 }
 

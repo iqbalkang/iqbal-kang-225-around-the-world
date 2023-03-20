@@ -15,6 +15,8 @@ const Favorites = () => {
     dispatch(getUserFavorite(user.id))
   }, [JSON.stringify(userFavorites)])
 
+  console.log('running')
+
   // useEffect(() => {
   //   dispatch(getAllPlaces())
   // }, [])
