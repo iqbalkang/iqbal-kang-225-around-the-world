@@ -1,67 +1,108 @@
 import React from 'react'
 import { BiMap, BiSearch } from 'react-icons/bi'
-import { AiTwotoneStar, AiFillHeart } from 'react-icons/ai'
+import { AiTwotoneStar, AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import taj from '../images/taj.jpg'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteUserFavorite, postUserFavorite } from '../features/places/PlacesThunks'
+import { deleteUserFavorite, postUserFavorite, toggleLikedPlace } from '../features/places/PlacesThunks'
 import { useEffect } from 'react'
 import FlexContainer from './FlexContainer'
+import Heading from './Heading'
+import LoginForm from '../components/LoginForm'
+import { loginUser } from '../features/user/userThunk'
+import Modal from '../components/Modal'
 
-const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, image, updateCoordinates }) => {
-  console.log(country, rating)
+const initialInputsState = {
+  email: '',
+  password: '',
+}
+
+const shortenDescription = description => {
+  if (description.length > 350) return description.slice(0, 350) + '...'
+  return description
+}
+
+const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, image, updateCoordinates, userId }) => {
   const dispatch = useDispatch()
   const [isDescVisible, setIsDescVisible] = useState(true)
+  const [loginModal, setLoginModal] = useState(false)
+  const { isLoading, user } = useSelector(store => store.user)
+
+  const [values, setValues] = useState(initialInputsState)
+
   const toggleDescription = () => setIsDescVisible(prevState => !prevState)
 
-  // const favoriteHandler = placeID => {
-  //   !isFavorite ? dispatch(postUserFavorite({ placeID })) : dispatch(deleteUserFavorite(placeID))
-  // }
+  const handleToggleFavorite = placeId => {
+    if (!user) return setLoginModal(true)
+    dispatch(toggleLikedPlace(placeId))
+  }
 
-  const handleCoordinatesClick = () => updateCoordinates({ lat, lng })
+  const handleGetCoordinates = () => updateCoordinates({ lat, lng })
+
+  const imageContainerClasses =
+    'relative w-48 h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
+  const overlayClasses = 'absolute inset-0 bg-black/30 group-hover:bg-black/70 duration-200'
+  const searchButtonClasses =
+    'hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:block z-10'
+  const favoriteButtonClasses =
+    'absolute top-5 right-5 bg-white rounded-full w-6 h-6 flex items-center justify-center z-10'
+
+  const favoriteIcon = isFavorite => {
+    const favoriteIconClasses = 'text-accent'
+    return isFavorite ? (
+      <AiFillHeart className={favoriteIconClasses} />
+    ) : (
+      <AiOutlineHeart className={favoriteIconClasses} />
+    )
+  }
+
+  const submitHandler = e => {
+    e.preventDefault()
+    dispatch(loginUser(values))
+    setLoginModal(false)
+  }
+
+  const onChangeHandler = e =>
+    setValues(prevValues => {
+      const { name, value } = e.target
+      return { ...prevValues, [name]: value }
+    })
+
+  const closeLoginModal = () => setLoginModal(false)
+
+  if (loginModal)
+    return (
+      <Modal closeModal={closeLoginModal}>
+        <LoginForm onSubmit={submitHandler} isLoading={isLoading} onChange={onChangeHandler} />
+      </Modal>
+    )
 
   return (
-    <article onClick={handleCoordinatesClick} className='flex-shrink-0 cursor-pointer'>
+    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
       {/* container for photo and place description */}
       <div className='flex gap-2 h-60'>
         {/* container for place image, favorite & search */}
-        <div className='relative w-48 full  rounded-3xl shadow-md overflow-hidden'>
-          <img src={image} alt='place' className='h-full object-cover' />
-          {/* favourite container */}
-          <button
-            className='absolute top-5 right-5 bg-white rounded-full w-6 h-6 flex items-center justify-center'
-            // onClick={() => favoriteHandler(placeID)}
-          >
-            <AiFillHeart className={`${isFavorite ? 'text-accent' : 'text-dark-gray'}`} />
-          </button>
-
-          {/* search icon */}
-          <button className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' onClick={toggleDescription}>
-            <BiSearch className='text-dark-yellow w-6 h-6' />
-          </button>
+        <div className={imageContainerClasses}>
+          <img src={image} alt={title} className='h-full w-full object-cover' />
+          <Button className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
+            {favoriteIcon(isFavorite)}
+          </Button>
+          <Button className={searchButtonClasses} onClick={toggleDescription}>
+            <BiSearch className='text-accent w-10 h-10' />
+          </Button>
+          {/* overlay */}
+          <div className={overlayClasses}></div>
         </div>
 
         {/* description container */}
-        <div
-          className={`${
-            !isDescVisible ? 'scale-x-100 p-6' : 'scale-x-0 w-0 h-60'
-          } bg-dark-gray text-white rounded-3xl shadow-md origin-left duration-200`}
-        >
-          <h2 className='card-heading mb-2'>about place</h2>
-          <p className='max-w-sm'>{description}</p>
-          <div className='text-right'>
-            <Link to='people' className='uppercase text-accent font-bold text-xs'>
-              {title}
-            </Link>
-          </div>
-        </div>
+        <Description description={description} isDescVisible={isDescVisible} title={title} />
       </div>
       {/* container for place info */}
-      <div className='p-2'>
-        <h3 className='card-heading'>{title}</h3>
+      <FlexContainer col className='gap-0'>
+        <Heading h6>{title}</Heading>
         <CountryAndRating rating={rating} country={country} />
-      </div>
+      </FlexContainer>
     </article>
   )
 }
@@ -70,7 +111,7 @@ export default Place
 
 const CountryAndRating = ({ country, rating }) => {
   return (
-    <FlexContainer>
+    <FlexContainer alignCenter className='text-sm'>
       <ValueWithIcon value={country}>
         <BiMap />
       </ValueWithIcon>
@@ -82,8 +123,45 @@ const CountryAndRating = ({ country, rating }) => {
 }
 
 const ValueWithIcon = ({ children, value }) => (
-  <div className='flex items-center'>
+  <FlexContainer alignCenter className='gap-0'>
     {children}
     <p className='capitalize'>{value}</p>
-  </div>
+  </FlexContainer>
 )
+
+const Button = ({ onClick, className, children }) => {
+  return (
+    <button className={className} onClick={onClick}>
+      {children}
+    </button>
+  )
+}
+
+const Description = ({ description, isDescVisible, title }) => {
+  const containerBaseClasses =
+    'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
+  const containerExtraClasses = isDescVisible ? ' scale-x-0 w-0 h-60' : ' scale-x-100 p-6'
+  return (
+    <div className={containerBaseClasses + containerExtraClasses}>
+      <FlexContainer col className='h-full w-[400px] text-sm'>
+        <Heading h5>about taj mahal</Heading>
+        <p className='flex-1'>{shortenDescription(description)}</p>
+        <FlexContainer justifyBetween>
+          <CustomDescriptionLink text='added by' value='bala' to='/' />
+          <CustomDescriptionLink text='take me to' value={title} to='/' />
+        </FlexContainer>
+      </FlexContainer>
+    </div>
+  )
+}
+
+const CustomDescriptionLink = ({ text, to, value }) => {
+  return (
+    <div className='text-right text-xs'>
+      <span>{text} </span>
+      <Link to={to} className='uppercase text-accent font-bold hover:underline'>
+        {value}
+      </Link>
+    </div>
+  )
+}

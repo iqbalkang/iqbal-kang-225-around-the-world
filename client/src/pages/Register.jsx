@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import AccentButton from '../components/AccentButton'
 import FlexContainer from '../components/FlexContainer'
+import LoginForm from '../components/LoginForm'
+import RegisterForm from '../components/RegisterForm'
 
 const formContainerClasses = 'relative z-10 text-white font-josefin px-6 min-w-[450px] w-full md:w-auto'
 
@@ -34,6 +36,8 @@ const Register = () => {
       return { ...prevValues, [name]: value }
     })
 
+  console.log(values)
+
   const toggleIsMember = () => {
     setIsMember(prevState => !prevState)
     setValues(initialInputsState)
@@ -52,35 +56,52 @@ const Register = () => {
   const headingText = !isMember ? 'Log In' : 'Create new account'
   const paragraphText = isMember ? 'Already a member?' : 'Not a member yet?'
   const buttonText = isMember ? 'Log in' : 'Register'
-  const accentButtonText = isMember ? 'create account' : 'log in'
-  const formRowContainerWithLogoClasses = index => (index === 0 || index === 1 ? 'col-span-1' : 'col-span-2')
+  // const accentButtonText = isMember ? 'create account' : 'log in'
+  // const formRowContainerWithLogoClasses = index => (index === 0 || index === 1 ? 'col-span-1' : 'col-span-2')
 
-  const generatePropsObject = (index, input) => {
-    return {
-      key: index,
-      index: index,
-      input: input,
-      onChange: onChangeHandler,
-      value: values[input.label],
-    }
+  // const generateAuthPropsObject = (index, input) => {
+  //   return {
+  //     key: index,
+  //     index: index,
+  //     input: input,
+  //     onChange: onChangeHandler,
+  //     value: values[input.label],
+  //   }
+  // }
+
+  // const formLoginInputs = loginInputs.map((input, index) => {
+  //   const propsObj = generateAuthPropsObject(index, input)
+  //   return <FormRowContainerWithLogo primary className='col-span-2' key={index} propsObj={propsObj} />
+  // })
+
+  // const formRegisterInputs = registerInputs.map((input, index) => {
+  //   const propsObj = generateAuthPropsObject(index, input)
+  //   return (
+  //     <FormRowContainerWithLogo
+  //       primary
+  //       className={formRowContainerWithLogoClasses(index)}
+  //       key={index}
+  //       propsObj={propsObj}
+  //     />
+  //   )
+  // })
+
+  const authForm = () => {
+    if (!isMember)
+      return (
+        <LoginForm
+          onSubmit={submitHandler}
+          isMember={isMember}
+          isLoading={isLoading}
+          onChange={onChangeHandler}
+          isPrimary
+        />
+      )
+    else
+      return (
+        <RegisterForm onSubmit={submitHandler} isMember={isMember} isLoading={isLoading} onChange={onChangeHandler} />
+      )
   }
-
-  const formLoginInputs = loginInputs.map((input, index) => {
-    const propsObj = generatePropsObject(index, input)
-    return <FormRowContainerWithLogo primary className='col-span-2' key={index} propsObj={propsObj} />
-  })
-
-  const formRegisterInputs = registerInputs.map((input, index) => {
-    const propsObj = generatePropsObject(index, input)
-    return (
-      <FormRowContainerWithLogo
-        primary
-        className={formRowContainerWithLogoClasses(index)}
-        key={index}
-        propsObj={propsObj}
-      />
-    )
-  })
 
   return (
     <section className='flex items-center min-h-screen'>
@@ -95,15 +116,8 @@ const Register = () => {
           </button>
         </FlexContainer>
 
-        {/* form inputs container */}
-        <form className='grid grid-cols-2 gap-6' onSubmit={submitHandler}>
-          {isMember ? formRegisterInputs : formLoginInputs}
-          <FlexContainer center className='col-span-2'>
-            <AccentButton big primary isLoading={isLoading}>
-              {accentButtonText}
-            </AccentButton>
-          </FlexContainer>
-        </form>
+        {/* auth form */}
+        {authForm()}
       </div>
     </section>
   )

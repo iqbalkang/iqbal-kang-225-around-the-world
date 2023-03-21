@@ -5,18 +5,54 @@ import Place from '../components/Place'
 import { motion } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllPlaces } from '../features/places/PlacesThunks'
-import Heading2 from '../components/Heading2'
+import Heading from '../components/Heading'
 import FlexContainer from '../components/FlexContainer'
+// import Modal from '../components/Modal'
+import AccentButton from '../components/AccentButton'
+import { loginInputs } from '../utils/data/authenticationInputs'
+import FormRowContainerWithLogo from '../components/FormRowContainerWithLogo'
+// import LoginForm from '../components/LoginForm'
+// import { loginUser } from '../features/user/userThunk'
+
+// const initialInputsState = {
+//   email: '',
+//   password: '',
+// }
 
 const Places = () => {
   const dispatch = useDispatch()
   const { places } = useSelector(store => store.places)
-  const { user } = useSelector(store => store.user)
+  const { id: userId } = useSelector(store => store.user.user) || {}
+
   const [coordinates, setCoordinates] = useState(null)
+  // const [loginModal, setLoginModal] = useState(true)
+  // const { isLoading, user } = useSelector(store => store.user)
+
+  // const [values, setValues] = useState(initialInputsState)
 
   useEffect(() => {
-    dispatch(getAllPlaces())
+    dispatch(getAllPlaces(userId))
   }, [])
+
+  // const submitHandler = e => {
+  //   e.preventDefault()
+  //   dispatch(loginUser(values))
+
+  //   // !isMember ? dispatch(loginUser(values)) : dispatch(registerUser(values))
+  // }
+
+  // const onChangeHandler = e =>
+  //   setValues(prevValues => {
+  //     const { name, value } = e.target
+  //     return { ...prevValues, [name]: value }
+  //   })
+
+  // if (loginModal)
+  //   return (
+  //     <Modal>
+  //       <LoginForm onSubmit={submitHandler} isLoading={isLoading} onChange={onChangeHandler} />
+  //     </Modal>
+  //   )
 
   return (
     <FlexContainer col className='gap-0 h-full bg-off-white text-dark-gray'>
@@ -26,7 +62,7 @@ const Places = () => {
 
       <FlexContainer col className=''>
         {/* title */}
-        <Heading2>all places</Heading2>
+        <Heading h3>all places</Heading>
 
         {/* container to wrap arrows and all places */}
         <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
@@ -36,9 +72,9 @@ const Places = () => {
           </button> */}
 
           {/* places content container */}
-          <div className='flex gap-4 overflow-scroll'>
+          <div className='flex w-screen gap-4 overflow-scroll'>
             {places.map((place, index) => (
-              <Place key={index} {...place} updateCoordinates={setCoordinates} />
+              <Place key={index} {...place} userId={userId} updateCoordinates={setCoordinates} />
             ))}
           </div>
           {/* right arrow */}

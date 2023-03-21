@@ -3,9 +3,11 @@ import {
   deleteUserFavorite,
   getAllPlaces,
   getUserFavorite,
+  getUserFavorites,
   getUserPlaces,
   postPlace,
   postUserFavorite,
+  toggleLikedPlace,
 } from './PlacesThunks'
 import { toast } from 'react-toastify'
 
@@ -64,24 +66,55 @@ const placesSlice = createSlice({
         console.log(payload)
       })
 
-      // add favorite place
-      .addCase(postUserFavorite.pending, state => {
+      // toggle liked place
+      .addCase(toggleLikedPlace.pending, state => {
         state.isLoading = true
       })
-      .addCase(postUserFavorite.fulfilled, (state, { payload: { favPlace, favoritePlaces } }) => {
-        console.log(favoritePlaces)
+      .addCase(toggleLikedPlace.fulfilled, (state, { payload }) => {
         state.isLoading = false
-        const updatedFavPlaceIndex = state.userPlaces.findIndex(place => place._id === favPlace.placeID)
-
-        // if(updatedFavPlaceIndex === -1) {
-
-        // }
-        state.userPlaces[updatedFavPlaceIndex].isFavorite = !state.userPlaces[updatedFavPlaceIndex].isFavorite
+        state.places = state.places.map(place => {
+          if (place.id === payload) return { ...place, isFavorite: !place.isFavorite }
+          else return place
+        })
+        state.userFavorites = state.userFavorites.filter(place => place.id !== payload)
       })
-      .addCase(postUserFavorite.rejected, (state, { payload }) => {
+      .addCase(toggleLikedPlace.rejected, (state, { payload }) => {
         state.isLoading = false
-        console.log(payload)
+        toast.error(payload)
       })
+
+      // get user favorites
+      .addCase(getUserFavorites.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getUserFavorites.fulfilled, (state, { payload }) => {
+        const { places } = payload
+        state.isLoading = false
+        state.userFavorites = places
+      })
+      .addCase(getUserFavorites.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // add favorite place
+      // .addCase(postUserFavorite.pending, state => {
+      //   state.isLoading = true
+      // })
+      // .addCase(postUserFavorite.fulfilled, (state, { payload: { favPlace, favoritePlaces } }) => {
+      //   console.log(favoritePlaces)
+      //   state.isLoading = false
+      //   const updatedFavPlaceIndex = state.userPlaces.findIndex(place => place._id === favPlace.placeID)
+
+      //   // if(updatedFavPlaceIndex === -1) {
+
+      //   // }
+      //   state.userPlaces[updatedFavPlaceIndex].isFavorite = !state.userPlaces[updatedFavPlaceIndex].isFavorite
+      // })
+      // .addCase(postUserFavorite.rejected, (state, { payload }) => {
+      //   state.isLoading = false
+      //   console.log(payload)
+      // })
 
       // delete favorite place
       .addCase(deleteUserFavorite.pending, state => {
@@ -98,25 +131,7 @@ const placesSlice = createSlice({
         console.log(payload)
       })
 
-      // get favorite places
-      .addCase(getUserFavorite.pending, state => {
-        state.isLoading = true
-      })
-      .addCase(getUserFavorite.fulfilled, (state, { payload: { places } }) => {
-        const favoritePlaces = places.map(place => {
-          const favPlace = place.placeID
-          return {
-            ...favPlace,
-            isFavorite: true,
-          }
-        })
-        state.isLoading = false
-        state.userFavorites = favoritePlaces
-      })
-      .addCase(getUserFavorite.rejected, (state, { payload }) => {
-        state.isLoading = false
-        console.log(payload)
-      })
+    // get favorite places
   },
 })
 

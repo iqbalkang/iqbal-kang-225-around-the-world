@@ -4,9 +4,8 @@ import { useRef } from 'react'
 import classnames from 'classnames'
 import FlexContainer from './FlexContainer'
 import Label from './Label'
-// import { Autocomplete, useJsApiLoader } from '@react-google-maps/api'
 
-const FormRow = ({ input, onChange, value, index, transparent, inputClassName, flexClassName, updateSearch }) => {
+const FormRow = ({ input, onChange, value, index, transparent, inputClassName, flexClassName }) => {
   const { labelText, label, placeholder, type } = input
 
   const inputClasses = classnames(inputClassName, 'outline-none placeholder:text-light-gray rounded-md order-1 peer', {
@@ -19,8 +18,6 @@ const FormRow = ({ input, onChange, value, index, transparent, inputClassName, f
 
   useEffect(() => {
     firstEl.current?.focus()
-
-    // updateSearch(firstEl?.current?.value)
   }, [input])
 
   if (type === 'textarea') {

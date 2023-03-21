@@ -10,12 +10,6 @@
   }
 }
 
-@layer components {
-  .card-heading {
-    @apply capitalize font-bold text-lg;
-  }
-}
-
 @layer utilities {
   .active {
     @apply text-white;

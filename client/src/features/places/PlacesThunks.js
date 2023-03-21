@@ -3,7 +3,7 @@ import customFetch from '../../utils/axios/customFetch'
 
 export const postPlace = createAsyncThunk('places/postPlace', async (formData, thunkAPI) => {
   try {
-    const { data } = await customFetch.post(`/places`, formData, {
+    const { data } = await customFetch.post(`/places/`, formData, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
@@ -14,14 +14,46 @@ export const postPlace = createAsyncThunk('places/postPlace', async (formData, t
   }
 })
 
-export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (_, thunkAPI) => {
+export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (userId, thunkAPI) => {
+  let url = '/places'
+
+  if (userId) url = `${url}?user=${userId}`
+
   try {
-    const { data } = await customFetch.get(`/places`)
+    const { data } = await customFetch.get(url)
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
+
+export const toggleLikedPlace = createAsyncThunk('places/toggleLikedPlace', async (placeId, thunkAPI) => {
+  try {
+    const { data } = await customFetch.post(`/places/like/${placeId}`, null, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return placeId
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+export const getUserFavorites = createAsyncThunk('places/getUserFavorites', async (_, thunkAPI) => {
+  try {
+    const { data } = await customFetch.get(`/places/favorites`, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+////////////////////////////////
 
 export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async (userID, thunkAPI) => {
   try {
@@ -33,33 +65,6 @@ export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async (use
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
-  }
-})
-
-export const getUserFavorite = createAsyncThunk('places/getUserFavorite', async (userID, thunkAPI) => {
-  try {
-    const { data } = await customFetch.get(`places/favorites/${userID}`, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
-    return data
-  } catch (error) {
-    console.log(error.response)
-  }
-})
-
-export const postUserFavorite = createAsyncThunk('places/postUserFavorite', async (body, thunkAPI) => {
-  try {
-    const { data } = await customFetch.post('places/favorite', body, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
-    // console.log(data)
-    return data
-  } catch (error) {
-    console.log(error.response)
   }
 })
 
