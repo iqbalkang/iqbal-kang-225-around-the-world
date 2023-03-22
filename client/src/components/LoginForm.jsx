@@ -3,9 +3,12 @@ import { loginInputs } from '../utils/data/authenticationInputs'
 import AccentButton from './AccentButton'
 import FlexContainer from './FlexContainer'
 import FormRowContainerWithLogo from './FormRowContainerWithLogo'
+import classnames from 'classnames'
 
-const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary }) => {
+const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary, className }) => {
   const accentButtonText = isMember ? 'create account' : 'log in'
+
+  const formClasses = classnames(className, 'grid grid-cols-2 gap-6')
 
   const formLoginInputs = loginInputs.map((input, index) => {
     return (
@@ -21,7 +24,7 @@ const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary }) => {
   })
 
   return (
-    <form className='grid grid-cols-2 gap-6' onSubmit={onSubmit}>
+    <form className={formClasses} onSubmit={onSubmit}>
       {formLoginInputs}
       <FlexContainer center className='col-span-2'>
         <AccentButton big primary isLoading={isLoading}>

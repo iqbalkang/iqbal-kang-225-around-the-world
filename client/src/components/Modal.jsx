@@ -52,7 +52,7 @@ import FlexContainer from './FlexContainer'
 const Modal = ({ children, closeModal, className = '' }) => {
   const innerDivClasses = classnames(
     className,
-    'fixed py-6 rounded bg-white dark:bg-modal shadow-md cursor-auto overflow-y-scroll'
+    'fixed py-6 rounded bg-white dark:bg-modal shadow-md cursor-auto overflow-y-scroll p-4'
   )
   const backdropClasses =
     'fixed inset-0 bg-dark-gray bg-opacity-50 backdrop-blur-sm z-20 cursor-pointer flex flex-col justify-center items-center'

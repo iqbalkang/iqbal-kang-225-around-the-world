@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import FlexContainer from './FlexContainer'
 import FormRow from './FormRow'
 
-const FormRowContainerWithLogo = ({ input, primary, outline, className, onChange }) => {
+const FormRowContainerWithLogo = ({ input, primary, outline, className, onChange, placeholderText }) => {
   const containerDivClasses = classnames(className, `p-4 rounded-3xl`, {
     'bg-dark-brown': primary,
     'border border-dark-brown': outline,
@@ -11,7 +11,7 @@ const FormRowContainerWithLogo = ({ input, primary, outline, className, onChange
 
   return (
     <FlexContainer justifyBetween className={containerDivClasses}>
-      <FormRow transparent input={input} key={input.key} onChange={onChange} />
+      <FormRow transparent input={input} key={input.key} onChange={onChange} placeholderText={placeholderText} />
       {input.icon}
     </FlexContainer>
   )

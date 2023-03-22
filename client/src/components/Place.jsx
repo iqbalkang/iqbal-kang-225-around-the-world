@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BiMap, BiSearch } from 'react-icons/bi'
 import { AiTwotoneStar, AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import taj from '../images/taj.jpg'
@@ -6,17 +6,12 @@ import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteUserFavorite, postUserFavorite, toggleLikedPlace } from '../features/places/PlacesThunks'
-import { useEffect } from 'react'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
 import LoginForm from '../components/LoginForm'
 import { loginUser } from '../features/user/userThunk'
 import Modal from '../components/Modal'
-
-const initialInputsState = {
-  email: '',
-  password: '',
-}
+import LoginModal from './LoginModal'
 
 const shortenDescription = description => {
   if (description.length > 350) return description.slice(0, 350) + '...'
@@ -25,11 +20,10 @@ const shortenDescription = description => {
 
 const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, image, updateCoordinates, userId }) => {
   const dispatch = useDispatch()
-  const [isDescVisible, setIsDescVisible] = useState(true)
-  const [loginModal, setLoginModal] = useState(false)
   const { isLoading, user } = useSelector(store => store.user)
 
-  const [values, setValues] = useState(initialInputsState)
+  const [isDescVisible, setIsDescVisible] = useState(true)
+  const [loginModal, setLoginModal] = useState(false)
 
   const toggleDescription = () => setIsDescVisible(prevState => !prevState)
 
@@ -57,26 +51,9 @@ const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, 
     )
   }
 
-  const submitHandler = e => {
-    e.preventDefault()
-    dispatch(loginUser(values))
-    setLoginModal(false)
-  }
-
-  const onChangeHandler = e =>
-    setValues(prevValues => {
-      const { name, value } = e.target
-      return { ...prevValues, [name]: value }
-    })
-
   const closeLoginModal = () => setLoginModal(false)
 
-  if (loginModal)
-    return (
-      <Modal closeModal={closeLoginModal}>
-        <LoginForm onSubmit={submitHandler} isLoading={isLoading} onChange={onChangeHandler} />
-      </Modal>
-    )
+  if (loginModal) return <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />
 
   return (
     <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
