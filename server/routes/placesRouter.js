@@ -3,9 +3,10 @@ const {
   getUserPlaces,
   postUserPlace,
   getAllPlaces,
+  getSinglePlace,
   updatePlace,
   getUserFavorites,
-  postUserFavorite,
+  toggleLikedPlace,
   deleteUserFavorite,
   postPlace,
 } = require('../controllers/placesController')
@@ -15,10 +16,14 @@ const uploadImage = require('../middlewares/upload')
 
 const router = express.Router()
 
+router.get('/favorites', isAuthenticated, getUserFavorites)
 router.get('/', getAllPlaces)
-// router.post('/', isAuthenticated, postUserFavorite)
+router.get('/:placeId', getSinglePlace)
+
 router.post('/', isAuthenticated, uploadImage.single('image'), postPlace)
-// router.get('/favorites/:userID', isAuthenticated, getUserFavorites)
+router.post('/like/:placeId', isAuthenticated, toggleLikedPlace)
+
+// router.get('/favorites', (req, res) => console.log('ff'))
 // router.get('/:userID', isAuthenticated, getUserPlaces)
 // router.post('/:userID', isAuthenticated, postUserPlace)
 // router.delete('/:placeID', isAuthenticated, deleteUserFavorite)

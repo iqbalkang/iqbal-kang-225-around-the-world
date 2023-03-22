@@ -1,5 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const Place = require('../models/PlaceModel')
+const Like = require('../models/LikeModel')
+const Tag = require('../models/TagModel')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
@@ -114,9 +116,17 @@ const cloudinaryUpload = require('../utils/cloudinaryUpload')
 //   })
 // })
 
+const formatPlaces = places => {
+  return places.map(place => {
+    const placeObj = { ...place, isFavorite: place.is_favorite }
+    delete placeObj.is_favorite
+    return placeObj
+  })
+}
+
 const postPlace = asyncHandler(async (req, res, next) => {
   const image = req.file
-  const { title, description, country, lat, lng, rating, address } = req.body
+  const { title, description, country, lat, lng, rating, address, tags } = req.body
   const { id: userId } = req.user
 
   if (!address || !title || !country || !lat || !lng || !rating)
@@ -134,6 +144,13 @@ const postPlace = asyncHandler(async (req, res, next) => {
   const newPlace = new Place(userId, address, country, lat, lng, title, description, rating, imageUrl, imageId)
   const place = await newPlace.save()
 
+  if (tags) {
+    JSON.parse(tags).map(async tag => {
+      const newTag = new Tag(tag, place.id)
+      await newTag.save()
+    })
+  }
+
   res.status(StatusCodes.CREATED).json({
     status: 'success',
     message: 'new place added',
@@ -142,15 +159,77 @@ const postPlace = asyncHandler(async (req, res, next) => {
 })
 
 const getAllPlaces = asyncHandler(async (req, res, next) => {
-  const places = await Place.find()
+  const { user } = req.query
+
+  let places
+  if (user) places = await Place.findByUserId(user)
+  else places = await Place.find()
 
   res.status(StatusCodes.OK).json({
     status: 'success',
-    places,
+    places: formatPlaces(places),
+  })
+})
+
+const toggleLikedPlace = asyncHandler(async (req, res, next) => {
+  const { id: userId } = req.user
+  const { placeId } = req.params
+
+  let response
+
+  const like = await Like.findOne(userId, placeId)
+
+  if (like) {
+    await Like.findByIdAndDelete(userId, placeId)
+  } else {
+    const newLike = new Like(userId, placeId)
+    response = await newLike.save()
+  }
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+  })
+})
+
+const getUserFavorites = asyncHandler(async (req, res, next) => {
+  const { id } = req.user
+
+  const places = await Place.findUserFavorites(id)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    places: formatPlaces(places),
+  })
+})
+
+const getSinglePlace = asyncHandler(async (req, res, next) => {
+  const { placeId } = req.params
+  const { user } = req.query
+
+  const place = await Place.findByPlaceId(placeId)
+  const tags = await Place.findPlaceTags(placeId)
+
+  const formattedTags = []
+  tags.map(tag => formattedTags.push(tag.tag))
+
+  console.log(formattedTags)
+
+  let tempPlace
+  if (user) {
+    tempPlace = await Place.findByUserAndPlaceId(user, placeId)
+    place.isFavorite = tempPlace.is_favorite
+  }
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    place,
   })
 })
 
 module.exports = {
   postPlace,
   getAllPlaces,
+  toggleLikedPlace,
+  getUserFavorites,
+  getSinglePlace,
 }

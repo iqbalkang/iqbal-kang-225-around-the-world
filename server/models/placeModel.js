@@ -40,6 +40,78 @@ class Place {
     const data = await db.query(dbQuery)
     return data.rows
   }
+
+  static async findByPlaceId(placeId) {
+    const dbQuery = `SELECT places.*, COUNT(*) as likes
+                     FROM places 
+                     RIGHT JOIN likes
+                     ON likes.place_id = '${placeId}'
+                     WHERE places.id = '${placeId}'
+                     GROUP BY places.id`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findByUserId(userId) {
+    const dbQuery = `SELECT places.*,
+                     CASE
+                        WHEN likes.user_id = '${userId}' then true
+                        ELSE false
+                        END AS is_favorite
+                     FROM places
+                     LEFT JOIN likes 
+                     ON places.id = likes.place_id AND likes.user_id = '${userId}'`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async findByUserAndPlaceId(userId, placeId) {
+    const dbQuery = `SELECT
+                        CASE
+                          WHEN likes.user_id = '${userId}' THEN TRUE
+                          ELSE false
+                          END AS is_favorite
+                      FROM places
+                      LEFT JOIN likes 
+                      ON places.id = likes.place_id and likes.user_id = '${userId}'
+                      where places.id = '${placeId}'`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findPlaceTags(placeId) {
+    const dbQuery = `SELECT tag
+                    FROM tags
+                    WHERE tags.place_id = '${placeId}'
+                    `
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async findUserFavorites(userId) {
+    const dbQuery = `SELECT places.*,
+                     CASE
+                        WHEN likes.user_id = '${userId}' then true
+                        ELSE false
+                        END AS is_favorite
+                     FROM places
+                     INNER JOIN likes 
+                     ON places.id = likes.place_id AND likes.user_id = '${userId}'`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  // static async find() {
+  //   const dbQuery = `SELECT * FROM places`
+
+  //   const data = await db.query(dbQuery)
+  //   return data.rows
+  // }
 }
 
 module.exports = Place
