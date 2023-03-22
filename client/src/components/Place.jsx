@@ -53,6 +53,10 @@ const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, 
 
   const closeLoginModal = () => setLoginModal(false)
 
+  useEffect(() => {
+    if (!isLoading) setLoginModal(false)
+  }, [isLoading])
+
   if (loginModal) return <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />
 
   return (

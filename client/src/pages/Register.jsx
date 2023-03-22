@@ -36,8 +36,6 @@ const Register = () => {
       return { ...prevValues, [name]: value }
     })
 
-  console.log(values)
-
   const toggleIsMember = () => {
     setIsMember(prevState => !prevState)
     setValues(initialInputsState)

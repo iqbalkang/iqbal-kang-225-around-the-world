@@ -19,12 +19,14 @@ import { MdOutlineLocationSearching } from 'react-icons/md'
 import FlexContainer from '../components/FlexContainer'
 import ImageUploader from '../components/ImageUploader'
 import PlacesAutoComplete from '../components/PlacesAutoComplete'
+import Tags from '../components/Tags'
 
 const initialState = {
   country: '',
   title: '',
   description: '',
   rating: 0,
+  tags: [],
   image: null,
 }
 
@@ -54,6 +56,8 @@ const Explore = () => {
     setValues({ ...values, rating })
   }
 
+  const updateTags = tags => setValues({ ...values, tags })
+
   const handleSubmit = e => {
     e.preventDefault()
 
@@ -64,10 +68,10 @@ const Explore = () => {
     formData.append('lng', coordinates.lng)
 
     for (let key in values) {
-      formData.append(key, values[key])
+      if (key === 'tags') formData.append(key, JSON.stringify(values[key]))
+      else formData.append(key, values[key])
     }
 
-    // if (!user) return dispatch(openModal())
     dispatch(postPlace(formData))
     setAddress('')
     setCoordinates(null)
@@ -93,13 +97,15 @@ const Explore = () => {
   return (
     <section className='h-full grid grid-cols-[2fr,8fr]'>
       {/* left side form inputs */}
-      <FlexContainer center className='bg-dark-gray px-4'>
-        <form className='space-y-4' onSubmit={handleSubmit}>
+      <FlexContainer center className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
+        <form className='space-y-3' onSubmit={handleSubmit}>
           <ImageUploader onChange={onChangeHandler} selectedImage={selectedImage} />
 
           <PlacesAutoComplete address={address} setAddress={setAddress} setCoordinates={setCoordinates} />
 
           {renderExploreInputs}
+
+          <Tags tags={values.tags} updateTags={updateTags} />
 
           <FlexContainer alignCenter>
             <p>How much would you rate this place?</p>

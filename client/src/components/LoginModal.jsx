@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Modal from './Modal'
 import LoginForm from '../components/LoginForm'
 import { loginUser } from '../features/user/userThunk'
+import Heading from '../components/Heading'
 
 const initialInputsState = {
   email: '',
@@ -26,7 +27,16 @@ const LoginModal = ({ closeModal, isLoading }) => {
 
   return (
     <Modal closeModal={closeModal}>
-      <LoginForm onSubmit={submitHandler} isLoading={isLoading} onChange={onChangeHandler} className='w-[400px]' />
+      <Heading h3 className='mb-2'>
+        log in to continue
+      </Heading>
+      <LoginForm
+        onSubmit={submitHandler}
+        isLoading={isLoading}
+        onChange={onChangeHandler}
+        className='w-[400px] '
+        placeholderText='peer-focus:text-black'
+      />
     </Modal>
   )
 }

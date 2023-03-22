@@ -32,7 +32,7 @@ const Places = () => {
 
   useEffect(() => {
     dispatch(getAllPlaces(userId))
-  }, [])
+  }, [userId])
 
   // const submitHandler = e => {
   //   e.preventDefault()

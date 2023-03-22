@@ -30,7 +30,7 @@ const FormRow = ({ input, onChange, value, index, transparent, inputClassName, f
           onChange={onChange}
           value={value}
           placeholder={placeholder}
-          rows={5}
+          rows={4}
         />
         <Label label={label}>{labelText || label}</Label>
       </FlexContainer>
@@ -50,7 +50,7 @@ const FormRow = ({ input, onChange, value, index, transparent, inputClassName, f
         ref={index === 0 ? firstEl : null}
         autoComplete='off'
       />
-      <Label placeholderText='peer-focus:text-black' label={label}>
+      <Label placeholderText={placeholderText} label={label}>
         {labelText || label}
       </Label>
     </FlexContainer>

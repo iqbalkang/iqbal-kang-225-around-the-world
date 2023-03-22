@@ -5,10 +5,10 @@ import FlexContainer from './FlexContainer'
 import FormRowContainerWithLogo from './FormRowContainerWithLogo'
 import classnames from 'classnames'
 
-const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary, className }) => {
+const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary, className, placeholderText }) => {
   const accentButtonText = isMember ? 'create account' : 'log in'
 
-  const formClasses = classnames(className, 'grid grid-cols-2 gap-6')
+  const formClasses = classnames(className, 'grid grid-cols-2 gap-6  font-josefin')
 
   const formLoginInputs = loginInputs.map((input, index) => {
     return (
@@ -19,6 +19,7 @@ const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary, classNa
         key={index}
         input={input}
         onChange={onChange}
+        placeholderText={placeholderText}
       />
     )
   })
