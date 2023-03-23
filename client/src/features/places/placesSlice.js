@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import {
   deleteUserFavorite,
   getAllPlaces,
+  getSinglePlace,
   getUserFavorite,
   getUserFavorites,
   getUserPlaces,
@@ -15,6 +16,7 @@ const initialState = {
   places: [],
   userPlaces: [],
   userFavorites: [],
+  singlePlace: null,
   isLoading: false,
 }
 
@@ -53,7 +55,21 @@ const placesSlice = createSlice({
         toast.error(payload)
       })
 
-      // get user places
+      // get single place
+      .addCase(getSinglePlace.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getSinglePlace.fulfilled, (state, { payload }) => {
+        const { place } = payload
+        state.isLoading = false
+        state.singlePlace = place
+      })
+      .addCase(getSinglePlace.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // !get user places ???
       .addCase(getUserPlaces.pending, state => {
         state.isLoading = true
       })

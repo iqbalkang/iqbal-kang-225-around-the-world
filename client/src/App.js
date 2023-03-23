@@ -8,12 +8,14 @@ import MyPlaces from './pages/MyPlaces'
 import Register from './pages/Register'
 import Explore from './pages/Explore'
 import Favorites from './pages/Favorites'
+import SinglePage from './pages/SinglePage'
 
 const App = () => {
   return (
     <Routes>
       <Route path='/' element={<Home />}>
         <Route index element={<Places />} />
+        <Route path='/:placeId' element={<SinglePage />} />
         <Route path='people' element={<People />} />
         {/* <Route path='explore/:search' element={<Explore />} /> */}
         <Route path='explore' element={<Explore />} />
