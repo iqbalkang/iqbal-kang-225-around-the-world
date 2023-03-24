@@ -206,19 +206,28 @@ const getSinglePlace = asyncHandler(async (req, res, next) => {
   const { placeId } = req.params
   const { user } = req.query
 
+  if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
   const place = await Place.findByPlaceId(placeId)
   const tags = await Place.findPlaceTags(placeId)
+  const likes = await Place.findLikes(placeId)
 
-  const formattedTags = []
-  tags.map(tag => formattedTags.push(tag.tag))
+  if (likes) {
+    place.likes = []
+    likes.map(like => place.likes.push(like))
+  }
 
-  console.log(formattedTags)
+  if (tags) {
+    place.tags = []
+    tags.map(tag => place.tags.push(tag.tag))
+  }
 
-  let tempPlace
   if (user) {
+    let tempPlace
     tempPlace = await Place.findByUserAndPlaceId(user, placeId)
     place.isFavorite = tempPlace.is_favorite
   }
+  console.log(place)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
