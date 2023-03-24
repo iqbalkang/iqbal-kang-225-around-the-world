@@ -3,6 +3,8 @@ import logo from '../images/logosmall.svg'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../features/user/userSlice'
+import Image from './Image'
+import WebsiteContainer from './WebsiteContainer'
 
 const navListItems = ['places', 'people', 'favorites', 'explore', 'settings', 'alerts']
 
@@ -24,22 +26,24 @@ const Navbar = () => {
     <div className='bg-accent'>
       {/* Navbar inner container to wrap logo and navigation links */}
 
-      <nav>
-        <ul className='flex-container-between capitalize'>
-          {/* logo */}
-          <Link to='/'>
-            <img src={logo} alt='around the world logo' />
-          </Link>
+      <WebsiteContainer>
+        <nav>
+          <ul className='flex-container-between capitalize'>
+            {/* logo */}
+            <Link to='/'>
+              <Image src={logo} alt='around the world logo' />
+            </Link>
 
-          {/* navigation links */}
-          {listItems}
+            {/* navigation links */}
+            {listItems}
 
-          {/* auth button */}
-          <Link to='/register' onClick={handleAuth}>
-            {user ? 'Logout' : 'Login'}
-          </Link>
-        </ul>
-      </nav>
+            {/* auth button */}
+            <Link to='/register' onClick={handleAuth}>
+              {user ? 'Logout' : 'Login'}
+            </Link>
+          </ul>
+        </nav>
+      </WebsiteContainer>
     </div>
   )
 }

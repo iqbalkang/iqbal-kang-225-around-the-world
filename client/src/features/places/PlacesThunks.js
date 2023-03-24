@@ -53,9 +53,12 @@ export const getUserFavorites = createAsyncThunk('places/getUserFavorites', asyn
   }
 })
 
-export const getSinglePlace = createAsyncThunk('places/getSinglePlace', async (placeID, thunkAPI) => {
+export const getSinglePlace = createAsyncThunk('places/getSinglePlace', async ({ userId, placeId }, thunkAPI) => {
+  let url = `places/${placeId}`
+  if (userId) url = `${url}?user=${userId}`
+
   try {
-    const { data } = await customFetch.get(`places/${placeID}`)
+    const { data } = await customFetch.get(url)
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)

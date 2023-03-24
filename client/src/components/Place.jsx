@@ -15,6 +15,7 @@ import LoginModal from './LoginModal'
 import RoundButton from './RoundButton'
 import CountryWithRating from './CountryWithRating'
 import CustomDescriptionLink from './CustomDescriptionLink'
+import Image from './Image'
 
 const shortenDescription = description => {
   if (description.length > 350) return description.slice(0, 350) + '...'
@@ -64,10 +65,10 @@ const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, 
   return (
     <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
       {/* container for photo and place description */}
-      <div className='flex gap-2 h-60'>
+      <div className='flex gap-2 h-72'>
         {/* container for place image, favorite & search */}
         <div className={imageContainerClasses}>
-          <img src={image} alt={title} className='h-full w-full object-cover' />
+          <Image src={image} alt={title} />
           <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
             {favoriteIcon(isFavorite)}
           </RoundButton>
