@@ -12,10 +12,13 @@ import CustomDescriptionLink from '../components/CustomDescriptionLink'
 import Image from '../components/Image'
 import WebsiteContainer from '../components/WebsiteContainer'
 import { render } from 'react-dom'
+import { useState } from 'react'
 
 const SinglePage = () => {
   const { placeId } = useParams()
   const dispatch = useDispatch()
+
+  // const [loginModal, setLoginModal] = useState(false)
 
   const { singlePlace } = useSelector(store => store.places)
   const { id: userId } = useSelector(store => store.user.user) || {}
@@ -23,15 +26,12 @@ const SinglePage = () => {
 
   useEffect(() => {
     dispatch(getSinglePlace({ userId, placeId }))
-  }, [])
+  }, [isFavorite])
 
   const handleToggleFavorite = placeId => {
-    // if (!user) return setLoginModal(true)
+    // if (!userId) return setLoginModal(true)
     dispatch(toggleLikedPlace(placeId))
   }
-
-  console.log(singlePlace)
-  console.log(likes)
 
   const favoriteIcon = isFavorite => {
     return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />

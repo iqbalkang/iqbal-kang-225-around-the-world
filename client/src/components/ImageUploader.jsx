@@ -1,13 +1,19 @@
 import React from 'react'
 import FlexContainer from './FlexContainer'
+import classnames from 'classnames'
+import Image from './Image'
 
-const ImageUploader = ({ onChange, selectedImage, className }) => {
+const ImageUploader = ({ onChange, selectedImage, className, square, rounded }) => {
+  const imageUploaderContainerClasses = classnames(className, {
+    'rounded-full overflow-hidden': rounded,
+    'rounded h-36': square,
+    'border border-light-gray border-dashed': !selectedImage,
+  })
+
   const renderImageUploaderContent = () => {
-    if (selectedImage)
-      return <img src={selectedImage} className={`rounded aspect-square h-36 w-full object-cover ${className}`} />
     return (
-      <FlexContainer center className='border border-light-gray border-dashed h-36 rounded'>
-        <p>Select image</p>
+      <FlexContainer center className={imageUploaderContainerClasses}>
+        {selectedImage ? <Image src={selectedImage} /> : <p>Select image</p>}
       </FlexContainer>
     )
   }

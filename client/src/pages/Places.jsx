@@ -11,6 +11,7 @@ import FlexContainer from '../components/FlexContainer'
 import AccentButton from '../components/AccentButton'
 import { loginInputs } from '../utils/data/authenticationInputs'
 import FormRowContainerWithLogo from '../components/FormRowContainerWithLogo'
+import ContentPageLayout from '../components/ContentPageLayout'
 // import LoginForm from '../components/LoginForm'
 // import { loginUser } from '../features/user/userThunk'
 
@@ -25,65 +26,42 @@ const Places = () => {
   const { id: userId } = useSelector(store => store.user.user) || {}
 
   const [coordinates, setCoordinates] = useState(null)
-  // const [loginModal, setLoginModal] = useState(true)
-  // const { isLoading, user } = useSelector(store => store.user)
-
-  // const [values, setValues] = useState(initialInputsState)
 
   useEffect(() => {
     dispatch(getAllPlaces(userId))
   }, [userId])
 
-  // const submitHandler = e => {
-  //   e.preventDefault()
-  //   dispatch(loginUser(values))
-
-  //   // !isMember ? dispatch(loginUser(values)) : dispatch(registerUser(values))
-  // }
-
-  // const onChangeHandler = e =>
-  //   setValues(prevValues => {
-  //     const { name, value } = e.target
-  //     return { ...prevValues, [name]: value }
-  //   })
-
-  // if (loginModal)
-  //   return (
-  //     <Modal>
-  //       <LoginForm onSubmit={submitHandler} isLoading={isLoading} onChange={onChangeHandler} />
-  //     </Modal>
-  //   )
-
   return (
-    <FlexContainer col className='gap-0 h-full bg-off-white text-dark-gray'>
-      <div className='h-96'>
-        <Gmap coordinates={coordinates} />
-      </div>
+    // <FlexContainer col className='gap-0 h-full bg-off-white text-dark-gray'>
+    //   <div className='h-96'>
+    //     <Gmap coordinates={coordinates} />
+    //   </div>
 
-      <FlexContainer col className=''>
-        {/* title */}
-        <Heading h3>all places</Heading>
+    //   <FlexContainer col className=''>
+    //     {/* title */}
+    //     <Heading h3>all places</Heading>
 
-        {/* container to wrap arrows and all places */}
-        <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
-          {/* left arrow */}
-          {/* <button className='hidden relative -top-5 md:block'>
-            <BiRightArrow className='w-8 h-8 text-accent rotate-180' />
-          </button> */}
+    //     {/* container to wrap arrows and all places */}
+    //     <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
+    //       {/* left arrow */}
+    //       {/* <button className='hidden relative -top-5 md:block'>
+    //         <BiRightArrow className='w-8 h-8 text-accent rotate-180' />
+    //       </button> */}
 
-          {/* places content container */}
-          <div className='flex w-screen gap-4 overflow-scroll'>
-            {places.map((place, index) => (
-              <Place key={index} {...place} userId={userId} updateCoordinates={setCoordinates} />
-            ))}
-          </div>
-          {/* right arrow */}
-          {/* <button className='hidden relative -top-5 md:block'>
-            <BiRightArrow className='w-8 h-8 text-accent' />
-          </button> */}
-        </div>
-      </FlexContainer>
-    </FlexContainer>
+    //       {/* places content container */}
+    //       <div className='flex w-screen gap-4 overflow-scroll'>
+    //         {places.map((place, index) => (
+    //           <Place key={index} {...place} userId={userId} updateCoordinates={setCoordinates} />
+    //         ))}
+    //       </div>
+    //       {/* right arrow */}
+    //       {/* <button className='hidden relative -top-5 md:block'>
+    //         <BiRightArrow className='w-8 h-8 text-accent' />
+    //       </button> */}
+    //     </div>
+    //   </FlexContainer>
+    // </FlexContainer>
+    <ContentPageLayout title='all places' data={places} />
   )
 }
 

@@ -5,12 +5,26 @@ import classnames from 'classnames'
 import FlexContainer from './FlexContainer'
 import Label from './Label'
 
-const FormRow = ({ input, onChange, value, index, transparent, inputClassName, flexClassName, placeholderText }) => {
+const FormRow = ({
+  input,
+  onChange,
+  value,
+  index,
+  transparent,
+  inputClassName,
+  flexClassName,
+  placeholderText,
+  disabled = false,
+}) => {
   const { labelText, label, placeholder, type } = input
 
-  const inputClasses = classnames(inputClassName, 'outline-none placeholder:text-light-gray rounded-md order-1 peer', {
-    'bg-transparent': transparent,
-  })
+  const inputClasses = classnames(
+    inputClassName,
+    'outline-none placeholder:text-light-gray rounded-md order-1 peer disabled:bg-light-gray',
+    {
+      'bg-transparent': transparent,
+    }
+  )
 
   const flexClasses = classnames(flexClassName, 'flex-1')
 
@@ -49,6 +63,7 @@ const FormRow = ({ input, onChange, value, index, transparent, inputClassName, f
         value={value}
         ref={index === 0 ? firstEl : null}
         autoComplete='off'
+        disabled={disabled}
       />
       <Label placeholderText={placeholderText} label={label}>
         {labelText || label}

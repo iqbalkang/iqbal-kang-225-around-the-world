@@ -19,10 +19,36 @@ export const loginUser = createAsyncThunk('user/loginUser', async (user, thunkAP
   }
 })
 
+export const updateUser = createAsyncThunk('user/updateUser', async (user, thunkAPI) => {
+  try {
+    const { data } = await customFetch.put(`/authentication/update`, user, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+export const getUserInfo = createAsyncThunk('user/getUserInfo', async (userId, thunkAPI) => {
+  try {
+    const { data } = await customFetch.get(`/authentication/user/${userId}`, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
 export const getAllUsers = createAsyncThunk('user/getAllUsers', async (_, thunkAPI) => {
   try {
-    const { data } = await customFetch.get('/')
-    return data.users
+    const { data } = await customFetch.get('/authentication/all-users')
+    return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
   }

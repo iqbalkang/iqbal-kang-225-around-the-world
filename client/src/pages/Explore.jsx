@@ -99,7 +99,7 @@ const Explore = () => {
       {/* left side form inputs */}
       <FlexContainer center className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
         <form className='space-y-3' onSubmit={handleSubmit}>
-          <ImageUploader onChange={onChangeHandler} selectedImage={selectedImage} />
+          <ImageUploader square onChange={onChangeHandler} selectedImage={selectedImage} />
 
           <PlacesAutoComplete address={address} setAddress={setAddress} setCoordinates={setCoordinates} />
 

@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { loginUser, registerUser, getAllUsers } from './userThunk'
+import { loginUser, registerUser, getAllUsers, getUserInfo, updateUser } from './userThunk'
 import { getLocalStorage, setLocalStorage, removeLocalStorage } from '../../utils/localStorage/localStorage'
 import { toast } from 'react-toastify'
 
 const initialState = {
   user: getLocalStorage('user'),
   isLoading: false,
+  currentUser: null,
   allUsers: [],
 }
 
@@ -53,14 +54,45 @@ const userSlice = createSlice({
         toast.error(payload)
       })
 
+      // update user
+      .addCase(updateUser.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        const { user, message } = payload
+        state.isLoading = false
+        state.currentUser = user
+        toast.success(message)
+      })
+      .addCase(updateUser.rejected, (state, { payload }) => {
+        console.log(payload)
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // get user info
+      .addCase(getUserInfo.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getUserInfo.fulfilled, (state, { payload }) => {
+        const { user } = payload
+        state.isLoading = false
+        state.currentUser = user
+      })
+      .addCase(getUserInfo.rejected, (state, { payload }) => {
+        console.log(payload)
+        state.isLoading = false
+        toast.error(payload)
+      })
+
       // get all users
       .addCase(getAllUsers.pending, state => {
         state.isLoading = true
       })
       .addCase(getAllUsers.fulfilled, (state, { payload }) => {
-        console.log(payload)
+        const { users } = payload
         state.isLoading = false
-        state.allUsers = payload
+        state.allUsers = users
       })
       .addCase(getAllUsers.rejected, (state, { payload }) => {
         state.isLoading = false

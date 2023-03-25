@@ -6,7 +6,7 @@ import { logout } from '../features/user/userSlice'
 import Image from './Image'
 import WebsiteContainer from './WebsiteContainer'
 
-const navListItems = ['places', 'people', 'favorites', 'explore', 'settings', 'alerts']
+const navListItems = ['places', 'people', 'favorites', 'explore', 'profile', 'alerts']
 
 const Navbar = () => {
   const navigate = useNavigate()

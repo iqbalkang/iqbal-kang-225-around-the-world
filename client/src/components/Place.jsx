@@ -22,7 +22,20 @@ const shortenDescription = description => {
   return description
 }
 
-const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, image, updateCoordinates, userId }) => {
+const Place = ({
+  title,
+  country,
+  rating,
+  description,
+  id,
+  isFavorite,
+  firstName,
+  lat,
+  lng,
+  image,
+  updateCoordinates,
+  userId,
+}) => {
   const dispatch = useDispatch()
   const { isLoading, user } = useSelector(store => store.user)
 
@@ -80,7 +93,14 @@ const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, 
         </div>
 
         {/* description container */}
-        <Description description={description} isDescVisible={isDescVisible} title={title} to={id} />
+        <Description
+          description={description}
+          isDescVisible={isDescVisible}
+          title={title}
+          toPlace={id}
+          toUser={userId}
+          value={firstName}
+        />
       </div>
       {/* container for place info */}
       <FlexContainer col className='gap-0'>
@@ -93,7 +113,7 @@ const Place = ({ title, country, rating, description, id, isFavorite, lat, lng, 
 
 export default Place
 
-const Description = ({ description, isDescVisible, title, to }) => {
+const Description = ({ description, isDescVisible, title, toPlace, toUser, value }) => {
   const containerBaseClasses =
     'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
   const containerExtraClasses = isDescVisible ? ' scale-x-0 w-0 h-60' : ' scale-x-100 p-6'
@@ -103,8 +123,8 @@ const Description = ({ description, isDescVisible, title, to }) => {
         <Heading h5>about taj mahal</Heading>
         <p className='flex-1'>{shortenDescription(description)}</p>
         <FlexContainer justifyBetween>
-          <CustomDescriptionLink text='added by' value='bala' to='/' />
-          <CustomDescriptionLink text='take me to' value={title} to={'/' + to} />
+          <CustomDescriptionLink text='added by' value={value} to={'/people/' + toUser} />
+          <CustomDescriptionLink text='take me to' value={title} to={'/places/' + toPlace} />
         </FlexContainer>
       </FlexContainer>
     </div>
