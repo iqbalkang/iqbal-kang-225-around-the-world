@@ -3,14 +3,14 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 class User {
-  constructor(firstName, lastName, email, password, about, image, createdAt) {
+  constructor(firstName, lastName, email, password, aboutMe, image, imageId) {
     this.firstName = firstName
     this.lastName = lastName
     this.email = email
     this.password = password
-    this.about = about
+    this.aboutMe = aboutMe
     this.image = image
-    this.createdAt = createdAt
+    this.imageId = imageId
   }
 
   async save() {
@@ -24,17 +24,52 @@ class User {
     return data.rows[0]
   }
 
+  static async findOne(userId) {
+    console.log(userId)
+    const dbQuery = `SELECT * FROM users
+                     WHERE id = '${userId}'`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  async updateOne(email) {
+    this.aboutMe = this.aboutMe ? `'${this.aboutMe}'` : null
+    this.image = this.image ? `'${this.image}'` : null
+    this.imageId = this.imageId ? `'${this.imageId}'` : null
+
+    const dbQuery = `UPDATE users SET
+                      first_name = '${this.firstName}', 
+                      last_name = '${this.lastName}', 
+                      about_me = ${this.aboutMe},
+                      image    = ${this.image},
+                      image_id =  ${this.imageId}  
+                      WHERE email = '${email}' RETURNING *`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findAllUsers() {
+    const dbQuery = `SELECT * FROM users`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
   static createJWT(user) {
     const { id, email } = user
     return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY })
   }
 
-  static async findOne(email) {
-    const dbQuery = `SELECT * FROM users
-                     WHERE email = '${email}'`
-    const data = await db.query(dbQuery)
-    return data.rows[0]
-  }
+  // static async findUserPlaces(email) {
+  //   const dbQuery = `SELECT places.* FROM users
+  //                    JOIN places
+  //                    ON places.user_id = users.id
+  //                    WHERE users.email = ${email}
+  //                    ;`
+  //   const data = await db.query(dbQuery)
+  //   return data.rows[0]
+  // }
 
   static async comparePasswords(enteredPassword, dbPassword) {
     return await bcrypt.compare(enteredPassword, dbPassword)

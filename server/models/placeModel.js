@@ -35,7 +35,9 @@ class Place {
   }
 
   static async find() {
-    const dbQuery = `SELECT * FROM places`
+    const dbQuery = `SELECT places.*, first_name FROM places
+                     JOIN users ON places.user_id = users.id
+    `
 
     const data = await db.query(dbQuery)
     return data.rows
@@ -64,13 +66,15 @@ class Place {
     return data.rows
   }
 
-  static async findByUserId(userId) {
-    const dbQuery = `SELECT places.*,
+  static async findAllPlacesByUserId(userId) {
+    const dbQuery = `SELECT places.*, first_name,
                      CASE
                         WHEN likes.user_id = '${userId}' then true
                         ELSE false
                         END AS is_favorite
                      FROM places
+                     LEFT JOIN users 
+                     ON places.user_id = users.id
                      LEFT JOIN likes 
                      ON places.id = likes.place_id AND likes.user_id = '${userId}'`
 
@@ -78,7 +82,24 @@ class Place {
     return data.rows
   }
 
-  static async findByUserAndPlaceId(userId, placeId) {
+  static async findUserPlacesByUserId(userId) {
+    const dbQuery = `SELECT places.*, first_name,
+                     CASE
+                       WHEN likes.user_id = ${userId} THEN true
+                       ELSE false
+                       END AS is_favorite
+                     FROM users
+                     LEFT JOIN places
+                     ON places.user_id = users.id
+                     LEFT JOIN likes
+                     ON likes.place_id = places.id
+                     WHERE users.id = ${userId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async findSinglePlaceByUserAndPlaceId(userId, placeId) {
     const dbQuery = `SELECT
                         CASE
                           WHEN likes.user_id = '${userId}' THEN TRUE
@@ -104,12 +125,14 @@ class Place {
   }
 
   static async findUserFavorites(userId) {
-    const dbQuery = `SELECT places.*,
+    const dbQuery = `SELECT places.*,first_name,
                      CASE
                         WHEN likes.user_id = '${userId}' then true
                         ELSE false
                         END AS is_favorite
                      FROM places
+                     LEFT JOIN users 
+                     ON places.user_id = users.id
                      INNER JOIN likes 
                      ON places.id = likes.place_id AND likes.user_id = '${userId}'`
 

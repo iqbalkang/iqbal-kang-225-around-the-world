@@ -5,6 +5,7 @@ const Tag = require('../models/TagModel')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
+const formatPlaces = require('../utils/formatPlaces')
 
 // const getAllPlaces = catchAsync(async (req, res, next) => {
 //   const signedInUser = req.params.id
@@ -116,14 +117,6 @@ const cloudinaryUpload = require('../utils/cloudinaryUpload')
 //   })
 // })
 
-const formatPlaces = places => {
-  return places.map(place => {
-    const placeObj = { ...place, isFavorite: place.is_favorite }
-    delete placeObj.is_favorite
-    return placeObj
-  })
-}
-
 const postPlace = asyncHandler(async (req, res, next) => {
   const image = req.file
   const { title, description, country, lat, lng, rating, address, tags } = req.body
@@ -162,8 +155,19 @@ const getAllPlaces = asyncHandler(async (req, res, next) => {
   const { user } = req.query
 
   let places
-  if (user) places = await Place.findByUserId(user)
+  if (user) places = await Place.findAllPlacesByUserId(user)
   else places = await Place.find()
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    places: formatPlaces(places),
+  })
+})
+
+const getUserPlaces = asyncHandler(async (req, res, next) => {
+  const { id: userId } = req.user
+
+  const places = await Place.findUserPlacesByUserId(userId)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -224,10 +228,9 @@ const getSinglePlace = asyncHandler(async (req, res, next) => {
 
   if (user) {
     let tempPlace
-    tempPlace = await Place.findByUserAndPlaceId(user, placeId)
+    tempPlace = await Place.findSinglePlaceByUserAndPlaceId(user, placeId)
     place.isFavorite = tempPlace.is_favorite
   }
-  console.log(place)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -241,4 +244,5 @@ module.exports = {
   toggleLikedPlace,
   getUserFavorites,
   getSinglePlace,
+  getUserPlaces,
 }
