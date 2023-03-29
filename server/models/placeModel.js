@@ -85,13 +85,8 @@ class Place {
   }
 
   static async findUserPlacesByUserId(userId) {
-    const dbQuery = `SELECT places.*, first_name,
-                     CASE
-                         WHEN likes.user_id = ${userId} THEN true
-                         ELSE false
-                         END AS is_favorite
-                     FROM places
-                     LEFT JOIN likes ON likes.place_id = places.id
+    const dbQuery = `SELECT places.*, first_name                    
+                     FROM places                     
                      LEFT JOIN users ON users.id = places.user_id
                      WHERE users.id = ${userId}`
 
@@ -100,14 +95,13 @@ class Place {
   }
 
   static async findUserPlacesByUserIdAndSignedInUser(userId, signedInUser) {
-    console.log(signedInUser, userId)
     const dbQuery = `SELECT places.*, first_name,
                      CASE
                          WHEN likes.user_id = ${signedInUser} THEN true
                          ELSE false
                          END AS is_favorite
                      FROM places
-                     LEFT JOIN likes ON likes.place_id = places.id
+                     LEFT JOIN likes ON likes.place_id = places.id AND likes.user_id = ${signedInUser}
                      LEFT JOIN users ON users.id = places.user_id
                      WHERE users.id = ${userId}`
 

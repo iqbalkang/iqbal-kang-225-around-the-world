@@ -167,10 +167,9 @@ const getAllPlaces = asyncHandler(async (req, res, next) => {
 const getUserPlaces = asyncHandler(async (req, res, next) => {
   const { userId } = req.params
   const { signedInUser } = req.query
-  console.log(req.query)
 
   let places
-  if (signedInUser) await Place.findUserPlacesByUserIdAndSignedInUser(userId, signedInUser)
+  if (signedInUser) places = await Place.findUserPlacesByUserIdAndSignedInUser(userId, signedInUser)
   else places = await Place.findUserPlacesByUserId(userId)
 
   res.status(StatusCodes.OK).json({

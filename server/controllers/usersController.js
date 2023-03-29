@@ -49,7 +49,6 @@ const loginUser = asyncHandler(async (req, res, next) => {
 
 const getUserInfo = asyncHandler(async (req, res, next) => {
   const { userId } = req.params
-  // console
 
   const user = await User.findOneById(userId)
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
@@ -101,8 +100,6 @@ const updateUser = asyncHandler(async (req, res, next) => {
 const getAllUsers = asyncHandler(async (req, res, next) => {
   const users = await User.findAllUsers()
   if (!users) return next(new AppError('No users were found', StatusCodes.NOT_FOUND))
-
-  console.log(users)
 
   const formattedUsers = users.map(user => formatUser(user))
 
