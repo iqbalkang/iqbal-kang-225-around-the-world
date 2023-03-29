@@ -14,12 +14,12 @@ const Person = () => {
   const dispatch = useDispatch()
   const { placesByCurrentUser } = useSelector(store => store.places)
 
-  const { currentUser } = useSelector(store => store.user)
-  const { firstName, lastName, email, aboutMe, image, imageId, id: signedInUser } = currentUser || {}
+  const { currentUser, user } = useSelector(store => store.user)
+  const { firstName, lastName, email, aboutMe, image, imageId } = currentUser || {}
 
   useEffect(() => {
     dispatch(getUserInfo(userId))
-    dispatch(getUserPlaces({ userId, signedInUser }))
+    dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
   }, [userId])
 
   const renderImage = () => {

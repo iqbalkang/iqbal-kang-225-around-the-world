@@ -32,7 +32,7 @@ const Profile = () => {
   const [selectedImage, setSelectedImage] = useState('')
   const [coordinates, setCoordinates] = useState(null)
   const [values, setValues] = useState(initialState)
-  const { id: userId } = user
+  const { id: userId } = user || {}
 
   const onChangeHandler = e => {
     const { name, value, files } = e.target
@@ -82,7 +82,7 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(getUserInfo(userId))
-    dispatch(getUserPlaces(userId))
+    dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
   }, [userId])
 
   useEffect(() => {
@@ -113,7 +113,7 @@ const Profile = () => {
 
       {/* right side google map */}
 
-      <ContentPageLayout title={'places added by ' + firstName} data={placesByCurrentUser} />
+      <ContentPageLayout title={'places added by you'} data={placesByCurrentUser} />
     </section>
   )
 }

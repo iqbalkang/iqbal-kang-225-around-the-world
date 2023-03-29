@@ -80,7 +80,6 @@ const userSlice = createSlice({
         state.currentUser = user
       })
       .addCase(getUserInfo.rejected, (state, { payload }) => {
-        console.log(payload)
         state.isLoading = false
         toast.error(payload)
       })

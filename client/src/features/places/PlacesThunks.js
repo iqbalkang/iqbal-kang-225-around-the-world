@@ -28,16 +28,12 @@ export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (userI
 })
 
 export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async ({ userId, signedInUser }, thunkAPI) => {
-  console.log(userId, signedInUser)
+  console.log(userId)
   let url = `/places/user-places/${userId}`
-
   if (signedInUser) url = `${url}?signedInUser=${signedInUser}`
+
   try {
-    const { data } = await customFetch.get(url, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
+    const { data } = await customFetch.get(url)
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
