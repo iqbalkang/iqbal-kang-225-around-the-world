@@ -42,37 +42,53 @@ import { getUserPlaces } from '../features/places/PlacesThunks'
 import { Link } from 'react-router-dom'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
+import Image from './Image'
 
-const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId }) => {
+const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlaces }) => {
   const dispatch = useDispatch()
 
   const handleClick = () => {}
 
   const shortenDescription = description => {
-    if (description?.length > 130) return description.slice(0, 130) + '...'
+    if (description?.length > 130) {
+      return (
+        <>
+          {description.slice(0, 130) + '...'}
+          <Link to={'/people/' + userId} className='text-accent ml-2'>
+            know more
+          </Link>
+        </>
+      )
+    }
     return description
   }
 
+  const renderImage = () => {
+    if (image) return <Image src={image} alt={firstName + 'image'} />
+    else
+      return (
+        <FlexContainer center className='bg-off-white h-full w-full text-dark-gray'>
+          <Heading h2>{firstName?.slice(0, 1)}</Heading>
+          <Heading h2>{lastName?.slice(0, 1)}</Heading>
+        </FlexContainer>
+      )
+  }
+
   return (
-    <FlexContainer gap center className='bg-off-white text-dark-gray p-4 rounded-3xl'>
+    <FlexContainer gap justifyBetween className='bg-off-white text-dark-gray p-4 rounded-3xl'>
       {/* left info col */}
       <div>
         <Heading h5 bold>
           {firstName} {lastName}
         </Heading>
-        <h4>
-          {/* <span className='font-bold'>{userPlaces?.length}</span> {userPlaces?.length <= 1 ? 'place' : 'places'} */}
-          <span className='font-bold'>{4}</span> {true <= 1 ? 'place' : 'places'}
-        </h4>
-        <p className='text-sm'>
-          {shortenDescription(aboutMe)}
-          <Link to={'/people/' + userId} className='text-accent ml-2'>
-            know more
-          </Link>
+        <p className='text-xs mb-2'>
+          Places added:
+          <span className='font-bold text-sm ml-2'>{totalPlaces}</span>
         </p>
+        <p className='text-sm'>{shortenDescription(aboutMe)}</p>
       </div>
       {/* right photo col */}
-      <img src={image} alt='user' className='w-28 h-36 shrink-0 object-cover rounded-xl' />
+      <div className='w-28 h-36 shrink-0 rounded-xl overflow-hidden shadow-lg'>{renderImage()}</div>
     </FlexContainer>
   )
 }

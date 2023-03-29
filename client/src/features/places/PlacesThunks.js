@@ -27,9 +27,13 @@ export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (userI
   }
 })
 
-export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async (_, thunkAPI) => {
+export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async ({ userId, signedInUser }, thunkAPI) => {
+  console.log(userId, signedInUser)
+  let url = `/places/user-places/${userId}`
+
+  if (signedInUser) url = `${url}?signedInUser=${signedInUser}`
   try {
-    const { data } = await customFetch.get(`/places/user-places`, {
+    const { data } = await customFetch.get(url, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },

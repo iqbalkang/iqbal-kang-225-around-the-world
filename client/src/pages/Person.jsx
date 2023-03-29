@@ -15,14 +15,12 @@ const Person = () => {
   const { placesByCurrentUser } = useSelector(store => store.places)
 
   const { currentUser } = useSelector(store => store.user)
-  const { firstName, lastName, email, aboutMe, image, imageId } = currentUser || {}
-
-  // console.log(userId)
+  const { firstName, lastName, email, aboutMe, image, imageId, id: signedInUser } = currentUser || {}
 
   useEffect(() => {
     dispatch(getUserInfo(userId))
-    // dispatch(getUserPlaces())
-  }, [])
+    dispatch(getUserPlaces({ userId, signedInUser }))
+  }, [userId])
 
   const renderImage = () => {
     if (image) return <Image src={image} alt={firstName + 'image'} className='h-48 w-48' />
@@ -84,7 +82,7 @@ const Person = () => {
 
       {/* right side google map */}
 
-      <ContentPageLayout title='my places' data={placesByCurrentUser} />
+      <ContentPageLayout title={'places added by ' + firstName} data={placesByCurrentUser} />
     </section>
   )
 }

@@ -24,7 +24,7 @@ const ImageUploader = ({ onChange, selectedImage, className, square, rounded }) 
         type='file'
         id='image'
         name='image'
-        accept='image/jpg, image/jpeg, image/png, image/webp'
+        accept='image/jpg, image/jpeg, image/png, image/webp, image/avif'
         hidden
         onChange={onChange}
       />

@@ -18,6 +18,7 @@ import CustomDescriptionLink from './CustomDescriptionLink'
 import Image from './Image'
 
 const shortenDescription = description => {
+  if (!description) return
   if (description.length > 350) return description.slice(0, 350) + '...'
   return description
 }

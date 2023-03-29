@@ -32,7 +32,7 @@ const Profile = () => {
   const [selectedImage, setSelectedImage] = useState('')
   const [coordinates, setCoordinates] = useState(null)
   const [values, setValues] = useState(initialState)
-  const { userId } = user
+  const { id: userId } = user
 
   const onChangeHandler = e => {
     const { name, value, files } = e.target
@@ -81,9 +81,9 @@ const Profile = () => {
   })
 
   useEffect(() => {
-    dispatch(getUserInfo())
-    dispatch(getUserPlaces())
-  }, [])
+    dispatch(getUserInfo(userId))
+    dispatch(getUserPlaces(userId))
+  }, [userId])
 
   useEffect(() => {
     if (currentUser) {

@@ -4,7 +4,7 @@ import classnames from 'classnames'
 const FlexContainer = ({ children, center, col, alignCenter, justifyBetween, gap, alignEnd, className = '' }) => {
   const classes = classnames(className, 'flex', {
     'justify-center items-center': center,
-    'justify-between items-center': justifyBetween,
+    'justify-between': justifyBetween,
     'items-end': alignEnd,
     'items-center': alignCenter,
     'flex-col': col,

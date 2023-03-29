@@ -58,6 +58,7 @@ import FlexContainer from '../components/FlexContainer'
 
 const ContentPageLayout = ({ title, data }) => {
   const [coordinates, setCoordinates] = useState(null)
+  console.log(data)
 
   return (
     <FlexContainer col className='gap-0 h-full bg-off-white text-dark-gray'>

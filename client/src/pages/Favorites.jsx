@@ -70,7 +70,7 @@ const Favorites = () => {
     //     </div>
     //   </FlexContainer>
     // </FlexContainer>
-    <ContentPageLayout title='all places' data={currentUserFavorites} />
+    <ContentPageLayout title='your favorites' data={currentUserFavorites} />
   )
 }
 
