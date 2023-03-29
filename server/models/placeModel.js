@@ -35,9 +35,11 @@ class Place {
   }
 
   static async find() {
-    const dbQuery = `SELECT places.*, first_name FROM places
-                     JOIN users ON places.user_id = users.id
-    `
+    const dbQuery = `SELECT places.*, first_name 
+                     FROM places
+                     JOIN users 
+                     ON places.user_id = users.id
+                    `
 
     const data = await db.query(dbQuery)
     return data.rows
@@ -85,14 +87,28 @@ class Place {
   static async findUserPlacesByUserId(userId) {
     const dbQuery = `SELECT places.*, first_name,
                      CASE
-                       WHEN likes.user_id = ${userId} THEN true
-                       ELSE false
-                       END AS is_favorite
-                     FROM users
-                     LEFT JOIN places
-                     ON places.user_id = users.id
-                     LEFT JOIN likes
-                     ON likes.place_id = places.id
+                         WHEN likes.user_id = ${userId} THEN true
+                         ELSE false
+                         END AS is_favorite
+                     FROM places
+                     LEFT JOIN likes ON likes.place_id = places.id
+                     LEFT JOIN users ON users.id = places.user_id
+                     WHERE users.id = ${userId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async findUserPlacesByUserIdAndSignedInUser(userId, signedInUser) {
+    console.log(signedInUser, userId)
+    const dbQuery = `SELECT places.*, first_name,
+                     CASE
+                         WHEN likes.user_id = ${signedInUser} THEN true
+                         ELSE false
+                         END AS is_favorite
+                     FROM places
+                     LEFT JOIN likes ON likes.place_id = places.id
+                     LEFT JOIN users ON users.id = places.user_id
                      WHERE users.id = ${userId}`
 
     const data = await db.query(dbQuery)

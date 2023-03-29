@@ -24,10 +24,16 @@ class User {
     return data.rows[0]
   }
 
-  static async findOne(userId) {
-    console.log(userId)
+  static async findOne(email) {
     const dbQuery = `SELECT * FROM users
-                     WHERE id = '${userId}'`
+                     WHERE email = '${email}'`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findOneById(id) {
+    const dbQuery = `SELECT * FROM users
+                     WHERE id = '${id}'`
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
@@ -50,7 +56,12 @@ class User {
   }
 
   static async findAllUsers() {
-    const dbQuery = `SELECT * FROM users`
+    const dbQuery = `SELECT users.id, first_name, last_name, users.image, about_me, count(places.user_id) AS total_places 
+                     FROM users
+                     LEFT JOIN places
+                     ON places.user_id = users.id
+                     GROUP BY users.id
+                    `
 
     const data = await db.query(dbQuery)
     return data.rows

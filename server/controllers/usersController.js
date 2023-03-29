@@ -11,10 +11,14 @@ const cloudinary = require('cloudinary').v2
 const registerUser = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, password, confirmPassword } = req.body
   if ((!firstName, !email, !password)) return next(new AppError('Missing fields', StatusCodes.BAD_REQUEST))
+
   if (password !== confirmPassword) return next(new AppError('Passwords does not match', StatusCodes.BAD_REQUEST))
 
   const userObj = new User(firstName, lastName, email, password)
   const user = await userObj.save()
+
+  const token = User.createJWT(user)
+  user.token = token
 
   res.status(StatusCodes.CREATED).json({
     status: 'success',
@@ -30,6 +34,9 @@ const loginUser = asyncHandler(async (req, res, next) => {
   const user = await User.findOne(email)
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
 
+  const token = User.createJWT(user)
+  user.token = token
+
   const passwordsMatch = await User.comparePasswords(password, user.password)
   if (!passwordsMatch) return next(new AppError('Invalid credentials', StatusCodes.BAD_REQUEST))
 
@@ -42,11 +49,9 @@ const loginUser = asyncHandler(async (req, res, next) => {
 
 const getUserInfo = asyncHandler(async (req, res, next) => {
   const { userId } = req.params
-  // console.log(req.params)
+  // console
 
-  // console.log(userId)
-
-  const user = await User.findOne(userId)
+  const user = await User.findOneById(userId)
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
   const formattedUser = formatUser(user)
 
@@ -96,6 +101,9 @@ const updateUser = asyncHandler(async (req, res, next) => {
 const getAllUsers = asyncHandler(async (req, res, next) => {
   const users = await User.findAllUsers()
   if (!users) return next(new AppError('No users were found', StatusCodes.NOT_FOUND))
+
+  console.log(users)
+
   const formattedUsers = users.map(user => formatUser(user))
 
   res.status(StatusCodes.OK).json({

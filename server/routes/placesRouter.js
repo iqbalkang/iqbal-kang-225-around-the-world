@@ -18,7 +18,7 @@ const router = express.Router()
 
 router.get('/favorites', isAuthenticated, getUserFavorites)
 router.get('/', getAllPlaces)
-router.get('/user-places', isAuthenticated, getUserPlaces)
+router.get('/user-places/:userId', getUserPlaces)
 router.get('/:placeId', getSinglePlace)
 
 router.post('/', isAuthenticated, uploadImage.single('image'), postPlace)

@@ -1,6 +1,6 @@
 // const app = require('./app')
 // const mongoose = require('mongoose')
-// require('dotenv').config()
+require('dotenv').config()
 
 // const MONGOURI = process.env.MONGO_URI
 // const PORT = process.env.PORT || 8000
@@ -20,5 +20,6 @@
 // startServer()
 
 const app = require('./app')
+const PORT = process.env.port || 8000
 
-app.listen(8000, () => console.log('Listening on 8000...'))
+app.listen(PORT, () => console.log(`Listening on ${PORT}...`))
