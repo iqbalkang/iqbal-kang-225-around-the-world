@@ -28,7 +28,6 @@ export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (userI
 })
 
 export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async ({ userId, signedInUser }, thunkAPI) => {
-  console.log(userId)
   let url = `/places/user-places/${userId}`
   if (signedInUser) url = `${url}?signedInUser=${signedInUser}`
 
