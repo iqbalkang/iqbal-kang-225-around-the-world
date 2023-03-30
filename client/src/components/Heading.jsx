@@ -7,7 +7,7 @@ const Heading = ({ children, h2, h3, h4, h5, h6, className, offWhite, bold }) =>
     'text-3xl': h3,
     'text-2xl': h4,
     'text-xl': h5,
-    'text-md': h6,
+    'text-lg': h6,
     'text-off-white': offWhite,
     'font-semibold': bold,
   })

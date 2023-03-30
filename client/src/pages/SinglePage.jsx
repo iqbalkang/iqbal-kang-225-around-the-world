@@ -15,6 +15,8 @@ import { render } from 'react-dom'
 import { useState } from 'react'
 import LoginModal from '../components/LoginModal'
 
+import Comments from '../components/Comments'
+
 const SinglePage = () => {
   const { placeId } = useParams()
   const dispatch = useDispatch()
@@ -119,6 +121,9 @@ const SinglePage = () => {
             {description}
             <CustomDescriptionLink text='added by' value={addedBy} to={'/people/' + addedByUserId} />
           </FlexContainer>
+
+          {/* comments */}
+          <Comments />
         </WebsiteContainer>
       </div>
 
