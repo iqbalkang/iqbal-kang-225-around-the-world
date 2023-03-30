@@ -50,16 +50,9 @@ const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlac
   const handleClick = () => {}
 
   const shortenDescription = description => {
-    if (description?.length > 130) {
-      return (
-        <>
-          {description.slice(0, 130) + '...'}
-          <Link to={'/people/' + userId} className='text-accent ml-2'>
-            know more
-          </Link>
-        </>
-      )
-    }
+    if (!description) return 'no description added'
+    if (description?.length > 130) return description.slice(0, 130) + '...'
+
     return description
   }
 
@@ -77,7 +70,7 @@ const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlac
   return (
     <FlexContainer gap justifyBetween className='bg-off-white text-dark-gray p-4 rounded-3xl'>
       {/* left info col */}
-      <div>
+      <FlexContainer col>
         <Heading h5 bold>
           {firstName} {lastName}
         </Heading>
@@ -85,8 +78,13 @@ const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlac
           Places added:
           <span className='font-bold text-sm ml-2'>{totalPlaces}</span>
         </p>
-        <p className='text-sm'>{shortenDescription(aboutMe)}</p>
-      </div>
+        <p className='text-sm flex-1 first-letter:capitalize'>
+          {shortenDescription(aboutMe)}
+          <Link to={'/people/' + userId} className='text-accent ml-2'>
+            know more
+          </Link>
+        </p>
+      </FlexContainer>
       {/* right photo col */}
       <div className='w-28 h-36 shrink-0 rounded-xl overflow-hidden shadow-lg'>{renderImage()}</div>
     </FlexContainer>
