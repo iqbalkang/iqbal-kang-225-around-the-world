@@ -1,7 +1,7 @@
 import { AiOutlineUser, AiOutlineMail } from 'react-icons/ai'
 import { RiLockPasswordLine } from 'react-icons/ri'
 
-const inputs = [
+const registerInputs = [
   {
     labelText: 'first name',
     label: 'firstName',
@@ -36,4 +36,21 @@ const inputs = [
   },
 ]
 
-export default inputs
+const loginInputs = [
+  {
+    label: 'email',
+    type: 'email',
+    placeholder: 'johndoe@gmail.com',
+    icon: <AiOutlineMail className='text-dark-white' size={20} />,
+    required: true,
+  },
+  {
+    label: 'password',
+    type: 'password',
+    placeholder: '**********',
+    icon: <RiLockPasswordLine className='text-dark-white' size={20} />,
+    required: true,
+  },
+]
+
+export { registerInputs, loginInputs }

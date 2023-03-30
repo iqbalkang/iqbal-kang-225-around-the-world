@@ -1,52 +1,90 @@
-const mongoose = require('mongoose')
-const validator = require('validator')
+const db = require('../utils/connectDB')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    minLength: 3,
-    required: [true, 'Missing name'],
-  },
-  lastName: String,
-  email: {
-    type: String,
-    required: [true, 'Missing email'],
-    validate: [validator.isEmail, 'Wrong email'],
-    unique: true,
-  },
-  password: {
-    type: String,
-    minLength: 5,
-    required: [true, 'Missing password'],
-  },
-  confirmPassword: {
-    type: String,
-    required: [true, 'Missing confirm password'],
-    validate: {
-      validator: function (value) {
-        return this.password === value
-      },
-      message: 'Passwords do not match',
-    },
-  },
-})
+class User {
+  constructor(firstName, lastName, email, password, aboutMe, image, imageId) {
+    this.firstName = firstName
+    this.lastName = lastName
+    this.email = email
+    this.password = password
+    this.aboutMe = aboutMe
+    this.image = image
+    this.imageId = imageId
+  }
 
-userSchema.methods.createJWT = function (user) {
-  const { _id: userID, email } = user
-  return jwt.sign({ id: userID, email: email }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRY,
-  })
+  async save() {
+    const hashedPassword = await bcrypt.hash(this.password, 12)
+
+    const dbQuery = `INSERT INTO users (first_name, last_name, email, password)
+                   VALUES ($1,$2,$3,$4) RETURNING *`
+    const values = [this.firstName, this.lastName, this.email, hashedPassword]
+
+    const data = await db.query(dbQuery, values)
+    return data.rows[0]
+  }
+
+  static async findOne(email) {
+    const dbQuery = `SELECT * FROM users
+                     WHERE email = '${email}'`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findOneById(id) {
+    const dbQuery = `SELECT * FROM users
+                     WHERE id = '${id}'`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  async updateOne(email) {
+    this.aboutMe = this.aboutMe ? `'${this.aboutMe}'` : null
+    this.image = this.image ? `'${this.image}'` : null
+    this.imageId = this.imageId ? `'${this.imageId}'` : null
+
+    const dbQuery = `UPDATE users SET
+                      first_name = '${this.firstName}', 
+                      last_name = '${this.lastName}', 
+                      about_me = ${this.aboutMe},
+                      image    = ${this.image},
+                      image_id =  ${this.imageId}  
+                      WHERE email = '${email}' RETURNING *`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findAllUsers() {
+    const dbQuery = `SELECT users.id, first_name, last_name, users.image, about_me, count(places.user_id) AS total_places 
+                     FROM users
+                     LEFT JOIN places
+                     ON places.user_id = users.id
+                     GROUP BY users.id
+                    `
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static createJWT(user) {
+    const { id, email } = user
+    return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY })
+  }
+
+  // static async findUserPlaces(email) {
+  //   const dbQuery = `SELECT places.* FROM users
+  //                    JOIN places
+  //                    ON places.user_id = users.id
+  //                    WHERE users.email = ${email}
+  //                    ;`
+  //   const data = await db.query(dbQuery)
+  //   return data.rows[0]
+  // }
+
+  static async comparePasswords(enteredPassword, dbPassword) {
+    return await bcrypt.compare(enteredPassword, dbPassword)
+  }
 }
 
-userSchema.methods.comparePasswords = async function (enteredPassword) {
-  return bcrypt.compare(enteredPassword, this.password)
-}
-
-userSchema.pre('save', async function () {
-  this.password = await bcrypt.hash(this.password, 12)
-  this.confirmPassword = undefined
-})
-
-module.exports = mongoose.model('User', userSchema)
+module.exports = User

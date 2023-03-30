@@ -1,74 +1,133 @@
-import React from 'react'
-import { BiMap, BiSearch } from 'react-icons/bi'
-import { AiTwotoneStar, AiFillHeart } from 'react-icons/ai'
+import React, { useEffect } from 'react'
+import { BiSearch } from 'react-icons/bi'
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import taj from '../images/taj.jpg'
-import { Link } from 'react-router-dom'
+
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteUserFavorite, postUserFavorite } from '../features/places/PlacesThunks'
-import { useEffect } from 'react'
+import { deleteUserFavorite, postUserFavorite, toggleLikedPlace } from '../features/places/PlacesThunks'
+import FlexContainer from './FlexContainer'
+import Heading from './Heading'
+import LoginForm from '../components/LoginForm'
+import { loginUser } from '../features/user/userThunk'
+import Modal from '../components/Modal'
+import LoginModal from './LoginModal'
+import RoundButton from './RoundButton'
+import CountryWithRating from './CountryWithRating'
+import CustomDescriptionLink from './CustomDescriptionLink'
+import Image from './Image'
 
-const Place = ({ title, country, rating, description, _id: placeID, isFavorite, name }) => {
+const shortenDescription = description => {
+  if (!description) return
+  if (description.length > 350) return description.slice(0, 350) + '...'
+  return description
+}
+
+const Place = ({
+  title,
+  country,
+  rating,
+  description,
+  id,
+  isFavorite,
+  firstName,
+  lat,
+  lng,
+  image,
+  updateCoordinates,
+  userId,
+}) => {
   const dispatch = useDispatch()
+  const { isLoading, user } = useSelector(store => store.user)
+
   const [isDescVisible, setIsDescVisible] = useState(true)
+  const [loginModal, setLoginModal] = useState(false)
+
   const toggleDescription = () => setIsDescVisible(prevState => !prevState)
 
-  const favoriteHandler = placeID => {
-    !isFavorite ? dispatch(postUserFavorite({ placeID })) : dispatch(deleteUserFavorite(placeID))
+  const handleToggleFavorite = placeId => {
+    if (!user) return setLoginModal(true)
+    dispatch(toggleLikedPlace(placeId))
   }
 
-  return (
-    <article className='flex-shrink-0'>
-      {/* container for photo and place description */}
-      <div className='flex gap-2'>
-        {/* container for place image, favorite & search */}
-        <div className='relative w-48 min-h-[240px] bg-red-300  rounded-3xl shadow-md overflow-hidden'>
-          <img src={taj} alt='place' className='h-full object-cover' />
-          {/* favourite container */}
-          <button
-            className='absolute top-5 right-5 bg-white rounded-full w-6 h-6 flex items-center justify-center'
-            onClick={() => favoriteHandler(placeID)}
-          >
-            <AiFillHeart className={`${isFavorite ? 'text-accent' : 'text-dark-gray'}`} />
-          </button>
+  const handleGetCoordinates = () => updateCoordinates({ lat, lng })
 
-          {/* search icon */}
-          <button className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' onClick={toggleDescription}>
-            <BiSearch className='text-dark-yellow w-6 h-6' />
-          </button>
+  const imageContainerClasses =
+    'relative w-48 h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
+  const overlayClasses = 'absolute inset-0 bg-black/30 group-hover:bg-black/70 duration-200'
+  const searchButtonClasses =
+    'hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:block z-10'
+  const favoriteButtonClasses = 'absolute top-5 right-5 z-10'
+
+  const favoriteIcon = isFavorite => {
+    const favoriteIconClasses = 'text-accent'
+    return isFavorite ? (
+      <AiFillHeart className={favoriteIconClasses} />
+    ) : (
+      <AiOutlineHeart className={favoriteIconClasses} />
+    )
+  }
+
+  const closeLoginModal = () => setLoginModal(false)
+
+  useEffect(() => {
+    if (!isLoading) setLoginModal(false)
+  }, [isLoading])
+
+  if (loginModal) return <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />
+
+  return (
+    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
+      {/* container for photo and place description */}
+      <div className='flex gap-2 h-72'>
+        {/* container for place image, favorite & search */}
+        <div className={imageContainerClasses}>
+          <Image src={image} alt={title} />
+          <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
+            {favoriteIcon(isFavorite)}
+          </RoundButton>
+          <RoundButton className={searchButtonClasses} onClick={toggleDescription}>
+            <BiSearch className='text-accent w-10 h-10' />
+          </RoundButton>
+          {/* overlay */}
+          <div className={overlayClasses}></div>
         </div>
 
         {/* description container */}
-        <div
-          className={`${
-            !isDescVisible ? 'scale-x-100 p-6' : 'scale-x-0 w-0 h-60'
-          } bg-dark-gray text-white rounded-3xl shadow-md origin-left duration-200`}
-        >
-          <h2 className='card-heading mb-2'>about place</h2>
-          <p className='max-w-sm'>{description}</p>
-          <div className='text-right'>
-            <Link to='people' className='uppercase text-accent font-bold text-xs'>
-              {name?.firstName}
-            </Link>
-          </div>
-        </div>
+        <Description
+          description={description}
+          isDescVisible={isDescVisible}
+          title={title}
+          toPlace={id}
+          toUser={userId}
+          value={firstName}
+        />
       </div>
       {/* container for place info */}
-      <div className='p-2'>
-        <h3 className='card-heading'>{title}</h3>
-        <div className='flex gap-6 '>
-          <div className='flex items-center'>
-            <BiMap />
-            <p className='capitalize'>{country}</p>
-          </div>
-          <div className='flex items-center'>
-            <AiTwotoneStar className='text-dark-yellow' />
-            <p className='capitalize'>{rating}.0</p>
-          </div>
-        </div>
-      </div>
+      <FlexContainer col className='gap-0'>
+        <Heading h6>{title}</Heading>
+        <CountryWithRating rating={rating} country={country} className='text-sm' />
+      </FlexContainer>
     </article>
   )
 }
 
 export default Place
+
+const Description = ({ description, isDescVisible, title, toPlace, toUser, value }) => {
+  const containerBaseClasses =
+    'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
+  const containerExtraClasses = isDescVisible ? ' scale-x-0 w-0 h-60' : ' scale-x-100 p-6'
+  return (
+    <div className={containerBaseClasses + containerExtraClasses}>
+      <FlexContainer col className='h-full w-[400px] text-sm'>
+        <Heading h5>about taj mahal</Heading>
+        <p className='flex-1'>{shortenDescription(description)}</p>
+        <FlexContainer justifyBetween>
+          <CustomDescriptionLink text='added by' value={value} to={'/people/' + toUser} />
+          <CustomDescriptionLink text='take me to' value={title} to={'/places/' + toPlace} />
+        </FlexContainer>
+      </FlexContainer>
+    </div>
+  )
+}

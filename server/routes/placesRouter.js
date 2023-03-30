@@ -3,21 +3,31 @@ const {
   getUserPlaces,
   postUserPlace,
   getAllPlaces,
+  getSinglePlace,
   updatePlace,
   getUserFavorites,
-  postUserFavorite,
+  toggleLikedPlace,
   deleteUserFavorite,
+  postPlace,
 } = require('../controllers/placesController')
-const isAuthenticated = require('../utils/isAuthenticated')
+const isAuthenticated = require('../middlewares/isAuthenticated')
+const uploadImage = require('../middlewares/upload')
+// const isAuthenticated = require('../middlewares/isAuthenticated')
 
 const router = express.Router()
 
-router.get('/all/:id', getAllPlaces)
-router.post('/favorite', isAuthenticated, postUserFavorite)
-router.get('/favorites/:userID', isAuthenticated, getUserFavorites)
-router.get('/:userID', isAuthenticated, getUserPlaces)
-router.post('/:userID', isAuthenticated, postUserPlace)
-router.delete('/:placeID', isAuthenticated, deleteUserFavorite)
+router.get('/favorites', isAuthenticated, getUserFavorites)
+router.get('/', getAllPlaces)
+router.get('/user-places/:userId', getUserPlaces)
+router.get('/:placeId', getSinglePlace)
+
+router.post('/', isAuthenticated, uploadImage.single('image'), postPlace)
+router.post('/like/:placeId', isAuthenticated, toggleLikedPlace)
+
+// router.get('/favorites', (req, res) => console.log('ff'))
+// router.get('/:userID', isAuthenticated, getUserPlaces)
+// router.post('/:userID', isAuthenticated, postUserPlace)
+// router.delete('/:placeID', isAuthenticated, deleteUserFavorite)
 // router.patch('/:placeID', isAuthenticated, updatePlace)
 
 module.exports = router

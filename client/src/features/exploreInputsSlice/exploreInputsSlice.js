@@ -32,11 +32,5 @@ const exploreInputsSlice = createSlice({
   },
 })
 
-export const {
-  handleChange,
-  getSearchData,
-  handleRating,
-  openModal,
-  closeModal,
-} = exploreInputsSlice.actions
+export const { handleChange, getSearchData, handleRating, openModal, closeModal } = exploreInputsSlice.actions
 export default exploreInputsSlice.reducer
