@@ -219,6 +219,12 @@ const getSinglePlace = asyncHandler(async (req, res, next) => {
   const tags = await Place.findPlaceTags(placeId)
   const likes = await Place.findLikes(placeId)
 
+  place.addedBy = place.first_name
+  delete place.first_name
+
+  place.userId = place.user_id
+  delete place.user_id
+
   if (likes) {
     place.likes = []
     likes.map(like => place.likes.push(like))
