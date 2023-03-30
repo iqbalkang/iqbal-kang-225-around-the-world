@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import ExploreFormRow from '../components/ExploreFormRow'
 import Gmap from '../components/Gmap'
@@ -13,13 +13,13 @@ import { handleChange, openModal } from '../features/exploreInputsSlice/exploreI
 import Stars from '../components/Stars'
 import Modal from '../components/Modal'
 import FormRow from '../components/FormRow'
-import { useState } from 'react'
 import Label from '../components/Label'
 import { MdOutlineLocationSearching } from 'react-icons/md'
 import FlexContainer from '../components/FlexContainer'
 import ImageUploader from '../components/ImageUploader'
 import PlacesAutoComplete from '../components/PlacesAutoComplete'
 import Tags from '../components/Tags'
+import LoginModal from '../components/LoginModal'
 
 const initialState = {
   country: '',
@@ -32,13 +32,14 @@ const initialState = {
 
 const Explore = () => {
   const dispatch = useDispatch()
-  // const inputState = useSelector(store => store.exploreInputs)
-  const { user, isLoading } = useSelector(store => store.user)
+  const { user, isLoading: isUserLoading } = useSelector(store => store.user)
+  const { isLoading: isPlaceLoading } = useSelector(store => store.places)
 
   const [selectedImage, setSelectedImage] = useState('')
   const [address, setAddress] = useState('')
   const [coordinates, setCoordinates] = useState(null)
   const [values, setValues] = useState(initialState)
+  const [loginModal, setLoginModal] = useState(false)
 
   const onChangeHandler = e => {
     const { name, value, files } = e.target
@@ -58,8 +59,12 @@ const Explore = () => {
 
   const updateTags = tags => setValues({ ...values, tags })
 
+  const closeLoginModal = () => setLoginModal(false)
+
   const handleSubmit = e => {
     e.preventDefault()
+
+    if (!user) return setLoginModal(true)
 
     const formData = new FormData()
 
@@ -73,9 +78,6 @@ const Explore = () => {
     }
 
     dispatch(postPlace(formData))
-    setAddress('')
-    setCoordinates(null)
-    setValues(initialState)
   }
 
   const generatePropsObject = (index, input) => {
@@ -88,6 +90,19 @@ const Explore = () => {
       flexClassName: 'gap-1',
     }
   }
+
+  useEffect(() => {
+    if (!isUserLoading) setLoginModal(false)
+  }, [isUserLoading])
+
+  useEffect(() => {
+    if (!isPlaceLoading && user) {
+      setAddress('')
+      setSelectedImage('')
+      setCoordinates(null)
+      setValues(initialState)
+    }
+  }, [isPlaceLoading])
 
   const renderExploreInputs = exploreInputs.map((input, index) => {
     const propsObj = generatePropsObject(index, input)
@@ -109,10 +124,10 @@ const Explore = () => {
 
           <FlexContainer alignCenter>
             <p>How much would you rate this place?</p>
-            <Stars handleRating={updateRating} />
+            <Stars handleRating={updateRating} rating={values.rating} />
           </FlexContainer>
 
-          <AccentButton small full primary isLoading={isLoading}>
+          <AccentButton small full primary isLoading={isPlaceLoading}>
             add place
           </AccentButton>
         </form>
@@ -120,6 +135,8 @@ const Explore = () => {
 
       {/* right side google map */}
       <Gmap coordinates={coordinates} />
+
+      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isUserLoading} />}
     </section>
   )
 }

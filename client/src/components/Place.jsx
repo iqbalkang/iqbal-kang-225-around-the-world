@@ -74,8 +74,6 @@ const Place = ({
     if (!isLoading) setLoginModal(false)
   }, [isLoading])
 
-  if (loginModal) return <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />
-
   return (
     <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
       {/* container for photo and place description */}
@@ -108,6 +106,8 @@ const Place = ({
         <Heading h6>{title}</Heading>
         <CountryWithRating rating={rating} country={country} className='text-sm' />
       </FlexContainer>
+
+      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
     </article>
   )
 }

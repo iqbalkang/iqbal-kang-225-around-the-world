@@ -65,7 +65,7 @@ const Person = () => {
           <Heading offWhite h6>
             about me
           </Heading>
-          <p className='text-center text-xs'>{aboutMe}</p>
+          <p className='text-center text-xs first-letter:capitalize'>{aboutMe ? aboutMe : 'no description added'}</p>
         </FlexContainer>
 
         <FlexContainer col center>

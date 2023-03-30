@@ -46,19 +46,21 @@ class Place {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT places.*, COUNT(likes.place_id) AS likes
+    const dbQuery = `SELECT places.*, COUNT(likes.place_id) AS likes, first_name
                      FROM places 
                      LEFT JOIN likes
                      ON likes.place_id = '${placeId}'
+                     LEFT JOIN users
+                     ON places.user_id = users.id
                      WHERE places.id = '${placeId}'
-                     GROUP BY places.id`
+                     GROUP BY places.id, first_name`
 
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
 
   static async findLikes(placeId) {
-    const dbQuery = `SELECT users.id, first_name, last_name FROM places
+    const dbQuery = `SELECT users.id, first_name, last_name, users.image FROM places
                      JOIN likes ON likes.place_id = places.id
                      JOIN users ON likes.user_id = users.id
                      WHERE places.id = '${placeId}'

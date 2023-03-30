@@ -13,33 +13,58 @@ import Image from '../components/Image'
 import WebsiteContainer from '../components/WebsiteContainer'
 import { render } from 'react-dom'
 import { useState } from 'react'
+import LoginModal from '../components/LoginModal'
+
+import Comments from '../components/Comments'
 
 const SinglePage = () => {
   const { placeId } = useParams()
   const dispatch = useDispatch()
 
-  // const [loginModal, setLoginModal] = useState(false)
+  const [loginModal, setLoginModal] = useState(false)
 
   const { singlePlace } = useSelector(store => store.places)
-  const { id: userId } = useSelector(store => store.user.user) || {}
-  const { title, description, address, id, tags, likes, country, rating, image, isFavorite } = singlePlace || {}
+  const { user, isLoading } = useSelector(store => store.user) || {}
+  const { id: userId } = user || {}
+
+  const {
+    title,
+    description,
+    address,
+    id,
+    tags,
+    likes,
+    country,
+    rating,
+    image,
+    isFavorite,
+    addedBy,
+    userId: addedByUserId,
+  } = singlePlace || {}
 
   useEffect(() => {
     dispatch(getSinglePlace({ userId, placeId }))
   }, [isFavorite])
 
+  useEffect(() => {
+    if (!isLoading) setLoginModal(false)
+  }, [isLoading])
+
   const handleToggleFavorite = placeId => {
-    // if (!userId) return setLoginModal(true)
+    if (!userId) return setLoginModal(true)
     dispatch(toggleLikedPlace(placeId))
   }
+
+  const closeLoginModal = () => setLoginModal(false)
 
   const favoriteIcon = isFavorite => {
     return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />
   }
 
-  const renderLikes = likes?.map(like => (
-    <FollowingContainer key={like.id} firstName={like.first_name} lastName={like.last_name} />
-  ))
+  const renderLikes = likes?.map(like => {
+    const { first_name, last_name, image, id } = like
+    return <FollowingContainer key={id} firstName={first_name} lastName={last_name} image={image} />
+  })
 
   const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />)
 
@@ -94,20 +119,36 @@ const SinglePage = () => {
           {/* description */}
           <FlexContainer col className='text-sm max-w-3xl'>
             {description}
-            <CustomDescriptionLink text='added by' value={'bala'} to={'/' + 'people'} />
+            <CustomDescriptionLink text='added by' value={addedBy} to={'/people/' + addedByUserId} />
           </FlexContainer>
+
+          {/* comments */}
+          <Comments />
         </WebsiteContainer>
       </div>
+
+      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
     </section>
   )
 }
 
 export default SinglePage
 
-const FollowingContainer = ({ id, firstName, lastName }) => {
+const FollowingContainer = ({ id, firstName, lastName, image }) => {
+  const renderImage = () => {
+    if (image) return <Image src={image} alt={firstName + 'image'} />
+    else
+      return (
+        <FlexContainer center className='bg-off-white h-full w-full text-dark-gray'>
+          <Heading h6>{firstName?.slice(0, 1)}</Heading>
+          <Heading h6>{lastName?.slice(0, 1)}</Heading>
+        </FlexContainer>
+      )
+  }
+
   return (
     <FlexContainer gap alignCenter className='py-2'>
-      <img src='' alt='' className='h-7 w-7 rounded-full bg-white' />
+      <div className='h-10 w-10 overflow-hidden rounded-full'>{renderImage()}</div>
       <p className='mr-auto capitalize font-semibold text-sm'>
         {firstName} {lastName}
       </p>
