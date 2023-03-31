@@ -9,7 +9,6 @@ import AccentButton from '../components/AccentButton'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { postPlace } from '../features/places/PlacesThunks'
-import { handleChange, openModal } from '../features/exploreInputsSlice/exploreInputsSlice'
 import Stars from '../components/Stars'
 import Modal from '../components/Modal'
 import FormRow from '../components/FormRow'

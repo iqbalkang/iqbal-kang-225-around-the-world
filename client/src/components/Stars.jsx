@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { AiFillStar } from 'react-icons/ai'
 import { useDispatch } from 'react-redux'
-import { handleRating } from '../features/exploreInputsSlice/exploreInputsSlice'
 
 const Stars = ({ handleRating, rating }) => {
   const dispatch = useDispatch()

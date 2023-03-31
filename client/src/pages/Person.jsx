@@ -8,6 +8,7 @@ import Heading from '../components/Heading'
 import Image from '../components/Image'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import { getUserInfo } from '../features/user/userThunk'
+import { renderLargeImage } from '../utils/rendeImage'
 
 const Person = () => {
   const { userId } = useParams()
@@ -22,23 +23,12 @@ const Person = () => {
     dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
   }, [userId])
 
-  const renderImage = () => {
-    if (image) return <Image src={image} alt={firstName + 'image'} className='h-48 w-48' />
-    else
-      return (
-        <FlexContainer center className='bg-off-white h-full w-full text-dark-gray'>
-          <Heading h2>{firstName?.slice(0, 1)}</Heading>
-          <Heading h2>{lastName?.slice(0, 1)}</Heading>
-        </FlexContainer>
-      )
-  }
-
   return (
     <section className='h-full grid grid-cols-[2fr,8fr]'>
       {/* left side form inputs */}
       <FlexContainer center col className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
         <FlexContainer center className='h-48 w-48 rounded-full mb-6 overflow-hidden'>
-          {renderImage()}
+          {renderLargeImage(image, firstName, lastName)}
         </FlexContainer>
 
         <Heading h4 offWhite bold>
