@@ -16,6 +16,7 @@ import { useState } from 'react'
 import LoginModal from '../components/LoginModal'
 
 import Comments from '../components/Comments'
+import { renderSmallImage } from '../utils/rendeImage'
 
 const SinglePage = () => {
   const { placeId } = useParams()
@@ -135,20 +136,9 @@ const SinglePage = () => {
 export default SinglePage
 
 const FollowingContainer = ({ id, firstName, lastName, image }) => {
-  const renderImage = () => {
-    if (image) return <Image src={image} alt={firstName + 'image'} />
-    else
-      return (
-        <FlexContainer center className='bg-off-white h-full w-full text-dark-gray'>
-          <Heading h6>{firstName?.slice(0, 1)}</Heading>
-          <Heading h6>{lastName?.slice(0, 1)}</Heading>
-        </FlexContainer>
-      )
-  }
-
   return (
     <FlexContainer gap alignCenter className='py-2'>
-      <div className='h-10 w-10 overflow-hidden rounded-full'>{renderImage()}</div>
+      <div className='h-10 w-10 overflow-hidden rounded-full'>{renderSmallImage(image, firstName, lastName)}</div>
       <p className='mr-auto capitalize font-semibold text-sm'>
         {firstName} {lastName}
       </p>

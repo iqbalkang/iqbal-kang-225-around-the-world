@@ -43,6 +43,7 @@ import { Link } from 'react-router-dom'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
 import Image from './Image'
+import { renderLargeImage } from '../utils/rendeImage'
 
 const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlaces }) => {
   const dispatch = useDispatch()
@@ -54,17 +55,6 @@ const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlac
     if (description?.length > 130) return description.slice(0, 130) + '...'
 
     return description
-  }
-
-  const renderImage = () => {
-    if (image) return <Image src={image} alt={firstName + 'image'} />
-    else
-      return (
-        <FlexContainer center className='bg-off-white h-full w-full text-dark-gray'>
-          <Heading h2>{firstName?.slice(0, 1)}</Heading>
-          <Heading h2>{lastName?.slice(0, 1)}</Heading>
-        </FlexContainer>
-      )
   }
 
   return (
@@ -86,7 +76,9 @@ const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlac
         </p>
       </FlexContainer>
       {/* right photo col */}
-      <div className='w-28 h-36 shrink-0 rounded-xl overflow-hidden shadow-lg'>{renderImage()}</div>
+      <div className='w-28 h-36 shrink-0 rounded-xl overflow-hidden shadow-lg'>
+        {renderLargeImage(image, firstName, lastName)}
+      </div>
     </FlexContainer>
   )
 }

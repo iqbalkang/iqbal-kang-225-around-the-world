@@ -1,5 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
+import Spinner from './Spinner'
 
 const AccentButton = ({ children, isLoading, big, primary, small, full, outline }) => {
   const classes = classnames(
@@ -25,5 +26,3 @@ const AccentButton = ({ children, isLoading, big, primary, small, full, outline 
 }
 
 export default AccentButton
-
-const Spinner = () => <div className='h-4 w-4 rounded-full border-2 border-b-accent animate-spin'></div>
