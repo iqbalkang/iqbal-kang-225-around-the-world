@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import ExploreFormRow from '../components/ExploreFormRow'
 import Gmap from '../components/Gmap'
 import exploreInputs from '../utils/data/explore-inputs'
 import { HiChevronDown } from 'react-icons/hi'
