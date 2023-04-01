@@ -20,10 +20,13 @@ const Comment = ({ comment }) => {
   const dispatch = useDispatch()
 
   const toggleReaction = () => {
-    if (selectedReaction) setSelectedReaction(null)
-    else setSelectedReaction('like')
-
-    dispatch(toggleCommentReaction({ commentId, type: 'like' }))
+    if (selectedReaction) {
+      setSelectedReaction(null)
+      dispatch(toggleCommentReaction({ commentId, type: selectedReaction }))
+    } else {
+      setSelectedReaction('like')
+      dispatch(toggleCommentReaction({ commentId, type: 'like' }))
+    }
   }
 
   const updateReaction = reaction => setSelectedReaction(reaction)
@@ -56,7 +59,6 @@ const Comment = ({ comment }) => {
   }
 
   useEffect(() => {
-    console.log(reaction)
     setSelectedReaction(reaction)
   }, [reaction])
 
@@ -73,7 +75,7 @@ const Comment = ({ comment }) => {
         <FlexContainer justifyBetween>
           <div className='relative group'>
             {renderReaction()}
-            <Reactions updateReaction={updateReaction} />
+            <Reactions updateReaction={updateReaction} commentId={commentId} />
           </div>
 
           <div className='flex items-center gap-2'>

@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { toggleCommentReaction } from '../features/comments/commentsThunks'
 
 import sad from '../images/reactions/crying.gif'
 import fire from '../images/reactions/fire.gif'
@@ -16,8 +18,9 @@ const reactionsToggleClasses = [
   'group-hover:bottom-full',
 ]
 
-const Reactions = ({ updateReaction }) => {
+const Reactions = ({ updateReaction, commentId }) => {
   const reactionsContainerRef = useRef()
+  const dispatch = useDispatch()
 
   const allReactions = {
     like,
@@ -29,13 +32,14 @@ const Reactions = ({ updateReaction }) => {
     stop,
   }
 
-  const [selectedReaction, setSelectedReaction] = useState(null)
+  // const [selectedReaction, setSelectedReaction] = useState(null)
   const [activeReaction, setActiveReaction] = useState(-1)
 
   const handleOnMouseEnter = index => setActiveReaction(index)
 
   const handleReactionSelection = selection => {
-    setSelectedReaction(selection)
+    dispatch(toggleCommentReaction({ commentId, type: selection }))
+    // setSelectedReaction(selection)
     updateReaction(selection)
     setActiveReaction(-1)
     reactionsContainerRef.current.classList.remove(...reactionsToggleClasses)
