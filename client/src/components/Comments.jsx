@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
@@ -9,8 +9,8 @@ import Image from './Image'
 
 import { getComments, getCommentsForSignedInUsers, postComment } from '../features/comments/commentsThunks'
 import { toast } from 'react-toastify'
-import Spinner from './Spinner'
 import Comment from './Comment'
+import CommentForm from './CommentForm'
 
 const Comments = () => {
   const inputRef = useRef()
@@ -32,10 +32,6 @@ const Comments = () => {
     user ? dispatch(getCommentsForSignedInUsers(placeId)) : dispatch(getComments(placeId))
   }, [placeId])
 
-  useEffect(() => {
-    if (!isLoading) inputRef.current.innerText = ''
-  }, [isLoading])
-
   const renderComments = comments.map((comment, index) => <Comment key={index} comment={comment} />)
 
   return (
@@ -48,12 +44,7 @@ const Comments = () => {
       <div className='space-y-6 mt-2 mb-6'>{renderComments}</div>
 
       {/* comment form */}
-      <form onSubmit={handleCommentSubmit}>
-        <FlexContainer justifyBetween className='ml-10 border rounded-3xl bg-transparent p-2'>
-          <div className='outline-none w-[94%]' contentEditable={true} ref={inputRef}></div>
-          <button className='text-accent capitalize'>{isLoading ? <Spinner /> : 'post'}</button>
-        </FlexContainer>
-      </form>
+      <CommentForm marginLeft onSubmit={handleCommentSubmit} isLoading={isLoading} ref={inputRef} />
     </div>
   )
 }

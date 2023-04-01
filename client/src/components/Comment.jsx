@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { AiOutlineFire as Fire, AiOutlineHeart as Heart, AiOutlineStop as Stop } from 'react-icons/ai'
 import { FaRegSadCry as Sad } from 'react-icons/fa'
 import { BiLike as Like, BiConfused as Think } from 'react-icons/bi'
@@ -7,15 +7,37 @@ import { renderSmallImage } from '../utils/rendeImage'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
 import { BsEmojiExpressionless } from 'react-icons/bs'
+import { CgMailReply } from 'react-icons/cg'
 import Reactions from './Reactions'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toggleCommentReaction } from '../features/comments/commentsThunks'
+import CommentForm from './CommentForm'
+import { Link } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { postReply } from '../features/replies/repliesThunks'
 
-// const Comment = ({ updateReaction, selectedReaction, comment }) => {
+const buttonBaseClasses = 'flex items-center gap-1 capitalize hover:underline'
+
 const Comment = ({ comment }) => {
-  const [selectedReaction, setSelectedReaction] = useState(null)
+  const inputRef = useRef()
 
-  const { first_name: firstName, last_name: lastName, image, comment: text, reaction, id: commentId } = comment
+  const { user } = useSelector(store => store.user)
+  const [selectedReaction, setSelectedReaction] = useState(null)
+  const [showCommentForm, setShowCommentForm] = useState(false)
+
+  const { firstName, lastName, image } = user
+
+  const toggleCommentForm = () => setShowCommentForm(prevState => !prevState)
+
+  const {
+    first_name: commentorFirstName,
+    last_name: commentorLastName,
+    commentorImage,
+    comment: text,
+    reaction,
+    id: commentId,
+    user_id: userId,
+  } = comment
 
   const dispatch = useDispatch()
 
@@ -32,7 +54,6 @@ const Comment = ({ comment }) => {
   const updateReaction = reaction => setSelectedReaction(reaction)
 
   const renderReaction = () => {
-    const buttonBaseClasses = 'flex items-center gap-2 capitalize hover:underline'
     if (!selectedReaction)
       return (
         <button className={buttonBaseClasses} onClick={toggleReaction}>
@@ -58,6 +79,14 @@ const Comment = ({ comment }) => {
     )
   }
 
+  const handleReplySubmit = e => {
+    e.preventDefault()
+    const reply = inputRef.current.innerText
+
+    if (!reply) return toast.error('Please enter a reply')
+    dispatch(postReply({ reply, commentId }))
+  }
+
   useEffect(() => {
     setSelectedReaction(reaction)
   }, [reaction])
@@ -65,24 +94,43 @@ const Comment = ({ comment }) => {
   return (
     <FlexContainer gap>
       <div className='h-10 w-10 shrink-0 rounded-full overflow-hidden'>
-        {renderSmallImage(image, firstName, lastName)}
+        {renderSmallImage(commentorImage, commentorFirstName, commentorLastName)}
       </div>
       <div className='w-full'>
-        <Heading bold h6 offWhite>
-          {firstName} {lastName}
-        </Heading>
+        <Link to={'/people/' + userId} className='hover:underline'>
+          <Heading bold h6 offWhite>
+            {commentorFirstName} {commentorLastName}
+          </Heading>
+        </Link>
         <p className='mb-2'>{text}</p>
         <FlexContainer justifyBetween>
-          <div className='relative group'>
-            {renderReaction()}
-            <Reactions updateReaction={updateReaction} commentId={commentId} />
-          </div>
+          <FlexContainer className='gap-4 mb-2'>
+            <div className='relative group'>
+              {renderReaction()}
+              <Reactions updateReaction={updateReaction} commentId={commentId} />
+            </div>
+            <button className={buttonBaseClasses} onClick={toggleCommentForm}>
+              reply
+            </button>
+            <p className='text-light-gray'>1h ago</p>
+          </FlexContainer>
 
           <div className='flex items-center gap-2'>
             <BsEmojiExpressionless />
             <p>You and 85 others</p>
           </div>
         </FlexContainer>
+        <button className={buttonBaseClasses + ' mb-2'}>
+          <CgMailReply className='rotate-180' size={22} /> view all 5 replies
+        </button>
+        {showCommentForm && (
+          <FlexContainer alignCenter gap>
+            <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
+              {renderSmallImage(image, firstName, lastName)}
+            </div>
+            <CommentForm ref={inputRef} onSubmit={handleReplySubmit} />
+          </FlexContainer>
+        )}
       </div>
     </FlexContainer>
   )
