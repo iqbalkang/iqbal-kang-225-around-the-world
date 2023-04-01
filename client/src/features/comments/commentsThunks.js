@@ -29,3 +29,32 @@ export const getComments = createAsyncThunk('comments/getComments', async (place
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
+
+export const getCommentsForSignedInUsers = createAsyncThunk(
+  'comments/getCommentsForSignedInUsers',
+  async (placeId, thunkAPI) => {
+    try {
+      const { data } = await customFetch.get(`/comments/user/${placeId}`, {
+        headers: {
+          authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+        },
+      })
+      return data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message)
+    }
+  }
+)
+
+export const toggleCommentReaction = createAsyncThunk('comments/toggleCommentReaction', async (body, thunkAPI) => {
+  try {
+    const { data } = await customFetch.post(`/comments/reaction`, body, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})

@@ -4,7 +4,7 @@ import AccentButton from './AccentButton'
 import FlexContainer from './FlexContainer'
 import FormRowContainerWithLogo from './FormRowContainerWithLogo'
 
-const LoginForm = ({ onSubmit, isMember, isLoading, onChange }) => {
+const RegisterForm = ({ onSubmit, isMember, isLoading, onChange }) => {
   const accentButtonText = isMember ? 'create account' : 'log in'
   const formRowContainerWithLogoClasses = index => (index === 0 || index === 1 ? 'col-span-1' : 'col-span-2')
 
@@ -32,4 +32,4 @@ const LoginForm = ({ onSubmit, isMember, isLoading, onChange }) => {
   )
 }
 
-export default LoginForm
+export default RegisterForm

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { toast } from 'react-toastify'
-import { getComments, postComment } from './commentsThunks'
+import { getComments, getCommentsForSignedInUsers, postComment } from './commentsThunks'
 
 const initialState = {
   comments: [],
@@ -9,8 +9,9 @@ const initialState = {
 }
 
 const commentsSlice = createSlice({
-  name: 'coments',
+  name: 'comments',
   initialState,
+
   extraReducers: builder => {
     builder
 
@@ -19,7 +20,6 @@ const commentsSlice = createSlice({
         state.isLoading = true
       })
       .addCase(postComment.fulfilled, (state, { payload }) => {
-        console.log(payload)
         const { comment, message } = payload
         state.isLoading = false
         state.comments = [...state.comments, comment]
@@ -40,6 +40,20 @@ const commentsSlice = createSlice({
         state.comments = comments
       })
       .addCase(getComments.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // get signed in user comments
+      .addCase(getCommentsForSignedInUsers.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getCommentsForSignedInUsers.fulfilled, (state, { payload }) => {
+        const { comments } = payload
+        state.isLoading = false
+        state.comments = comments
+      })
+      .addCase(getCommentsForSignedInUsers.rejected, (state, { payload }) => {
         state.isLoading = false
         toast.error(payload)
       })
