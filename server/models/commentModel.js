@@ -17,7 +17,7 @@ class Comment {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT comment, users.id, first_name, last_name, image
+    const dbQuery = `SELECT comment, users.id as user_id, first_name, last_name, image
                      FROM comments
                      JOIN users ON comments.user_id = users.id
                      WHERE place_id = ${placeId}`
@@ -27,7 +27,7 @@ class Comment {
   }
 
   static async findByPlaceAndUserId(placeId, userId) {
-    const dbQuery = `SELECT comment, comments.id, first_name, last_name, image, type as reaction
+    const dbQuery = `SELECT comment, comments.id, users.id as user_id, first_name, last_name, image, type as reaction
                      FROM comments
                      JOIN users ON comments.user_id = users.id
                      LEFT JOIN reactions ON reactions.user_id = ${userId} AND reactions.comment_id = comments.id

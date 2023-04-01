@@ -39,6 +39,15 @@ CREATE TABLE comments (
   deleted boolean default(false)
 );
 
+CREATE TABLE replies (
+  id SERIAL PRIMARY KEY not null,
+  reply text,
+  created_at timestamp default now(),
+  comment_id integer not null references comments (id) on delete cascade,
+  user_id integer not null references users (id) on delete cascade,
+  deleted boolean default(false)
+);
+
 create table likes (
     id serial primary key not null,
     user_id integer not null references users (id) on delete cascade,
@@ -60,11 +69,4 @@ CREATE TABLE followers (
   follower_id integer not null references users (id) on delete cascade
 );
 
-CREATE TABLE replies (
-  id SERIAL PRIMARY KEY not null,
-  reply text,
-  created_at timestamp default now(),
-  comment_id integer not null references comments (id) on delete cascade,
-  user_id integer not null references users (id) on delete cascade,
-  deleted boolean default(false)
-);
+
