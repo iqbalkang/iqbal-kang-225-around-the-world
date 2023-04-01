@@ -25,6 +25,17 @@ class Comment {
     const data = await db.query(dbQuery)
     return data.rows
   }
+
+  static async findByPlaceAndUserId(placeId, userId) {
+    const dbQuery = `SELECT comment, comments.id, first_name, last_name, image, type as reaction
+                     FROM comments
+                     JOIN users ON comments.user_id = users.id
+                     LEFT JOIN reactions ON reactions.user_id = ${userId} AND reactions.comment_id = comments.id
+                     WHERE place_id = ${placeId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
 }
 
 module.exports = Comment
