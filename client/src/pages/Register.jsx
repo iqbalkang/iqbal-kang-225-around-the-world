@@ -54,35 +54,6 @@ const Register = () => {
   const headingText = !isMember ? 'Log In' : 'Create new account'
   const paragraphText = isMember ? 'Already a member?' : 'Not a member yet?'
   const buttonText = isMember ? 'Log in' : 'Register'
-  // const accentButtonText = isMember ? 'create account' : 'log in'
-  // const formRowContainerWithLogoClasses = index => (index === 0 || index === 1 ? 'col-span-1' : 'col-span-2')
-
-  // const generateAuthPropsObject = (index, input) => {
-  //   return {
-  //     key: index,
-  //     index: index,
-  //     input: input,
-  //     onChange: onChangeHandler,
-  //     value: values[input.label],
-  //   }
-  // }
-
-  // const formLoginInputs = loginInputs.map((input, index) => {
-  //   const propsObj = generateAuthPropsObject(index, input)
-  //   return <FormRowContainerWithLogo primary className='col-span-2' key={index} propsObj={propsObj} />
-  // })
-
-  // const formRegisterInputs = registerInputs.map((input, index) => {
-  //   const propsObj = generateAuthPropsObject(index, input)
-  //   return (
-  //     <FormRowContainerWithLogo
-  //       primary
-  //       className={formRowContainerWithLogoClasses(index)}
-  //       key={index}
-  //       propsObj={propsObj}
-  //     />
-  //   )
-  // })
 
   const authForm = () => {
     if (!isMember)
