@@ -14,3 +14,12 @@ export const postReply = createAsyncThunk('comments/postReply', async (body, thu
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
+
+export const getReplies = createAsyncThunk('comments/getReplies', async (commentId, thunkAPI) => {
+  try {
+    const { data } = await customFetch.get(`/reply/${commentId}`)
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})

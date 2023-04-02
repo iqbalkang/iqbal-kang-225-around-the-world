@@ -18,6 +18,9 @@ const reactionsToggleClasses = [
   'group-hover:bottom-full',
 ]
 
+const reactionsContainerClasses = `bg-white rounded-3xl text-dark-gray flex gap-2 p-2 text-lg absolute bottom-0 opacity-0 invisible 
+group-hover:visible group-hover:opacity-100 group-hover:bottom-full duration-200 delay-1000`
+
 const Reactions = ({ updateReaction, commentId }) => {
   const reactionsContainerRef = useRef()
   const dispatch = useDispatch()
@@ -44,11 +47,13 @@ const Reactions = ({ updateReaction, commentId }) => {
     setActiveReaction(-1)
     reactionsContainerRef.current.classList.remove(...reactionsToggleClasses)
 
-    setInterval(() => reactionsContainerRef.current.classList.add(...reactionsToggleClasses), 1000)
+    // if (reactionsContainerRef)
+    const interval = setInterval(() => reactionsContainerRef.current.classList.add(...reactionsToggleClasses), 1000)
+    clearInterval(interval)
   }
 
-  const reactionsContainerClasses = `bg-white rounded-3xl text-dark-gray flex gap-2 p-2 text-lg absolute bottom-0 opacity-0 invisible 
-    group-hover:visible group-hover:opacity-100 group-hover:bottom-full duration-200 delay-1000`
+  // const reactionsContainerClasses = `bg-white rounded-3xl text-dark-gray flex gap-2 p-2 text-lg absolute bottom-0 opacity-0 invisible
+  //   group-hover:visible group-hover:opacity-100 group-hover:bottom-full duration-200 delay-1000`
 
   const reactions = Object.entries(allReactions)
 
