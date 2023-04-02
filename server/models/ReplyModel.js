@@ -16,15 +16,17 @@ class Reply {
     return data.rows[0]
   }
 
-  // static async findByPlaceId(commentId) {
-  //   const dbQuery = `SELECT reply, users.id as user_id, first_name, last_name, image
-  //                    FROM comments
-  //                    JOIN users ON comments.user_id = users.id
-  //                    WHERE place_id = ${commentId}`
+  static async findByCommentId(commentId) {
+    const dbQuery = `SELECT reply, users.id as user_id, first_name, last_name, image
+                     FROM replies
+                     JOIN users ON replies.user_id = users.id
+                     WHERE replies.comment_id = ${commentId}
+                     ORDER BY replies.created_at ASC
+                     `
 
-  //   const data = await db.query(dbQuery)
-  //   return data.rows
-  // }
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
 
   // static async findByPlaceAndUserId(commentId, userId) {
   //   const dbQuery = `SELECT reply, comments.id, users.id as user_id, first_name, last_name, image, type as reaction
