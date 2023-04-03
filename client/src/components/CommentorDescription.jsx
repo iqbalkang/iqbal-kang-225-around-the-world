@@ -2,11 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { renderSmallImage } from '../utils/rendeImage'
 import FlexContainer from './FlexContainer'
-import Heading from './Heading'
 
 const CommentorDescription = ({ props, children }) => {
   const { image, first_name: commentorFirstName, last_name: commentorLastName, comment, user_id: userId, reply } = props
-  console.log(props)
 
   return (
     <FlexContainer gap>

@@ -11,67 +11,17 @@ import Gmap from '../components/Gmap'
 const Favorites = () => {
   const dispatch = useDispatch()
 
-  const { user } = useSelector(store => store.user)
   const { currentUserFavorites } = useSelector(store => store.places)
 
-  // useEffect(() => {
-  //   dispatch(getUserFavorite(user.id))
-  // }, [JSON.stringify(currentUserFavorites)])
-
-  // console.log('running')
-
-  // useEffect(() => {
-  //   dispatch(getAllPlaces())
-  // }, [])
-
-  // if (currentUserFavorites?.length === 0) {
-  //   return <EmptyPageLayout user={user} />
-  // }
-
-  // return <ContentPageLayout userPlaces={currentUserFavorites} />
-
   useEffect(() => {
-    dispatch(getUserFavorites())
+    if (userId) dispatch(getUserFavorites())
   }, [])
 
-  // const { places } = useSelector(store => store.places)
   const { id: userId } = useSelector(store => store.user.user) || {}
-  // const [coordinates, setCoordinates] = useState(null)
 
-  if (!userId) return <EmptyPageLayout user={user} />
+  if (!userId) return <EmptyPageLayout />
 
-  return (
-    // <FlexContainer col className='gap-0 h-full bg-off-white text-dark-gray'>
-    //   <div className='h-96'>
-    //     <Gmap coordinates={coordinates} />
-    //   </div>
-
-    //   <FlexContainer col className=''>
-    //     {/* title */}
-    //     <Heading h3>all places</Heading>
-
-    //     {/* container to wrap arrows and all places */}
-    //     <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
-    //       {/* left arrow */}
-    //       {/* <button className='hidden relative -top-5 md:block'>
-    //     <BiRightArrow className='w-8 h-8 text-accent rotate-180' />
-    //   </button> */}
-
-    //       {/* places content container */}
-    //       <div className='flex w-screen gap-4 overflow-scroll'>
-    //         {currentUserFavorites.map((place, index) => (
-    //           <Place key={index} {...place} userId={userId} updateCoordinates={setCoordinates} />
-    //         ))}
-    //       </div>
-    //       {/* right arrow */}
-    //       {/* <button className='hidden relative -top-5 md:block'>
-    //     <BiRightArrow className='w-8 h-8 text-accent' />
-    //   </button> */}
-    //     </div>
-    //   </FlexContainer>
-    // </FlexContainer>
-    <ContentPageLayout title='your favorites' data={currentUserFavorites} />
-  )
+  return <ContentPageLayout title='your favorites' data={currentUserFavorites} />
 }
 
 export default Favorites

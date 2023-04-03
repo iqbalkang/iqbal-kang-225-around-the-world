@@ -9,8 +9,6 @@ const Home = () => {
       <Navbar />
 
       <main className='flex-1'>
-        {/* hamburger menu and logo nav for small screens, hides at medium */}
-        {/* <SmallNavbar /> */}
         <Outlet />
       </main>
     </FlexContainer>
