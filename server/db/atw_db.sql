@@ -62,11 +62,31 @@ CREATE TABLE reactions (
   comment_id integer not null references comments (id) on delete cascade
 );
 
+create type status as enum ('accepted', 'declined', 'pending');
 
 CREATE TABLE followers (
   id serial primary key not null,
+  status status,
   following_id integer not null references users (id) on delete cascade,
-  follower_id integer not null references users (id) on delete cascade
+  follower_id integer not null references users (id) on delete cascade,
+  unique (following_id, follower_id)
 );
+
+
+-- CREATE TABLE followers (
+--   id serial primary key not null,
+--   following_id integer not null references users (id) on delete cascade,
+--   follower_id integer not null references users (id) on delete cascade
+-- );
+
+CREATE TABLE alerts (
+  id serial primary key not null,
+  alert_from integer not null references users (id) on delete cascade,
+  alert_for integer not null references users (id) on delete cascade,
+  place_id integer  references places (id) on delete cascade,
+  comment_id integer  references comments (id) on delete cascade,
+  text text,
+  type varchar not null
+)
 
 
