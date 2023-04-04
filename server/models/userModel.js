@@ -31,9 +31,33 @@ class User {
     return data.rows[0]
   }
 
-  static async findOneById(id) {
-    const dbQuery = `SELECT * FROM users
-                     WHERE id = '${id}'`
+  static async findOneById(userId) {
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image FROM users
+                     WHERE users.id = ${userId}`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findOneByIds(userId, signedInUserId) {
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image, status FROM users
+                     LEFT JOIN followers ON following_id = ${userId} AND follower_id = ${signedInUserId}
+                     WHERE users.id = ${userId}`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async getFollowers(userId) {
+    const dbQuery = `SELECT count(*)::integer FROM followers
+                     WHERE following_id = ${userId} AND status = 'accepted'`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async getFollowing(userId) {
+    const dbQuery = `SELECT count(*)::integer FROM followers
+                     WHERE follower_id = ${userId} AND status = 'accepted'`
+
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
@@ -71,16 +95,6 @@ class User {
     const { id, email } = user
     return jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRY })
   }
-
-  // static async findUserPlaces(email) {
-  //   const dbQuery = `SELECT places.* FROM users
-  //                    JOIN places
-  //                    ON places.user_id = users.id
-  //                    WHERE users.email = ${email}
-  //                    ;`
-  //   const data = await db.query(dbQuery)
-  //   return data.rows[0]
-  // }
 
   static async comparePasswords(enteredPassword, dbPassword) {
     return await bcrypt.compare(enteredPassword, dbPassword)

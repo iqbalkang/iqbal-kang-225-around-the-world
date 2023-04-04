@@ -12,6 +12,7 @@ import Gmap from '../components/Gmap'
 import ContentPageLayout from '../components/ContentPageLayout'
 import { getUserInfo, updateUser } from '../features/user/userThunk'
 import { getUserPlaces } from '../features/places/PlacesThunks'
+import EmptyPageLayout from '../components/EmptyPageLayout'
 
 const initialState = {
   firstName: '',
@@ -81,6 +82,7 @@ const Profile = () => {
   })
 
   useEffect(() => {
+    if (!userId) return
     dispatch(getUserInfo(userId))
     dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
   }, [userId])
@@ -91,6 +93,8 @@ const Profile = () => {
       setSelectedImage(image)
     }
   }, [currentUser])
+
+  if (!userId) return <EmptyPageLayout />
 
   return (
     <section className='h-full grid grid-cols-[2fr,8fr]'>

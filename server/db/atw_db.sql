@@ -39,6 +39,15 @@ CREATE TABLE comments (
   deleted boolean default(false)
 );
 
+CREATE TABLE replies (
+  id SERIAL PRIMARY KEY not null,
+  reply text,
+  created_at timestamp default now(),
+  comment_id integer not null references comments (id) on delete cascade,
+  user_id integer not null references users (id) on delete cascade,
+  deleted boolean default(false)
+);
+
 create table likes (
     id serial primary key not null,
     user_id integer not null references users (id) on delete cascade,
@@ -53,18 +62,26 @@ CREATE TABLE reactions (
   comment_id integer not null references comments (id) on delete cascade
 );
 
+create type status as enum ('accepted', 'declined', 'pending');
 
 CREATE TABLE followers (
   id serial primary key not null,
+  status status,
   following_id integer not null references users (id) on delete cascade,
-  follower_id integer not null references users (id) on delete cascade
+  follower_id integer not null references users (id) on delete cascade,
+  unique (following_id, follower_id)
 );
 
-CREATE TABLE replies (
-  id SERIAL PRIMARY KEY not null,
-  reply text,
-  created_at timestamp default now(),
-  comment_id integer not null references comments (id) on delete cascade,
-  user_id integer not null references users (id) on delete cascade,
-  deleted boolean default(false)
-);
+
+CREATE TABLE alerts (
+  id serial primary key not null,
+  alert_from integer not null references users (id) on delete cascade,
+  alert_for integer not null references users (id) on delete cascade,
+  place_id integer  references places (id) on delete cascade,
+  comment_id integer  references comments (id) on delete cascade,
+  text text,
+  type varchar not null,
+  unique (alert_from, alert_for, type)
+)
+
+

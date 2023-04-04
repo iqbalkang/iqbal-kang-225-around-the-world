@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../features/user/userSlice'
 import Image from './Image'
 import WebsiteContainer from './WebsiteContainer'
+import Alerts from './Alerts'
 
-const navListItems = ['places', 'people', 'favorites', 'explore', 'profile', 'alerts']
+const navListItems = ['places', 'people', 'favorites', 'explore', 'profile']
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -36,6 +37,9 @@ const Navbar = () => {
 
             {/* navigation links */}
             {listItems}
+
+            {/* alerts button */}
+            <Alerts />
 
             {/* auth button */}
             <Link to='/register' onClick={handleAuth}>

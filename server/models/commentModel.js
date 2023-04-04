@@ -17,21 +17,30 @@ class Comment {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT comment, users.id, first_name, last_name, image
+    const dbQuery = `SELECT comment,comments.id, users.id as user_id, first_name, last_name, image, count(reply)::integer as reply_count
                      FROM comments
                      JOIN users ON comments.user_id = users.id
-                     WHERE place_id = ${placeId}`
+                     LEFT JOIN replies ON replies.comment_id = comments.id
+                     WHERE place_id = ${placeId}
+                     GROUP BY comment, comments.id, users.id, first_name, last_name, image`
 
     const data = await db.query(dbQuery)
     return data.rows
   }
 
   static async findByPlaceAndUserId(placeId, userId) {
-    const dbQuery = `SELECT comment, comments.id, first_name, last_name, image, type as reaction
+    const dbQuery = `SELECT comment, comments.id, users.id as user_id, first_name, last_name, image, count(reply)::integer as reply_count, type as reaction
                      FROM comments
                      JOIN users ON comments.user_id = users.id
+                     LEFT JOIN replies ON replies.comment_id = comments.id
                      LEFT JOIN reactions ON reactions.user_id = ${userId} AND reactions.comment_id = comments.id
-                     WHERE place_id = ${placeId}`
+                     WHERE place_id = ${placeId}
+                     GROUP BY comment, comments.id, users.id, first_name, last_name, image, type`
+    // const dbQuery = `SELECT comment, comments.id, users.id as user_id, first_name, last_name, image, type as reaction
+    //                  FROM comments
+    //                  JOIN users ON comments.user_id = users.id
+    //                  LEFT JOIN reactions ON reactions.user_id = ${userId} AND reactions.comment_id = comments.id
+    //                  WHERE place_id = ${placeId}`
 
     const data = await db.query(dbQuery)
     return data.rows

@@ -41,6 +41,19 @@ export const getUserInfo = createAsyncThunk('user/getUserInfo', async (userId, t
   }
 })
 
+export const getUserInfoForSignedInUsers = createAsyncThunk('user/getUserInfo', async (userId, thunkAPI) => {
+  try {
+    const { data } = await customFetch.get(`/authentication/auth/user/${userId}`, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
 export const getAllUsers = createAsyncThunk('user/getAllUsers', async (_, thunkAPI) => {
   try {
     const { data } = await customFetch.get('/authentication/all-users')

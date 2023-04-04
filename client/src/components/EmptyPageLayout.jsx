@@ -45,7 +45,7 @@ import AccentButton from '../components/AccentButton'
 import { Link } from 'react-router-dom'
 import FlexContainer from './FlexContainer'
 
-const EmptyPageLayout = ({ user }) => {
+const EmptyPageLayout = () => {
   // return <section className='h-full bg-green-200'></section>
   return (
     <FlexContainer col className='max-h-screen bg-off-white'>
@@ -59,8 +59,8 @@ const EmptyPageLayout = ({ user }) => {
           className='absolute top-20 right-72 w-80'
         />
       </div>
-      <FlexContainer center className='text-dark-gray relative bottom-10'>
-        <p className='text-xl'>Please log in to see your favorite places.</p>
+      <FlexContainer center gap className='text-dark-gray relative bottom-10'>
+        <p className='text-xl'>Please log in to continue</p>
         <Link to='/register' className='bg-accent px-8 text-white py-2 rounded-3xl'>
           Log in
         </Link>
