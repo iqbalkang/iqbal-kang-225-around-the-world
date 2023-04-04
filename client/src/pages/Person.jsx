@@ -23,7 +23,7 @@ const Person = () => {
 
   const [loginModal, setLoginModal] = useState(false)
 
-  const { firstName, lastName, email, aboutMe, image, imageId, status } = currentUser || {}
+  const { firstName, lastName, email, aboutMe, image, imageId, status, followers, following } = currentUser || {}
 
   const closeLoginModal = () => setLoginModal(false)
 
@@ -39,7 +39,7 @@ const Person = () => {
           authorization: `Bearer ${token}`,
         },
       })
-      dispatch(getUserInfo(userId))
+      dispatch(getUserInfoForSignedInUsers(userId))
     } catch (error) {
       toast(error.response.data.message)
     }
@@ -68,6 +68,8 @@ const Person = () => {
       )
   }
 
+  console.log(currentUser)
+
   useEffect(() => {
     user ? dispatch(getUserInfoForSignedInUsers(userId)) : dispatch(getUserInfo(userId))
     dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
@@ -90,19 +92,8 @@ const Person = () => {
         </Heading>
 
         <FlexContainer className='gap-8 mb-4'>
-          <button>
-            <FlexContainer className='gap-1'>
-              <p>100</p>
-              <p>following</p>
-            </FlexContainer>
-          </button>
-
-          <button>
-            <FlexContainer className='gap-1'>
-              <p>100</p>
-              <p>following</p>
-            </FlexContainer>
-          </button>
+          <Button count={followers}>{followers === 1 ? 'follower' : 'followers'}</Button>
+          <Button count={following}>following</Button>
         </FlexContainer>
 
         <FlexContainer col center className='mb-4'>
@@ -133,3 +124,14 @@ const Person = () => {
 }
 
 export default Person
+
+const Button = ({ children, count }) => {
+  return (
+    <button className='hover:underline'>
+      <FlexContainer className='gap-1'>
+        <p>{count}</p>
+        <p>{children}</p>
+      </FlexContainer>
+    </button>
+  )
+}
