@@ -24,7 +24,7 @@ class Follow {
     return data.rows[0]
   }
 
-  static async findByIdAndDelete(followingId, followerId) {
+  static async findByIdsAndDelete(followingId, followerId) {
     const dbQuery = `DELETE FROM followers
                      WHERE following_id = ${followingId} AND follower_id = ${followerId};`
 
@@ -33,9 +33,10 @@ class Follow {
   }
 
   static async findByIdsAndUpdate(followingId, followerId, status) {
+    console.log(status)
     const dbQuery = `UPDATE followers
                      SET status = '${status}'
-                     WHERE following_id = ${followerId} AND follower_id = ${followingId};`
+                     WHERE following_id = ${followingId} AND follower_id = ${followerId};`
 
     const data = await db.query(dbQuery)
     return data.rows[0]

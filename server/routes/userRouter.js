@@ -1,5 +1,12 @@
 const express = require('express')
-const { registerUser, loginUser, updateUser, getUserInfo, getAllUsers } = require('../controllers/usersController')
+const {
+  registerUser,
+  loginUser,
+  updateUser,
+  getUserInfo,
+  getAllUsers,
+  getUserInfoForSignedInUsers,
+} = require('../controllers/usersController')
 const uploadImage = require('../middlewares/upload')
 const isAuthenticated = require('../middlewares/isAuthenticated')
 
@@ -9,6 +16,7 @@ router.post('/register', registerUser)
 router.post('/login', loginUser)
 router.put('/update', isAuthenticated, uploadImage.single('image'), updateUser)
 router.get('/user/:userId', getUserInfo)
+router.get('/auth/user/:userId', isAuthenticated, getUserInfoForSignedInUsers)
 router.get('/all-users', getAllUsers)
 
 module.exports = router

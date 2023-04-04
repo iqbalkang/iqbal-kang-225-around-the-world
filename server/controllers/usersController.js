@@ -4,8 +4,6 @@ const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const formatUser = require('../utils/formatUser')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
-const Place = require('../models/PlaceModel')
-const formatPlaces = require('../utils/formatPlaces')
 const cloudinary = require('cloudinary').v2
 
 const registerUser = asyncHandler(async (req, res, next) => {
@@ -53,6 +51,23 @@ const getUserInfo = asyncHandler(async (req, res, next) => {
   const user = await User.findOneById(userId)
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
   const formattedUser = formatUser(user)
+
+  formattedUser.status = user.status
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    user: formattedUser,
+  })
+})
+const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params
+  const { id: signedInUserId } = req.user
+
+  const user = await User.findOneByIds(userId, signedInUserId)
+  if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
+  const formattedUser = formatUser(user)
+
+  formattedUser.status = user.status
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -109,31 +124,11 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
   })
 })
 
-// const getAllUsers = catchAsync(async (req, res, next) => {
-//   const users = await User.aggregate([
-//     {
-//       $lookup: {
-//         from: 'places',
-//         localField: '_id',
-//         foreignField: 'postedBy',
-//         as: 'userPlaces',
-//       },
-//     },
-//     {
-//       $project: { password: 0 },
-//     },
-//   ])
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     users,
-//   })
-// })
-
 module.exports = {
   registerUser,
   loginUser,
   updateUser,
   getUserInfo,
   getAllUsers,
+  getUserInfoForSignedInUsers,
 }

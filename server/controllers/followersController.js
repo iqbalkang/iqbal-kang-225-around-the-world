@@ -1,9 +1,6 @@
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
-const Place = require('../models/PlaceModel')
-const Comment = require('../models/CommentModel')
-const Reaction = require('../models/ReactionModel')
 const Follow = require('../models/FollowModel')
 const Alert = require('../models/AlertModel')
 
@@ -18,7 +15,7 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
   const follow = await Follow.findOne(followingId, followerId)
 
   if (follow) {
-    await Follow.findByIdAndDelete(followingId, followerId)
+    await Follow.findByIdsAndDelete(followingId, followerId)
   } else {
     const newFollower = new Follow(followingId, followerId, 'pending')
     response = await newFollower.save()
@@ -34,12 +31,14 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
 })
 
 const responseToFollowRequest = asyncHandler(async (req, res, next) => {
-  const { id: userId } = req.user
+  const { id: followingId } = req.user
   const { followerId, status } = req.body
 
   if (!followerId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
 
-  const updatedFollower = await Follow.findByIdsAndUpdate(userId, followerId, status)
+  const updatedFollower = await Follow.findByIdsAndUpdate(followingId, followerId, status)
+
+  await Alert.findByIdsAndDelete(followingId, followerId)
   // const savedFollower = await newFollower.save()
 
   res.status(StatusCodes.OK).json({

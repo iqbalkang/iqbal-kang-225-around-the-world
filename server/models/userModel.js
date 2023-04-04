@@ -31,9 +31,17 @@ class User {
     return data.rows[0]
   }
 
-  static async findOneById(id) {
-    const dbQuery = `SELECT * FROM users
-                     WHERE id = '${id}'`
+  static async findOneById(userId) {
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image FROM users
+                     WHERE users.id = ${userId}`
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findOneByIds(userId, signedInUserId) {
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image, status FROM users
+                     LEFT JOIN followers ON following_id = ${userId} AND follower_id = ${signedInUserId}
+                     WHERE users.id = ${userId}`
     const data = await db.query(dbQuery)
     return data.rows[0]
   }

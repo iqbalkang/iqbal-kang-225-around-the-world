@@ -33,19 +33,19 @@ const getReplies = asyncHandler(async (req, res, next) => {
   })
 })
 
-const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
-  const { placeId } = req.params
-  const { id: userId } = req.user
+// const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
+//   const { placeId } = req.params
+//   const { id: userId } = req.user
 
-  if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+//   if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
 
-  const comments = await Comment.findByPlaceAndUserId(placeId, userId)
+//   const comments = await Comment.findByPlaceAndUserId(placeId, userId)
 
-  res.status(StatusCodes.OK).json({
-    status: 'success',
-    comments,
-  })
-})
+//   res.status(StatusCodes.OK).json({
+//     status: 'success',
+//     comments,
+//   })
+// })
 
 module.exports = {
   postReply,

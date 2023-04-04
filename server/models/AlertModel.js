@@ -28,30 +28,13 @@ class Alert {
     return data.rows
   }
 
-  // static async findOne(alertFor, alertFrom) {
-  //   const dbQuery = `SELECT * FROM followers
-  //                    WHERE following_id = ${alertFor} AND follower_id = ${alertFrom};`
+  static async findByIdsAndDelete(followingId, followerId) {
+    const dbQuery = `DELETE FROM alerts
+                     WHERE alert_for = ${followingId} AND alert_from = ${followerId};`
 
-  //   const data = await db.query(dbQuery)
-  //   return data.rows[0]
-  // }
-
-  // static async findByIdAndDelete(alertFor, alertFrom) {
-  //   const dbQuery = `DELETE FROM followers
-  //                    WHERE following_id = ${alertFor} AND follower_id = ${alertFrom};`
-
-  //   const data = await db.query(dbQuery)
-  //   return data.rows[0]
-  // }
-
-  // static async findByIdsAndUpdate(alertFor, alertFrom, text) {
-  //   const dbQuery = `UPDATE followers
-  //                    SET text = '${text}'
-  //                    WHERE following_id = ${alertFrom} AND follower_id = ${alertFor};`
-
-  //   const data = await db.query(dbQuery)
-  //   return data.rows[0]
-  // }
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
 }
 
 module.exports = Alert

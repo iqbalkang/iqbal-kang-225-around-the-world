@@ -17,12 +17,12 @@ class Comment {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT comment, users.id as user_id, first_name, last_name, image, count(reply)::integer as reply_count
+    const dbQuery = `SELECT comment,comments.id, users.id as user_id, first_name, last_name, image, count(reply)::integer as reply_count
                      FROM comments
                      JOIN users ON comments.user_id = users.id
                      LEFT JOIN replies ON replies.comment_id = comments.id
                      WHERE place_id = ${placeId}
-                     GROUP BY comment, users.id, first_name, last_name, image`
+                     GROUP BY comment, comments.id, users.id, first_name, last_name, image`
 
     const data = await db.query(dbQuery)
     return data.rows

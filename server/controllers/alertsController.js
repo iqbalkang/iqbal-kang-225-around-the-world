@@ -7,7 +7,6 @@ const getAlerts = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
 
   const alerts = await Alert.findByUserId(userId)
-  console.log(alerts)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
