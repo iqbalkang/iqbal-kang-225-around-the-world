@@ -16,6 +16,7 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
 
   if (follow) {
     await Follow.findByIdsAndDelete(followingId, followerId)
+    await Alert.findByIdsAndDelete(followingId, followerId)
   } else {
     const newFollower = new Follow(followingId, followerId, 'pending')
     response = await newFollower.save()

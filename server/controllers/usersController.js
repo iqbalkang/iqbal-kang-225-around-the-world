@@ -67,7 +67,14 @@ const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
   const formattedUser = formatUser(user)
 
+  const followers = await User.getFollowers(userId)
+  const following = await User.getFollowing(userId)
+
   formattedUser.status = user.status
+  formattedUser.followers = followers.count
+  formattedUser.following = following.count
+
+  console.log(formattedUser)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
