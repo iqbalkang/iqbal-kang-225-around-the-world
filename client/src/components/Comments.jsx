@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
@@ -11,26 +11,38 @@ import { getComments, getCommentsForSignedInUsers, postComment } from '../featur
 import { toast } from 'react-toastify'
 import Comment from './Comment'
 import CommentForm from './CommentForm'
+import LoginModal from './LoginModal'
 
 const Comments = () => {
   const inputRef = useRef()
   const dispatch = useDispatch()
   const { placeId } = useParams()
 
-  const { user } = useSelector(store => store.user)
+  const { user, isLoading: isUserLoading } = useSelector(store => store.user)
   const { comments, isLoading } = useSelector(store => store.comments)
+
+  const [loginModal, setLoginModal] = useState(false)
 
   const handleCommentSubmit = e => {
     e.preventDefault()
+
+    if (!user) return setLoginModal(true)
+
     const comment = inputRef.current.innerText
 
     if (!comment) return toast.error('Please enter a comment')
     dispatch(postComment({ comment, placeId }))
   }
 
+  const closeLoginModal = () => setLoginModal(false)
+
   useEffect(() => {
     user ? dispatch(getCommentsForSignedInUsers(placeId)) : dispatch(getComments(placeId))
   }, [placeId])
+
+  useEffect(() => {
+    if (!isUserLoading) setLoginModal(false)
+  }, [isUserLoading])
 
   const renderComments = comments.map((comment, index) => <Comment key={index} comment={comment} />)
 
@@ -45,6 +57,9 @@ const Comments = () => {
 
       {/* comment form */}
       <CommentForm marginLeft onSubmit={handleCommentSubmit} isLoading={isLoading} ref={inputRef} />
+
+      {/* login modal */}
+      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isUserLoading} />}
     </div>
   )
 }

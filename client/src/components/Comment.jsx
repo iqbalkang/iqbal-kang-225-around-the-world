@@ -5,18 +5,17 @@ import { BiLike as Like, BiConfused as Think } from 'react-icons/bi'
 import { BsEmojiLaughing as Haha } from 'react-icons/bs'
 import { renderSmallImage } from '../utils/rendeImage'
 import FlexContainer from './FlexContainer'
-import Heading from './Heading'
 import { BsEmojiExpressionless } from 'react-icons/bs'
 import { CgMailReply } from 'react-icons/cg'
 import Reactions from './Reactions'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleCommentReaction } from '../features/comments/commentsThunks'
 import CommentForm from './CommentForm'
-import { Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import CommentorDescription from './CommentorDescription'
 import customFetch from '../utils/axios/customFetch'
 import { getLocalStorage } from '../utils/localStorage/localStorage'
+import LoginModal from './LoginModal'
 
 const buttonBaseClasses = 'flex items-center gap-1 capitalize hover:underline'
 
@@ -24,20 +23,30 @@ const Comment = ({ comment }) => {
   const inputRef = useRef()
   const dispatch = useDispatch()
 
-  const { user } = useSelector(store => store.user)
   // const { replies } = useSelector(store => store.replies)
+  const { user, isLoading } = useSelector(store => store.user)
+
   const [replies, setReplies] = useState([])
   const [selectedReaction, setSelectedReaction] = useState(null)
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [replyCountButtonText, setReplyCountButtonText] = useState(null)
   const [showReplyButton, setShowReplyButton] = useState(true)
+  const [loginModal, setLoginModal] = useState(false)
+
   const { firstName, lastName, image } = user || {}
 
-  const toggleCommentForm = () => setShowCommentForm(prevState => !prevState)
+  const toggleCommentForm = () => {
+    if (!user) return setLoginModal(true)
+    setShowCommentForm(prevState => !prevState)
+  }
 
   const { reaction, id: commentId, reply_count: replyCount } = comment
 
+  const closeLoginModal = () => setLoginModal(false)
+
   const toggleReaction = () => {
+    if (!user) return setLoginModal(true)
+
     if (selectedReaction) {
       setSelectedReaction(null)
       dispatch(toggleCommentReaction({ commentId, type: selectedReaction }))
@@ -47,7 +56,10 @@ const Comment = ({ comment }) => {
     }
   }
 
-  const updateReaction = reaction => setSelectedReaction(reaction)
+  const updateReaction = reaction => {
+    if (!user) return setLoginModal(true)
+    setSelectedReaction(reaction)
+  }
 
   const renderReaction = () => {
     if (!selectedReaction)
@@ -116,24 +128,13 @@ const Comment = ({ comment }) => {
 
   const renderReplies = replies.map((reply, index) => <CommentorDescription key={index} props={reply} />)
 
-  // const renderReplyCountButtonText = (count, text) => {
-  //   let countButtonText
-
-  //   if (!count && text) countButtonText = 'view other replies'
-  //   else countButtonText = count === 1 ? `view 1 reply` : `view all ${replyCount} replies`
-
-  //   if (count === 0 || !count) return
-  //   else
-  //     return (
-  //       <button className={buttonBaseClasses + ' mb-2'} onClick={handleGetReplies}>
-  //         <CgMailReply className='rotate-180' size={22} /> {countButtonText}
-  //       </button>
-  //     )
-  // }
-
   useEffect(() => {
     setSelectedReaction(reaction)
   }, [reaction])
+
+  useEffect(() => {
+    if (!isLoading) setLoginModal(false)
+  }, [isLoading])
 
   useEffect(() => {
     if (replyCount === 1) setReplyCountButtonText('view 1 reply')
@@ -181,6 +182,9 @@ const Comment = ({ comment }) => {
           <CommentForm ref={inputRef} onSubmit={handleReplySubmit} />
         </FlexContainer>
       )}
+
+      {/* login modal */}
+      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
     </CommentorDescription>
   )
 }

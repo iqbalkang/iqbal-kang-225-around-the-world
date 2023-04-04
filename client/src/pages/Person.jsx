@@ -8,8 +8,9 @@ import ContentPageLayout from '../components/ContentPageLayout'
 import FlexContainer from '../components/FlexContainer'
 import Heading from '../components/Heading'
 import Image from '../components/Image'
+import LoginModal from '../components/LoginModal'
 import { getUserPlaces } from '../features/places/PlacesThunks'
-import { getUserInfo } from '../features/user/userThunk'
+import { getUserInfo, getUserInfoForSignedInUsers } from '../features/user/userThunk'
 import customFetch from '../utils/axios/customFetch'
 import { getLocalStorage } from '../utils/localStorage/localStorage'
 import { renderLargeImage } from '../utils/rendeImage'
@@ -18,12 +19,17 @@ const Person = () => {
   const { userId } = useParams()
   const dispatch = useDispatch()
   const { placesByCurrentUser } = useSelector(store => store.places)
+  const { currentUser, user, isLoading } = useSelector(store => store.user)
 
-  const { currentUser, user } = useSelector(store => store.user)
-  const { firstName, lastName, email, aboutMe, image, imageId } = currentUser || {}
-  const [followInfo, setFollowInfo] = useState({})
+  const [loginModal, setLoginModal] = useState(false)
+
+  const { firstName, lastName, email, aboutMe, image, imageId, status } = currentUser || {}
+
+  const closeLoginModal = () => setLoginModal(false)
 
   const handleFollowRequestClick = async () => {
+    if (!user) return setLoginModal(true)
+
     const { token } = getLocalStorage('user')
     const body = { status: 'pending', followingId: userId }
 
@@ -33,17 +39,25 @@ const Person = () => {
           authorization: `Bearer ${token}`,
         },
       })
-      setFollowInfo(data.data)
+      dispatch(getUserInfo(userId))
     } catch (error) {
       toast(error.response.data.message)
     }
   }
 
   const renderFollowButton = () => {
-    if (followInfo?.status === 'pending')
+    if (currentUser?.id === user?.id) return
+
+    if (status === 'pending')
       return (
         <AccentButton small full outline onClick={handleFollowRequestClick}>
           requested
+        </AccentButton>
+      )
+    else if (status === 'accepted')
+      return (
+        <AccentButton small full outline onClick={handleFollowRequestClick}>
+          following
         </AccentButton>
       )
     else
@@ -55,9 +69,13 @@ const Person = () => {
   }
 
   useEffect(() => {
-    dispatch(getUserInfo(userId))
+    user ? dispatch(getUserInfoForSignedInUsers(userId)) : dispatch(getUserInfo(userId))
     dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
   }, [userId])
+
+  useEffect(() => {
+    if (!isLoading) setLoginModal(false)
+  }, [isLoading])
 
   return (
     <section className='h-full grid grid-cols-[2fr,8fr]'>
@@ -107,6 +125,9 @@ const Person = () => {
       {/* right side google map */}
 
       <ContentPageLayout title={'places added by ' + firstName} data={placesByCurrentUser} />
+
+      {/* login modal */}
+      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
     </section>
   )
 }
