@@ -1,4 +1,4 @@
-import React, { Children, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import FlexContainer from '../components/FlexContainer'
@@ -17,14 +17,17 @@ import LoginModal from '../components/LoginModal'
 
 import Comments from '../components/Comments'
 import { renderSmallImage } from '../utils/rendeImage'
+import FollowingContainer from '../components/FollowingContainer'
 
 const SinglePage = () => {
   const { placeId } = useParams()
   const dispatch = useDispatch()
+  const commentsRef = useRef()
 
   const [loginModal, setLoginModal] = useState(false)
 
   const { singlePlace } = useSelector(store => store.places)
+  const { comments } = useSelector(store => store.comments)
   const { user, isLoading } = useSelector(store => store.user) || {}
   const { id: userId } = user || {}
 
@@ -45,7 +48,7 @@ const SinglePage = () => {
 
   useEffect(() => {
     dispatch(getSinglePlace({ userId, placeId }))
-  }, [isFavorite])
+  }, [isFavorite, placeId])
 
   useEffect(() => {
     if (!isLoading) setLoginModal(false)
@@ -54,6 +57,10 @@ const SinglePage = () => {
   const handleToggleFavorite = placeId => {
     if (!userId) return setLoginModal(true)
     dispatch(toggleLikedPlace(placeId))
+  }
+
+  const handleCommentsClick = () => {
+    commentsRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
   const closeLoginModal = () => setLoginModal(false)
@@ -93,7 +100,7 @@ const SinglePage = () => {
               >
                 {favoriteIcon(isFavorite)}
               </ValueWithIcon>
-              <ValueWithIcon value={120} text='comments'>
+              <ValueWithIcon value={comments?.length} text='comments' onClick={handleCommentsClick}>
                 <BiMessageSquare />
               </ValueWithIcon>
             </FlexContainer>
@@ -124,7 +131,7 @@ const SinglePage = () => {
           </FlexContainer>
 
           {/* comments */}
-          <Comments />
+          <Comments ref={commentsRef} />
         </WebsiteContainer>
       </div>
 
@@ -134,26 +141,6 @@ const SinglePage = () => {
 }
 
 export default SinglePage
-
-const FollowingContainer = ({ id, firstName, lastName, image }) => {
-  return (
-    <FlexContainer gap alignCenter className='py-2'>
-      <div className='h-10 w-10 overflow-hidden rounded-full'>{renderSmallImage(image, firstName, lastName)}</div>
-      <p className='mr-auto capitalize font-semibold text-sm'>
-        {firstName} {lastName}
-      </p>
-      <FollowButton> follow</FollowButton>
-    </FlexContainer>
-  )
-}
-
-const FollowButton = ({ onClick, children }) => {
-  return (
-    <button className='bg-accent p-1 text-sm min-w-[80px] rounded-lg capitalize' onClick={onClick}>
-      {children}
-    </button>
-  )
-}
 
 const ValueWithIcon = ({ children, value, text, onClick }) => {
   return (

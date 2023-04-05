@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { toast } from 'react-toastify'
-import { getAlerts } from './alertsThunks'
+import { deleteAlerts, getAlerts } from './alertsThunks'
 
 const initialState = {
   alerts: [],
@@ -25,6 +25,19 @@ const alertsSlice = createSlice({
         state.alerts = alerts
       })
       .addCase(getAlerts.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // delete alerts
+      .addCase(deleteAlerts.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(deleteAlerts.fulfilled, (state, { payload }) => {
+        state.alerts = []
+        state.isLoading = false
+      })
+      .addCase(deleteAlerts.rejected, (state, { payload }) => {
         state.isLoading = false
         toast.error(payload)
       })
