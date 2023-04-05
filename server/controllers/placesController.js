@@ -2,120 +2,12 @@ const { StatusCodes } = require('http-status-codes')
 const Place = require('../models/PlaceModel')
 const Like = require('../models/LikeModel')
 const Tag = require('../models/TagModel')
+const Alert = require('../models/AlertModel')
+const Follow = require('../models/FollowModel')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
 const formatPlaces = require('../utils/formatPlaces')
-
-// const getAllPlaces = catchAsync(async (req, res, next) => {
-//   const signedInUser = req.params.id
-
-//   const allPlaces = await Place.find({})
-//   const favPlaces = await Favorite.find({})
-
-//   const places = allPlaces.map(place => {
-//     favPlaces.map(favPlace => {
-//       if (place._id.toString() === favPlace.placeID.toString() && favPlace.addedBy.toString() === signedInUser) {
-//         place.isFavorite = true
-//       }
-//     })
-//     return place
-//   })
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     places: allPlaces,
-//   })
-// })
-
-// const getUserPlaces = catchAsync(async (req, res, next) => {
-//   const signedInUser = req.params.userID
-
-//   const userPlaces = await Place.find({ postedBy: signedInUser })
-//   const favPlaces = await Favorite.find({ addedBy: signedInUser })
-
-//   const places = userPlaces.map(userPlace => {
-//     favPlaces.map(favPlace => {
-//       if (userPlace._id.toString() === favPlace.placeID.toString()) {
-//         userPlace.isFavorite = true
-//       }
-//     })
-//     return userPlace
-//   })
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     places,
-//   })
-// })
-
-// const getUserFavorites = catchAsync(async (req, res, next) => {
-//   const signedInUser = req.params.userID
-
-//   // const places = await Favorite.find({ addedBy: signedInUser }).populate('placeID').select('-_id -__v -addedBy')
-//   const places = await Favorite.find({ addedBy: signedInUser }).populate('placeID').select('-_id -__v -addedBy')
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     places,
-//   })
-// })
-
-// const postUserPlace = catchAsync(async (req, res, next) => {
-//   const signedInUser = req.params.userID
-
-//   const { search: address, title, country, description, rating, coordinates, isFavorite } = req.body
-//   if ((!address, !title, !country, !description)) return next(new AppError('Missing fields'), StatusCodes.BAD_REQUEST)
-
-//   const place = await Place.create({
-//     address,
-//     title,
-//     country,
-//     description,
-//     rating,
-//     coordinates,
-//     postedBy: signedInUser,
-//     isFavorite,
-//   })
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     place,
-//   })
-// })
-
-// const postUserFavorite = catchAsync(async (req, res, next) => {
-//   const signedInUser = req.user._id
-//   const { placeID } = req.body
-
-//   const favPlace = await Favorite.create({
-//     addedBy: signedInUser,
-//     placeID,
-//   })
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     favPlace,
-//   })
-// })
-
-// const deleteUserFavorite = catchAsync(async (req, res, next) => {
-//   const signedInUser = req.user._id
-//   const { placeID } = req.params
-
-//   const deletedUserFavorite = await Favorite.findOneAndRemove({ placeID })
-//   console.log(deletedUserFavorite)
-
-//   // const favPlace = await Favorite.create({
-//   //   addedBy: signedInUser,
-//   //   placeID,
-//   // })
-
-//   res.status(StatusCodes.OK).json({
-//     status: 'success',
-//     deletedPlace: deletedUserFavorite,
-//   })
-// })
 
 const postPlace = asyncHandler(async (req, res, next) => {
   const image = req.file
@@ -136,6 +28,15 @@ const postPlace = asyncHandler(async (req, res, next) => {
 
   const newPlace = new Place(userId, address, country, lat, lng, title, description, rating, imageUrl, imageId)
   const place = await newPlace.save()
+  const placeId = place.id
+
+  const followers = await Follow.getFollowers(userId)
+  if (followers.length > 0) {
+    followers.map(async follower => {
+      const newAlert = new Alert(follower.id, userId, 'post', placeId)
+      await newAlert.save()
+    })
+  }
 
   if (tags) {
     JSON.parse(tags).map(async tag => {

@@ -80,8 +80,7 @@ CREATE TABLE alerts (
   place_id integer  references places (id) on delete cascade,
   comment_id integer  references comments (id) on delete cascade,
   text text,
-  type varchar not null,
-  unique (alert_from, alert_for, type)
+  type varchar not null
 )
 
 

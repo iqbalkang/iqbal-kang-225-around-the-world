@@ -46,7 +46,9 @@ class Place {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT places.*, COUNT(likes.place_id) AS likes, first_name
+    const dbQuery = `SELECT places.*, first_name,
+                     (SELECT COUNT(*) FROM comments WHERE comments.place_id = ${placeId}) AS comments,
+                     (SELECT COUNT(*) FROM likes WHERE likes.place_id = ${placeId}) AS likes
                      FROM places 
                      LEFT JOIN likes
                      ON likes.place_id = '${placeId}'

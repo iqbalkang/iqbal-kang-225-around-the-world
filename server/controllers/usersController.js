@@ -74,8 +74,6 @@ const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
   formattedUser.followers = followers.count
   formattedUser.following = following.count
 
-  console.log(formattedUser)
-
   res.status(StatusCodes.OK).json({
     status: 'success',
     user: formattedUser,
