@@ -14,6 +14,29 @@ const getAlerts = asyncHandler(async (req, res, next) => {
   })
 })
 
+const deleteAlerts = asyncHandler(async (req, res, next) => {
+  const { id: userId } = req.user
+
+  await Alert.deleteAll(userId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+  })
+})
+
+const deleteSingleAlert = asyncHandler(async (req, res, next) => {
+  const { id: userId } = req.user
+  const { placeId } = req.params
+
+  await Alert.deletePostAlert(userId, placeId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+  })
+})
+
 module.exports = {
   getAlerts,
+  deleteAlerts,
+  deleteSingleAlert,
 }

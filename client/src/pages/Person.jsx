@@ -1,48 +1,48 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import AccentButton from '../components/AccentButton'
 import ContentPageLayout from '../components/ContentPageLayout'
 import FlexContainer from '../components/FlexContainer'
+import FollowModal from '../components/FollowModal'
 import Heading from '../components/Heading'
 import Image from '../components/Image'
 import LoginModal from '../components/LoginModal'
+import { getFollowInfo, getFollowInfoForSignedInUsers, sendFollowRequest } from '../features/followers/followersThunks'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import { getUserInfo, getUserInfoForSignedInUsers } from '../features/user/userThunk'
 import customFetch from '../utils/axios/customFetch'
 import { getLocalStorage } from '../utils/localStorage/localStorage'
 import { renderLargeImage } from '../utils/rendeImage'
 
+const initialState = {
+  followers: [],
+  following: [],
+  isLoading: false,
+}
+
 const Person = () => {
   const { userId } = useParams()
   const dispatch = useDispatch()
   const { placesByCurrentUser } = useSelector(store => store.places)
+  const { followInfo, isLoading: isFollowInfoLoading } = useSelector(store => store.followers)
   const { currentUser, user, isLoading } = useSelector(store => store.user)
 
   const [loginModal, setLoginModal] = useState(false)
+  const [followModal, setFollowModal] = useState(false)
+  const [selectedTab, setSelectedTab] = useState(null)
 
   const { firstName, lastName, email, aboutMe, image, imageId, status, followers, following } = currentUser || {}
 
   const closeLoginModal = () => setLoginModal(false)
+  const closeFollowModal = () => setFollowModal(false)
 
   const handleFollowRequestClick = async () => {
     if (!user) return setLoginModal(true)
-
-    const { token } = getLocalStorage('user')
     const body = { status: 'pending', followingId: userId }
-
-    try {
-      const { data } = await customFetch.post(`/follow`, body, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-      dispatch(getUserInfoForSignedInUsers(userId))
-    } catch (error) {
-      toast(error.response.data.message)
-    }
+    dispatch(sendFollowRequest({ body, userId }))
   }
 
   const renderFollowButton = () => {
@@ -68,7 +68,24 @@ const Person = () => {
       )
   }
 
-  console.log(currentUser)
+  const handleGetFollowInfo = async () => {
+    if (!user) return dispatch(getFollowInfo(userId))
+    dispatch(getFollowInfoForSignedInUsers(userId))
+  }
+
+  const handleGetFollowersClick = () => {
+    setFollowModal(true)
+    setSelectedTab('followers')
+    handleGetFollowInfo()
+  }
+
+  const handleGetFollowingClick = () => {
+    setFollowModal(true)
+    setSelectedTab('following')
+    handleGetFollowInfo()
+  }
+
+  const updateTab = tab => setSelectedTab(tab)
 
   useEffect(() => {
     user ? dispatch(getUserInfoForSignedInUsers(userId)) : dispatch(getUserInfo(userId))
@@ -78,6 +95,10 @@ const Person = () => {
   useEffect(() => {
     if (!isLoading) setLoginModal(false)
   }, [isLoading])
+
+  useEffect(() => {
+    dispatch(getUserInfoForSignedInUsers(userId))
+  }, [isFollowInfoLoading])
 
   return (
     <section className='h-full grid grid-cols-[2fr,8fr]'>
@@ -92,8 +113,12 @@ const Person = () => {
         </Heading>
 
         <FlexContainer className='gap-8 mb-4'>
-          <Button count={followers}>{followers === 1 ? 'follower' : 'followers'}</Button>
-          <Button count={following}>following</Button>
+          <Button count={followers} onClick={handleGetFollowersClick}>
+            {followers === 1 ? 'follower' : 'followers'}
+          </Button>
+          <Button count={following} onClick={handleGetFollowingClick}>
+            following
+          </Button>
         </FlexContainer>
 
         <FlexContainer col center className='mb-4'>
@@ -119,15 +144,26 @@ const Person = () => {
 
       {/* login modal */}
       {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
+
+      {/* follow modal */}
+      {followModal && (
+        <FollowModal
+          closeModal={closeFollowModal}
+          isLoading={isLoading}
+          followInfo={followInfo}
+          selectedTab={selectedTab}
+          updateTab={updateTab}
+        />
+      )}
     </section>
   )
 }
 
 export default Person
 
-const Button = ({ children, count }) => {
+const Button = ({ children, count, onClick }) => {
   return (
-    <button className='hover:underline'>
+    <button className='hover:underline' onClick={onClick}>
       <FlexContainer className='gap-1'>
         <p>{count}</p>
         <p>{children}</p>

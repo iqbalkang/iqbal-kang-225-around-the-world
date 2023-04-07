@@ -50,7 +50,10 @@ const getUserInfo = asyncHandler(async (req, res, next) => {
 
   const user = await User.findOneById(userId)
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
+
   const formattedUser = formatUser(user)
+  formattedUser.followers = user.followers
+  formattedUser.following = user.following
 
   formattedUser.status = user.status
 
@@ -59,6 +62,7 @@ const getUserInfo = asyncHandler(async (req, res, next) => {
     user: formattedUser,
   })
 })
+
 const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
   const { userId } = req.params
   const { id: signedInUserId } = req.user
@@ -67,14 +71,9 @@ const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
   const formattedUser = formatUser(user)
 
-  const followers = await User.getFollowers(userId)
-  const following = await User.getFollowing(userId)
-
   formattedUser.status = user.status
-  formattedUser.followers = followers.count
-  formattedUser.following = following.count
-
-  console.log(formattedUser)
+  formattedUser.followers = user.followers
+  formattedUser.following = user.following
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -131,6 +130,20 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
   })
 })
 
+const searchUsers = asyncHandler(async (req, res, next) => {
+  let { name } = req.query
+
+  const users = await User.searchUser(name)
+  if (!users) return next(new AppError('No users were found', StatusCodes.NOT_FOUND))
+
+  const formattedUsers = users.map(user => formatUser(user))
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    users: formattedUsers,
+  })
+})
+
 module.exports = {
   registerUser,
   loginUser,
@@ -138,4 +151,5 @@ module.exports = {
   getUserInfo,
   getAllUsers,
   getUserInfoForSignedInUsers,
+  searchUsers,
 }

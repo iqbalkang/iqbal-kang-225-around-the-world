@@ -32,32 +32,22 @@ class User {
   }
 
   static async findOneById(userId) {
-    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image FROM users
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image,
+                    (SELECT COUNT(following_id)::integer FROM followers WHERE following_id = ${userId} AND status = 'accepted') as followers,
+                    (SELECT COUNT(follower_id)::integer FROM followers WHERE follower_id = ${userId} AND status = 'accepted') as following
+                     FROM users
                      WHERE users.id = ${userId}`
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
 
   static async findOneByIds(userId, signedInUserId) {
-    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image, status FROM users
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image,
+                     (SELECT COUNT(following_id)::integer FROM followers WHERE following_id = ${userId} AND status = 'accepted') as followers,
+                     (SELECT COUNT(follower_id)::integer FROM followers WHERE follower_id = ${userId} AND status = 'accepted') as following,
+                     status FROM users
                      LEFT JOIN followers ON following_id = ${userId} AND follower_id = ${signedInUserId}
                      WHERE users.id = ${userId}`
-    const data = await db.query(dbQuery)
-    return data.rows[0]
-  }
-
-  static async getFollowers(userId) {
-    const dbQuery = `SELECT count(*)::integer FROM followers
-                     WHERE following_id = ${userId} AND status = 'accepted'`
-
-    const data = await db.query(dbQuery)
-    return data.rows[0]
-  }
-
-  static async getFollowing(userId) {
-    const dbQuery = `SELECT count(*)::integer FROM followers
-                     WHERE follower_id = ${userId} AND status = 'accepted'`
-
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
@@ -85,6 +75,16 @@ class User {
                      LEFT JOIN places
                      ON places.user_id = users.id
                      GROUP BY users.id
+                    `
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async searchUser(name) {
+    const dbQuery = `SELECT users.id, first_name, last_name, users.image 
+                     FROM users
+                     WHERE first_name LIKE '${name}%'
                     `
 
     const data = await db.query(dbQuery)

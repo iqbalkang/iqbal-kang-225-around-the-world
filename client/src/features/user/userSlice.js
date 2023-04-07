@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { loginUser, registerUser, getAllUsers, getUserInfo, updateUser } from './userThunk'
+import { loginUser, registerUser, getAllUsers, getUserInfo, updateUser, searchUsers } from './userThunk'
 import { getLocalStorage, setLocalStorage, removeLocalStorage } from '../../utils/localStorage/localStorage'
 import { toast } from 'react-toastify'
 
@@ -97,6 +97,20 @@ const userSlice = createSlice({
         state.isLoading = false
         console.log(payload)
       })
+
+    // // search  users
+    // .addCase(searchUsers.pending, state => {
+    //   state.isLoading = true
+    // })
+    // .addCase(searchUsers.fulfilled, (state, { payload }) => {
+    //   const { users } = payload
+    //   state.isLoading = false
+    //   state.allUsers = users
+    // })
+    // .addCase(searchUsers.rejected, (state, { payload }) => {
+    //   state.isLoading = false
+    //   console.log(payload)
+    // })
   },
 })
 

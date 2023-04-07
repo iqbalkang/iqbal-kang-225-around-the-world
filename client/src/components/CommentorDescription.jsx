@@ -4,7 +4,21 @@ import { renderSmallImage } from '../utils/rendeImage'
 import FlexContainer from './FlexContainer'
 
 const CommentorDescription = ({ props, children }) => {
-  const { image, first_name: commentorFirstName, last_name: commentorLastName, comment, user_id: userId, reply } = props
+  const {
+    image,
+    first_name: commentorFirstName,
+    last_name: commentorLastName,
+    comment,
+    user_id: userId,
+    reply,
+    mentions,
+  } = props
+
+  const renderMentions = mentions?.map(mention => (
+    <Link key={mention.id} className='hover:underline capitalize text-xs text-blue-600' to={'/people/' + mention.id}>
+      {mention.first_name} {mention.last_name}
+    </Link>
+  ))
 
   return (
     <FlexContainer gap>
@@ -22,6 +36,13 @@ const CommentorDescription = ({ props, children }) => {
             </p>
           </Link>
           <p>{comment || reply}</p>
+          {/* tagged people (mentions) */}
+          {mentions?.length > 0 && (
+            <FlexContainer alignCenter gap>
+              <p>Mentions: </p>
+              <FlexContainer gap>{renderMentions}</FlexContainer>
+            </FlexContainer>
+          )}
         </div>
 
         {children}

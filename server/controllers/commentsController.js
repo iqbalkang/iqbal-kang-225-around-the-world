@@ -4,16 +4,27 @@ const asyncHandler = require('express-async-handler')
 const Place = require('../models/PlaceModel')
 const Comment = require('../models/CommentModel')
 const Reaction = require('../models/ReactionModel')
+const Alert = require('../models/AlertModel')
+const Mention = require('../models/MentionModel')
 
 const postComment = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
-  const { placeId, comment } = req.body
+  const { placeId, comment, tags } = req.body
 
   if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
   if (!comment) return next(new AppError('please enter a comment', StatusCodes.BAD_REQUEST))
 
   const newComment = new Comment(comment, placeId, userId)
   const savedComment = await newComment.save()
+
+  if (tags) {
+    tags.map(async tag => {
+      const newAlert = new Alert(tag.id, userId, 'tag', placeId, savedComment.id)
+      const newMention = new Mention(tag.id, userId, savedComment.id)
+      await newAlert.save()
+      await newMention.save()
+    })
+  }
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -29,6 +40,12 @@ const getComments = asyncHandler(async (req, res, next) => {
 
   const comments = await Comment.findByPlaceId(placeId)
 
+  // const mentions = comments.map(async comment => {
+  //   return await Mention.findByCommentId(comment.id)
+  // })
+
+  // console.log(mentions)
+
   res.status(StatusCodes.OK).json({
     status: 'success',
     comments,
@@ -42,6 +59,18 @@ const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
   if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
 
   const comments = await Comment.findByPlaceAndUserId(placeId, userId)
+
+  const mentions = comments.map(async comment => {
+    comment.mentions = []
+
+    const mentions = await Mention.findByCommentId(comment.id)
+
+    return mentions.map(mention => {
+      if (mention.comment_id === comment.id) return comment.mentions.push(mention)
+    })
+  })
+
+  await Promise.all(mentions)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
