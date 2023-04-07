@@ -26,6 +26,8 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
     await newAlert.save()
   }
 
+  console.log(response)
+
   res.status(StatusCodes.OK).json({
     status: 'success',
     data: response,
@@ -69,7 +71,36 @@ const getFollowInfo = asyncHandler(async (req, res, next) => {
     return formattedUSer
   })
 
-  console.log(formattedFollowing)
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    followInfo: {
+      followers: formattedFollowers,
+      following: formattedFollowing,
+    },
+  })
+})
+
+const getFollowInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
+  const { userId } = req.params
+  const { id: signedInuserId } = req.user
+
+  if (!userId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  const followers = await Follow.getFollowersForSignedInUsers(userId, signedInuserId)
+
+  const following = await Follow.getFollowingForSignedInUsers(userId, signedInuserId)
+
+  const formattedFollowers = followers.map(user => {
+    const formattedUSer = formatUser(user)
+    formattedUSer.status = user.status
+    return formattedUSer
+  })
+
+  const formattedFollowing = following.map(user => {
+    const formattedUSer = formatUser(user)
+    formattedUSer.status = user.status
+    return formattedUSer
+  })
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -84,4 +115,5 @@ module.exports = {
   postFollowRequest,
   responseToFollowRequest,
   getFollowInfo,
+  getFollowInfoForSignedInUsers,
 }

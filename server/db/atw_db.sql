@@ -39,6 +39,14 @@ CREATE TABLE comments (
   deleted boolean default(false)
 );
 
+CREATE TABLE mentions (
+  id SERIAL PRIMARY KEY,
+  created_at timestamp default now(),
+  mentioned integer not null references users (id) on delete cascade,
+  mentioned_by integer not null references users (id) on delete cascade,
+  comment_id integer not null references comments (id) on delete cascade
+);
+
 CREATE TABLE replies (
   id SERIAL PRIMARY KEY not null,
   reply text,

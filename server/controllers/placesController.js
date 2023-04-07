@@ -8,6 +8,7 @@ const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
 const formatPlaces = require('../utils/formatPlaces')
+const formatUser = require('../utils/formatUser')
 
 const postPlace = asyncHandler(async (req, res, next) => {
   const image = req.file
@@ -128,7 +129,11 @@ const getSinglePlace = asyncHandler(async (req, res, next) => {
 
   if (likes) {
     place.likes = []
-    likes.map(like => place.likes.push(like))
+    likes.map(like => {
+      const formattedLike = formatUser(like)
+      formattedLike.status = like.status
+      place.likes.push(formattedLike)
+    })
   }
 
   if (tags) {

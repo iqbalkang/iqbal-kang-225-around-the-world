@@ -6,6 +6,7 @@ const {
   getUserInfo,
   getAllUsers,
   getUserInfoForSignedInUsers,
+  searchUsers,
 } = require('../controllers/usersController')
 const uploadImage = require('../middlewares/upload')
 const isAuthenticated = require('../middlewares/isAuthenticated')
@@ -18,5 +19,6 @@ router.put('/update', isAuthenticated, uploadImage.single('image'), updateUser)
 router.get('/user/:userId', getUserInfo)
 router.get('/auth/user/:userId', isAuthenticated, getUserInfoForSignedInUsers)
 router.get('/all-users', getAllUsers)
+router.get('/search-users', searchUsers)
 
 module.exports = router

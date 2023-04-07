@@ -25,27 +25,74 @@ class Follow {
   }
 
   static async getFollowers(userId) {
-    // const dbQuery = `SELECT first_name, last_name, image, users.id,
-    //                  CASE
-    //                     WHEN followers.following_id = users.id AND followers.follower_id = 1 then 'accepted'
-    //                     ELSE 'rejected'
-    //                     END AS status
-    //                  FROM followers
-    //                  LEFT JOIN users ON follower_id = users.id
-    //                  WHERE following_id = ${userId} AND status = 'accepted'`
-
-    const dbQuery = `SELECT first_name, last_name, image, users.id, status FROM followers
-                     LEFT JOIN users ON follower_id = users.id
-                     WHERE following_id = ${userId} AND status = 'accepted'`
+    const dbQuery = `SELECT u1.first_name, u1.last_name, u1.image, u1.id
+                     FROM followers f
+                     JOIN users u1 ON u1.id = f.follower_id
+                     WHERE f.following_id = ${userId} AND status = 'accepted'`
 
     const data = await db.query(dbQuery)
     return data.rows
   }
 
   static async getFollowing(userId) {
-    const dbQuery = `SELECT first_name, last_name, image, users.id, status FROM followers
-                     LEFT JOIN users ON following_id = users.id
-                     WHERE follower_id = ${userId} AND status = 'accepted'`
+    const dbQuery = `SELECT u1.first_name, u1.last_name, u1.image, u1.id
+                     FROM followers f
+                     JOIN users u1 ON u1.id = f.following_id
+                     WHERE f.follower_id = ${userId} AND status = 'accepted'`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async getFollowersForSignedInUsers(userId, signedInuserId) {
+    const dbQuery = `SELECT u1.first_name, u1.last_name, u1.image, u1.id,
+                     CASE 
+                         WHEN
+                             f.follower_id IN (
+                                 SELECT following_id
+                                 FROM followers
+                                 WHERE follower_id = ${signedInuserId} AND status = 'accepted'
+                             )
+                         THEN 'accepted'
+                         WHEN
+                             f.follower_id IN (
+                                 SELECT following_id
+                                 FROM followers
+                                 WHERE follower_id = ${signedInuserId} AND status = 'pending'
+                             )
+                         THEN 'pending'
+                         ELSE 'rejected'
+                     END AS status
+                     FROM followers f
+                     JOIN users u1 ON u1.id = f.follower_id
+                     WHERE f.following_id = ${userId} AND status = 'accepted'`
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async getFollowingForSignedInUsers(userId, signedInuserId) {
+    const dbQuery = `SELECT u1.first_name, u1.last_name, u1.image, u1.id,
+                     CASE
+                     WHEN
+                       f.following_id IN (
+                           SELECT following_id
+                           FROM followers
+                           WHERE follower_id = ${signedInuserId} AND status = 'accepted'
+                       )
+                     THEN 'accepted'
+                     WHEN
+                       f.following_id IN (
+                           SELECT following_id
+                           FROM followers
+                           WHERE follower_id = ${signedInuserId} AND status = 'pending'
+                       )
+                     THEN 'pending'
+                     ELSE 'rejected'
+                     END AS status
+                     FROM followers f
+                     JOIN users u1 ON u1.id = f.following_id
+                     WHERE f.follower_id = ${userId} AND status = 'accepted'`
 
     const data = await db.query(dbQuery)
     return data.rows
