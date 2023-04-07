@@ -6,8 +6,6 @@ import FollowingContainer from './FollowingContainer'
 const FollowModal = ({ closeModal, followInfo, selectedTab, updateTab }) => {
   const { followers, following } = followInfo
 
-  console.log(followers)
-
   const followersRef = useRef()
   const followingRef = useRef()
 
@@ -36,7 +34,7 @@ const FollowModal = ({ closeModal, followInfo, selectedTab, updateTab }) => {
   }, [])
 
   return (
-    <Modal closeModal={closeModal}>
+    <Modal closeModal={closeModal} className='w-[350px]'>
       <FlexContainer center className='gap-6'>
         <button className='capitalize' ref={followersRef} onClick={handleFollowersClick}>
           followers

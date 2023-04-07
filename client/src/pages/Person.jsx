@@ -10,6 +10,7 @@ import FollowModal from '../components/FollowModal'
 import Heading from '../components/Heading'
 import Image from '../components/Image'
 import LoginModal from '../components/LoginModal'
+import { getFollowInfo, getFollowInfoForSignedInUsers, sendFollowRequest } from '../features/followers/followersThunks'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import { getUserInfo, getUserInfoForSignedInUsers } from '../features/user/userThunk'
 import customFetch from '../utils/axios/customFetch'
@@ -26,11 +27,11 @@ const Person = () => {
   const { userId } = useParams()
   const dispatch = useDispatch()
   const { placesByCurrentUser } = useSelector(store => store.places)
+  const { followInfo, isLoading: isFollowInfoLoading } = useSelector(store => store.followers)
   const { currentUser, user, isLoading } = useSelector(store => store.user)
 
   const [loginModal, setLoginModal] = useState(false)
   const [followModal, setFollowModal] = useState(false)
-  const [followInfo, setFollowInfo] = useState(initialState)
   const [selectedTab, setSelectedTab] = useState(null)
 
   const { firstName, lastName, email, aboutMe, image, imageId, status, followers, following } = currentUser || {}
@@ -40,20 +41,8 @@ const Person = () => {
 
   const handleFollowRequestClick = async () => {
     if (!user) return setLoginModal(true)
-
-    const { token } = getLocalStorage('user')
     const body = { status: 'pending', followingId: userId }
-
-    try {
-      const { data } = await customFetch.post(`/follow`, body, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-      dispatch(getUserInfoForSignedInUsers(userId))
-    } catch (error) {
-      toast(error.response.data.message)
-    }
+    dispatch(sendFollowRequest({ body, userId }))
   }
 
   const renderFollowButton = () => {
@@ -80,12 +69,8 @@ const Person = () => {
   }
 
   const handleGetFollowInfo = async () => {
-    try {
-      const { data } = await customFetch.get(`/follow/${userId}`)
-      setFollowInfo(data.followInfo)
-    } catch (error) {
-      toast(error.response.data.message)
-    }
+    if (!user) return dispatch(getFollowInfo(userId))
+    dispatch(getFollowInfoForSignedInUsers(userId))
   }
 
   const handleGetFollowersClick = () => {
@@ -110,6 +95,10 @@ const Person = () => {
   useEffect(() => {
     if (!isLoading) setLoginModal(false)
   }, [isLoading])
+
+  useEffect(() => {
+    dispatch(getUserInfoForSignedInUsers(userId))
+  }, [isFollowInfoLoading])
 
   return (
     <section className='h-full grid grid-cols-[2fr,8fr]'>

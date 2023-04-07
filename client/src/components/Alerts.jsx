@@ -88,6 +88,20 @@ const Alerts = () => {
           />
         )
       }
+
+      if (type === 'tag') {
+        return (
+          <TagAlert
+            key={index}
+            firstName={firstName}
+            lastName={lastName}
+            image={image}
+            alertFrom={alertFrom}
+            onClick={handlePostAlertClick}
+            placeId={placeId}
+          />
+        )
+      }
     })
 
   const renderAlertsCount = () => {
@@ -165,6 +179,24 @@ const PostAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) 
         </Link>
         <Link to={'places/' + placeId} onClick={onClick.bind(null, placeId)}>
           has added a new post
+        </Link>
+      </p>
+    </FlexContainer>
+  )
+}
+
+const TagAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) => {
+  return (
+    <FlexContainer gap alignCenter className='bg-accent p-2'>
+      <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
+        {renderSmallImage(image, firstName, lastName)}
+      </div>
+      <p className='whitespace-nowrap flex-1'>
+        <Link to={'/people/' + alertFrom} className='mr-1 hover:underline'>
+          {firstName} {lastName}
+        </Link>
+        <Link to={'places/' + placeId} onClick={onClick.bind(null, placeId)}>
+          has tagged you in a comment
         </Link>
       </p>
     </FlexContainer>

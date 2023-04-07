@@ -24,7 +24,8 @@ const Comment = ({ comment }) => {
   const dispatch = useDispatch()
 
   // const { replies } = useSelector(store => store.replies)
-  const { user, isLoading } = useSelector(store => store.user)
+  // const { user, isLoading } = useSelector(store => store.user)
+  const { user, isLoading, allUsers } = useSelector(store => store.user)
 
   const [replies, setReplies] = useState([])
   const [selectedReaction, setSelectedReaction] = useState(null)
@@ -97,34 +98,41 @@ const Comment = ({ comment }) => {
     }
   }
 
-  const handleReplySubmit = async e => {
-    e.preventDefault()
-    const reply = inputRef.current.innerText
+  // const handleReplySubmit = async e => {
+  //   e.preventDefault()
+  //   const reply = inputRef.current.innerText
 
-    if (!reply) return toast.error('Please enter a reply')
-    const body = { reply, commentId }
+  //   if (!reply) return toast.error('Please enter a reply')
+  //   const body = { reply, commentId }
 
-    const { token, firstName, lastName, image } = getLocalStorage('user')
+  //   const { token, firstName, lastName, image } = getLocalStorage('user')
 
-    try {
-      const { data } = await customFetch.post(`/reply`, body, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
+  //   try {
+  //     const { data } = await customFetch.post(`/reply`, body, {
+  //       headers: {
+  //         authorization: `Bearer ${token}`,
+  //       },
+  //     })
 
-      const reply = data.reply
-      reply.first_name = firstName
-      reply.last_name = lastName
-      reply.image = image
+  //     const reply = data.reply
+  //     reply.first_name = firstName
+  //     reply.last_name = lastName
+  //     reply.image = image
 
-      setReplies([...replies, reply])
-      setReplyCountButtonText('view other replies')
-      inputRef.current.innerText = ''
-    } catch (error) {
-      toast(error.response.data.message)
-    }
+  //     setReplies([...replies, reply])
+  //     setReplyCountButtonText('view other replies')
+  //     inputRef.current.innerText = ''
+  //   } catch (error) {
+  //     toast(error.response.data.message)
+  //   }
+  // }
+
+  const updateReplies = reply => {
+    setReplies([...replies, reply])
+    setReplyCountButtonText('view other replies')
   }
+
+  // console.log(replies)
 
   const renderReplies = replies.map((reply, index) => <CommentorDescription key={index} props={reply} />)
 
@@ -179,7 +187,8 @@ const Comment = ({ comment }) => {
           <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
             {renderSmallImage(image, firstName, lastName)}
           </div>
-          <CommentForm ref={inputRef} onSubmit={handleReplySubmit} />
+          {/* <CommentForm ref={inputRef} onSubmit={handleReplySubmit} /> */}
+          <CommentForm ref={inputRef} commentId={commentId} updateReplies={updateReplies} allUsers={allUsers} reply />
         </FlexContainer>
       )}
 

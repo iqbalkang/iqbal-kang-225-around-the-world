@@ -69,10 +69,7 @@ const SinglePage = () => {
     return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />
   }
 
-  const renderLikes = likes?.map(like => {
-    const { first_name, last_name, image, id } = like
-    return <FollowingContainer key={id} firstName={first_name} lastName={last_name} image={image} />
-  })
+  const renderLikes = likes?.map(like => <FollowingContainer key={like.id} {...like} />)
 
   const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />)
 
