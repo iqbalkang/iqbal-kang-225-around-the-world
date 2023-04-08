@@ -16,6 +16,7 @@
     "react-google-autocomplete": "^2.7.1",
     "react-google-places-autocomplete": "^3.4.0",
     "react-icons": "^4.7.1",
+    "react-mentions": "^4.4.7",
     "react-places-autocomplete": "^7.3.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.5",

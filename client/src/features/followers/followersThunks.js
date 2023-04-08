@@ -1,29 +1,32 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import customFetch from '../../utils/axios/customFetch'
+import { getSinglePlace } from '../places/PlacesThunks'
 
-export const sendFollowRequest = createAsyncThunk('user/sendFollowRequest', async ({ body, userId }, thunkAPI) => {
+export const sendFollowRequest = createAsyncThunk('user/sendFollowRequest', async (body, thunkAPI) => {
+  const { id: userId } = thunkAPI.getState().user.currentUser
   try {
     const { data } = await customFetch.post(`/follow`, body, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
     })
-    return data
+    thunkAPI.dispatch(getFollowInfoForSignedInUsers(userId))
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
 
-export const sendFollowRequestFromModal = createAsyncThunk(
-  'user/sendFollowRequestFromModal',
-  async ({ body, userId }, thunkAPI) => {
+export const sendFollowRequestFromSinglePlace = createAsyncThunk(
+  'user/sendFollowRequestFromSinglePlace',
+  async ({ body, placeId }, thunkAPI) => {
+    const { id: userId } = thunkAPI.getState().user.user
     try {
       const { data } = await customFetch.post(`/follow`, body, {
         headers: {
           authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
         },
       })
-      thunkAPI.dispatch(getFollowInfoForSignedInUsers(userId))
+      thunkAPI.dispatch(getSinglePlace({ userId, placeId }))
       return data
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message)

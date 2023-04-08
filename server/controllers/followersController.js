@@ -26,8 +26,6 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
     await newAlert.save()
   }
 
-  console.log(response)
-
   res.status(StatusCodes.OK).json({
     status: 'success',
     data: response,

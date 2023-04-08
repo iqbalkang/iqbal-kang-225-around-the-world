@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AiOutlineFire as Fire, AiOutlineHeart as Heart, AiOutlineStop as Stop } from 'react-icons/ai'
 import { FaRegSadCry as Sad } from 'react-icons/fa'
 import { BiLike as Like, BiConfused as Think } from 'react-icons/bi'
@@ -10,21 +10,17 @@ import { CgMailReply } from 'react-icons/cg'
 import Reactions from './Reactions'
 import { useDispatch, useSelector } from 'react-redux'
 import { toggleCommentReaction } from '../features/comments/commentsThunks'
-import CommentForm from './CommentForm'
 import { toast } from 'react-toastify'
 import CommentorDescription from './CommentorDescription'
 import customFetch from '../utils/axios/customFetch'
-import { getLocalStorage } from '../utils/localStorage/localStorage'
 import LoginModal from './LoginModal'
+import CommentFormNew from './CommentFormNew'
 
 const buttonBaseClasses = 'flex items-center gap-1 capitalize hover:underline'
 
 const Comment = ({ comment }) => {
-  const inputRef = useRef()
   const dispatch = useDispatch()
 
-  // const { replies } = useSelector(store => store.replies)
-  // const { user, isLoading } = useSelector(store => store.user)
   const { user, isLoading, allUsers } = useSelector(store => store.user)
 
   const [replies, setReplies] = useState([])
@@ -98,41 +94,14 @@ const Comment = ({ comment }) => {
     }
   }
 
-  // const handleReplySubmit = async e => {
-  //   e.preventDefault()
-  //   const reply = inputRef.current.innerText
-
-  //   if (!reply) return toast.error('Please enter a reply')
-  //   const body = { reply, commentId }
-
-  //   const { token, firstName, lastName, image } = getLocalStorage('user')
-
-  //   try {
-  //     const { data } = await customFetch.post(`/reply`, body, {
-  //       headers: {
-  //         authorization: `Bearer ${token}`,
-  //       },
-  //     })
-
-  //     const reply = data.reply
-  //     reply.first_name = firstName
-  //     reply.last_name = lastName
-  //     reply.image = image
-
-  //     setReplies([...replies, reply])
-  //     setReplyCountButtonText('view other replies')
-  //     inputRef.current.innerText = ''
-  //   } catch (error) {
-  //     toast(error.response.data.message)
-  //   }
-  // }
-
   const updateReplies = reply => {
+    reply.first_name = firstName
+    reply.last_name = lastName
+    reply.image = image
+
     setReplies([...replies, reply])
     setReplyCountButtonText('view other replies')
   }
-
-  // console.log(replies)
 
   const renderReplies = replies.map((reply, index) => <CommentorDescription key={index} props={reply} />)
 
@@ -171,7 +140,6 @@ const Comment = ({ comment }) => {
         </div>
       </FlexContainer>
       {/* button to display total number of replies */}
-      {/* {renderReplyCountButtonText(replyCount)} */}
       {replyCount > 0 && showReplyButton && (
         <button className={buttonBaseClasses + ' mb-2'} onClick={handleGetReplies}>
           <CgMailReply className='rotate-180' size={22} /> {replyCountButtonText}
@@ -187,8 +155,7 @@ const Comment = ({ comment }) => {
           <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
             {renderSmallImage(image, firstName, lastName)}
           </div>
-          {/* <CommentForm ref={inputRef} onSubmit={handleReplySubmit} /> */}
-          <CommentForm ref={inputRef} commentId={commentId} updateReplies={updateReplies} allUsers={allUsers} reply />
+          <CommentFormNew commentId={commentId} updateReplies={updateReplies} allUsers={allUsers} reply />
         </FlexContainer>
       )}
 

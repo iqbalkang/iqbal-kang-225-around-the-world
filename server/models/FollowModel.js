@@ -100,7 +100,7 @@ class Follow {
 
   static async findByIdsAndDelete(followingId, followerId) {
     const dbQuery = `DELETE FROM followers
-                     WHERE following_id = ${followingId} AND follower_id = ${followerId};`
+                     WHERE following_id = ${followingId} AND follower_id = ${followerId}`
 
     const data = await db.query(dbQuery)
     return data.rows[0]

@@ -9,7 +9,8 @@ const Mention = require('../models/MentionModel')
 
 const postComment = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
-  const { placeId, comment, tags } = req.body
+  const { placeId, comment } = req.body
+  const tags = comment.match(/[^(]+(?=\))/g)
 
   if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
   if (!comment) return next(new AppError('please enter a comment', StatusCodes.BAD_REQUEST))
@@ -19,8 +20,8 @@ const postComment = asyncHandler(async (req, res, next) => {
 
   if (tags) {
     tags.map(async tag => {
-      const newAlert = new Alert(tag.id, userId, 'tag', placeId, savedComment.id)
-      const newMention = new Mention(tag.id, userId, savedComment.id)
+      const newAlert = new Alert(tag, userId, 'tag', placeId, savedComment.id)
+      const newMention = new Mention(tag, userId, savedComment.id)
       await newAlert.save()
       await newMention.save()
     })

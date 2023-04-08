@@ -136,7 +136,10 @@ const searchUsers = asyncHandler(async (req, res, next) => {
   const users = await User.searchUser(name)
   if (!users) return next(new AppError('No users were found', StatusCodes.NOT_FOUND))
 
-  const formattedUsers = users.map(user => formatUser(user))
+  const formattedUsers = users.map(user => ({
+    id: user.id,
+    display: user.first_name + ' ' + user.last_name,
+  }))
 
   res.status(StatusCodes.OK).json({
     status: 'success',
