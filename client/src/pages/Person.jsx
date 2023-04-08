@@ -42,7 +42,7 @@ const Person = () => {
   const handleFollowRequestClick = async () => {
     if (!user) return setLoginModal(true)
     const body = { status: 'pending', followingId: userId }
-    dispatch(sendFollowRequest({ body, userId }))
+    dispatch(sendFollowRequest(body))
   }
 
   const renderFollowButton = () => {

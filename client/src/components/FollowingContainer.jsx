@@ -7,11 +7,15 @@ import { getLocalStorage } from '../utils/localStorage/localStorage'
 import customFetch from '../utils/axios/customFetch'
 import { toast } from 'react-toastify'
 import { getUserInfoForSignedInUsers } from '../features/user/userThunk'
-import { sendFollowRequest, sendFollowRequestFromModal } from '../features/followers/followersThunks'
+import {
+  sendFollowRequest,
+  sendFollowRequestFromModal,
+  sendFollowRequestFromSinglePlace,
+} from '../features/followers/followersThunks'
 import LoginModal from './LoginModal'
 import { getSinglePlace } from '../features/places/PlacesThunks'
 
-const FollowingContainer = ({ id, firstName, lastName, image, status }) => {
+const FollowingContainer = ({ id, firstName, lastName, image, status, singlePage, placeId }) => {
   const dispatch = useDispatch()
 
   const [loginModal, setLoginModal] = useState(false)
@@ -22,7 +26,8 @@ const FollowingContainer = ({ id, firstName, lastName, image, status }) => {
   const handleFollowRequestClick = async () => {
     if (!user) return setLoginModal(true)
     const body = { status: 'pending', followingId: id }
-    dispatch(sendFollowRequest({ body, userId: id }))
+    if (singlePage) return dispatch(sendFollowRequestFromSinglePlace({ body, placeId }))
+    dispatch(sendFollowRequest(body))
   }
 
   const renderFollowButton = () => {

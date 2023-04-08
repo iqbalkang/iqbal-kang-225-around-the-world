@@ -69,7 +69,7 @@ const SinglePage = () => {
     return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />
   }
 
-  const renderLikes = likes?.map(like => <FollowingContainer key={like.id} {...like} />)
+  const renderLikes = likes?.map(like => <FollowingContainer key={like.id} {...like} singlePage placeId={placeId} />)
 
   const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />)
 
@@ -132,6 +132,7 @@ const SinglePage = () => {
         </WebsiteContainer>
       </div>
 
+      {/* login modal */}
       {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
     </section>
   )
