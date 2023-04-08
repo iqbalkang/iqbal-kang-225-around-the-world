@@ -62,10 +62,26 @@ class Place {
   }
 
   static async findLikes(placeId) {
+    const dbQuery = `SELECT users.id, first_name, last_name, users.image FROM places
+                     JOIN likes ON likes.place_id = places.id
+                     JOIN users ON likes.user_id = users.id
+                     WHERE places.id = ${placeId}
+                     `
+    // const dbQuery = `SELECT users.id, first_name, last_name, users.image FROM places
+    //                  JOIN likes ON likes.place_id = places.id
+    //                  JOIN users ON likes.user_id = users.id
+    //                  WHERE places.id = '${placeId}'
+    //                  `
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async findLikesForSignedInUser(placeId, userId) {
     const dbQuery = `SELECT users.id, first_name, last_name, users.image, status FROM places
                      JOIN likes ON likes.place_id = places.id
                      JOIN users ON likes.user_id = users.id
-                     LEFT JOIN followers ON followers.follower_id = 1 and followers.following_id = users.id
+                     LEFT JOIN followers ON followers.follower_id = ${userId} and followers.following_id = users.id
                      WHERE places.id = ${placeId}
                      `
     // const dbQuery = `SELECT users.id, first_name, last_name, users.image FROM places

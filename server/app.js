@@ -31,3 +31,55 @@ app.use('*', (req, res, next) => {
 app.use(errorHandler)
 
 module.exports = app
+
+// const str = '@[jeeto gill](2) @[bala kang](1) @[prince kang](1) look here'
+
+// let users = []
+// for (let i = 0; i < str.length; i++) {
+//   if (str[i] === '@') {
+//     const newStr = str.slice(i + 2)
+//     const indexBr = newStr.indexOf(']')
+//     const newnewstr = newStr.slice(0, indexBr)
+//     users.push(newnewstr)
+//   }
+// }
+
+// console.log(users)
+
+// const arr = str.split(/@\[|]/g).join('')
+// console.log(arr)
+
+// let newStr = arr
+// users.map(user => {
+//   // newStr = newStr.replace(user, 'oooo')
+//   // arr.indexOf(user)
+//   console.log(arr.indexOf(user))
+// })
+
+// // let comment = '%{10}% Hello world %{5}% %{6}%'
+// // const getUserName = (id) => {
+// //   //test data
+// //   //later it comes from the database
+// //   if (id == 10) {
+// //     return "John";
+// //   } else if (id ==5) {
+// //     return "Peter";
+// //   } else if (id == 6) {
+// //     return "Mary";
+// //   }
+// // };
+
+// // const getUserID = (strId) => {
+// //   const id = strId.split('%{')[1].split('}')[0];
+// //   return id;
+// // }
+
+// // const ids = comment.match(/%{\d+}%/g).map(strID => getUserID(strID));
+// // console.log(ids); // [ '10', '5', '6']
+
+// // for (let i = 0; i < ids.length; i++) {
+// //   const re = new RegExp(`\\%\\{${ids[i]}\\}\\%`);
+// //   comment = comment.replace(re, '@' + getUserName(ids[i]));
+// // }
+
+// // console.log(comment); // @John Hello world @Peter @Mary

@@ -114,12 +114,14 @@ const getUserFavorites = asyncHandler(async (req, res, next) => {
 const getSinglePlace = asyncHandler(async (req, res, next) => {
   const { placeId } = req.params
   const { user } = req.query
-
   if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
 
   const place = await Place.findByPlaceId(placeId)
   const tags = await Place.findPlaceTags(placeId)
-  const likes = await Place.findLikes(placeId)
+
+  let likes
+  if (user) likes = await Place.findLikesForSignedInUser(placeId, user)
+  else likes = await Place.findLikes(placeId)
 
   place.addedBy = place.first_name
   delete place.first_name
