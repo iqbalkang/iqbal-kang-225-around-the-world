@@ -7,6 +7,7 @@ CREATE TABLE users (
   about_me text,
   image text,
   image_id text,
+  is_public boolean default false,
   created_at timestamp default NOW()
 );
 

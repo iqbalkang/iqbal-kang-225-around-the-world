@@ -52,10 +52,11 @@ const getUserInfo = asyncHandler(async (req, res, next) => {
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
 
   const formattedUser = formatUser(user)
+  formattedUser.status = user.status
+  formattedUser.isPublic = user.is_public
+
   formattedUser.followers = user.followers
   formattedUser.following = user.following
-
-  formattedUser.status = user.status
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -71,9 +72,13 @@ const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
   if (!user) return next(new AppError('No user was found', StatusCodes.NOT_FOUND))
   const formattedUser = formatUser(user)
 
+  formattedUser.isPublic = user.is_public
   formattedUser.status = user.status
+  formattedUser.isFollowedByCurrentUser = user.is_followed_by_current_user
+
   formattedUser.followers = user.followers
   formattedUser.following = user.following
+  formattedUser.places = user.places
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -82,7 +87,7 @@ const getUserInfoForSignedInUsers = asyncHandler(async (req, res, next) => {
 })
 
 const updateUser = asyncHandler(async (req, res, next) => {
-  let { firstName, lastName, aboutMe } = req.body
+  let { firstName, lastName, aboutMe, isPublic } = req.body
   const image = req.file
   const { email } = req.user
   if ((!firstName, !lastName)) return next(new AppError('Missing fields', StatusCodes.BAD_REQUEST))
@@ -104,22 +109,29 @@ const updateUser = asyncHandler(async (req, res, next) => {
     imageId = public_id
   }
 
-  if (!aboutMe) aboutMe = oldUser.about_me
+  if (!aboutMe) aboutMe = 'add some description'
   if (!imageUrl) imageUrl = oldUser.image
   if (!imageId) imageId = oldUser.image_id
 
-  const userObj = new User(firstName, lastName, null, null, aboutMe, imageUrl, imageId)
+  const userObj = new User(firstName, lastName, null, null, aboutMe, isPublic, imageUrl, imageId)
   const user = await userObj.updateOne(email)
+
+  const formattedUser = formatUser(user)
+  formattedUser.isPublic = user.is_public
 
   res.status(StatusCodes.CREATED).json({
     status: 'success',
     message: 'user was updated successfully',
-    user: formatUser(user),
+    user: formattedUser,
   })
 })
 
 const getAllUsers = asyncHandler(async (req, res, next) => {
-  const users = await User.findAllUsers()
+  const { page, limit } = req.query
+
+  const skip = +page * +limit
+
+  const users = await User.findAllUsers(skip, limit)
   if (!users) return next(new AppError('No users were found', StatusCodes.NOT_FOUND))
 
   const formattedUsers = users.map(user => formatUser(user))

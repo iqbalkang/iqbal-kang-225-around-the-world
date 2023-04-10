@@ -54,11 +54,13 @@ const postPlace = asyncHandler(async (req, res, next) => {
 })
 
 const getAllPlaces = asyncHandler(async (req, res, next) => {
-  const { user } = req.query
+  const { user, page, limit } = req.query
+
+  const skip = +page * +limit
 
   let places
-  if (user) places = await Place.findAllPlacesByUserId(user)
-  else places = await Place.find()
+  if (user) places = await Place.findAllPlacesByUserId(user, skip, limit)
+  else places = await Place.find(skip, limit)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -68,11 +70,13 @@ const getAllPlaces = asyncHandler(async (req, res, next) => {
 
 const getUserPlaces = asyncHandler(async (req, res, next) => {
   const { userId } = req.params
-  const { signedInUser } = req.query
+  const { signedInUser, page, limit } = req.query
+
+  const skip = +page * +limit
 
   let places
-  if (signedInUser) places = await Place.findUserPlacesByUserIdAndSignedInUser(userId, signedInUser)
-  else places = await Place.findUserPlacesByUserId(userId)
+  if (signedInUser) places = await Place.findUserPlacesByUserIdAndSignedInUser(userId, signedInUser, skip, limit)
+  else places = await Place.findUserPlacesByUserId(userId, skip, limit)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -102,8 +106,11 @@ const toggleLikedPlace = asyncHandler(async (req, res, next) => {
 
 const getUserFavorites = asyncHandler(async (req, res, next) => {
   const { id } = req.user
+  const { page, limit } = req.query
 
-  const places = await Place.findUserFavorites(id)
+  const skip = +page * +limit
+
+  const places = await Place.findUserFavorites(id, skip, limit)
 
   res.status(StatusCodes.OK).json({
     status: 'success',

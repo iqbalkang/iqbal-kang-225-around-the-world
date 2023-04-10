@@ -3,12 +3,13 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 class User {
-  constructor(firstName, lastName, email, password, aboutMe, image, imageId) {
+  constructor(firstName, lastName, email, password, aboutMe, isPublic, image, imageId) {
     this.firstName = firstName
     this.lastName = lastName
     this.email = email
     this.password = password
     this.aboutMe = aboutMe
+    this.isPublic = isPublic
     this.image = image
     this.imageId = imageId
   }
@@ -32,7 +33,7 @@ class User {
   }
 
   static async findOneById(userId) {
-    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image,
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image, is_public,
                     (SELECT COUNT(following_id)::integer FROM followers WHERE following_id = ${userId} AND status = 'accepted') as followers,
                     (SELECT COUNT(follower_id)::integer FROM followers WHERE follower_id = ${userId} AND status = 'accepted') as following
                      FROM users
@@ -42,9 +43,14 @@ class User {
   }
 
   static async findOneByIds(userId, signedInUserId) {
-    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image,
+    const dbQuery = `SELECT users.id, first_name, last_name, email, about_me,image, is_public,
+                     CASE 
+                     WHEN followers.status = 'accepted' THEN true
+                     ELSE false
+                     END AS is_followed_by_current_user,
                      (SELECT COUNT(following_id)::integer FROM followers WHERE following_id = ${userId} AND status = 'accepted') as followers,
                      (SELECT COUNT(follower_id)::integer FROM followers WHERE follower_id = ${userId} AND status = 'accepted') as following,
+                     (SELECT COUNT(*)::integer FROM places WHERE places.user_id = ${userId}) as places,
                      status FROM users
                      LEFT JOIN followers ON following_id = ${userId} AND follower_id = ${signedInUserId}
                      WHERE users.id = ${userId}`
@@ -61,6 +67,7 @@ class User {
                       first_name = '${this.firstName}', 
                       last_name = '${this.lastName}', 
                       about_me = ${this.aboutMe},
+                      is_public = ${this.isPublic},
                       image    = ${this.image},
                       image_id =  ${this.imageId}  
                       WHERE email = '${email}' RETURNING *`
@@ -69,12 +76,13 @@ class User {
     return data.rows[0]
   }
 
-  static async findAllUsers() {
+  static async findAllUsers(skip, limit) {
     const dbQuery = `SELECT users.id, first_name, last_name, users.image, about_me, count(places.user_id) AS total_places 
                      FROM users
                      LEFT JOIN places
                      ON places.user_id = users.id
                      GROUP BY users.id
+                     OFFSET ${skip} LIMIT ${limit}
                     `
 
     const data = await db.query(dbQuery)
