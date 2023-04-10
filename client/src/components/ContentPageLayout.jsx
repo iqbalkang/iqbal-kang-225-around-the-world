@@ -1,95 +1,105 @@
-// import React, { useState } from 'react'
-// import Gmap from '../components/Gmap'
-// import { BiRightArrow } from 'react-icons/bi'
-// import Place from '../components/Place'
-// import { motion } from 'framer-motion'
-
-// const ContentPageLayout = ({ userPlaces, user }) => {
-//   const [coordinates, setCoordinates] = useState()
-//   const updateMapCenter = coords => setCoordinates(coords)
-
-//   return (
-//     <motion.section
-//       className='h-full bg-slate-100 flex flex-col'
-//       initial={{ x: '100vw' }}
-//       animate={{ x: '0' }}
-//       transition={{ type: 'tween', duration: 0.15 }}
-//     >
-//       <Gmap coordinates={coordinates} />
-
-//       <div className=' flex-1 p-6 pb-0 flex flex-col'>
-//         {/* title */}
-//         <h2 className='capitalize text-3xl mb-2'>bala's places</h2>
-
-//         {/* container to wrap arrows and all places */}
-//         <div className='grid gap-4 flex-1 items-center md:grid-cols-[min-content,1fr,min-content]'>
-//           {/* left arrow */}
-//           <button className='hidden relative -top-5 md:block'>
-//             <BiRightArrow className='w-8 h-8 text-accent rotate-180' />
-//           </button>
-
-//           {/* places content container */}
-//           <div className='flex gap-4 flex-1 overflow-scroll'>
-//             {userPlaces.map((place, index) => (
-//               <Place key={index} {...place} {...user} updateMapCenter={updateMapCenter} />
-//             ))}
-//           </div>
-//           {/* right arrow */}
-//           <button className='hidden relative -top-5 md:block'>
-//             <BiRightArrow className='w-8 h-8 text-accent' />
-//           </button>
-//         </div>
-//       </div>
-//     </motion.section>
-//   )
-// }
-
-// export default ContentPageLayout
-
 import React, { useEffect, useState } from 'react'
 import Gmap from '../components/Gmap'
-import { BiRightArrow } from 'react-icons/bi'
+import { TfiLock } from 'react-icons/tfi'
+import { FiCamera } from 'react-icons/fi'
 import Place from '../components/Place'
-import { motion } from 'framer-motion'
-import { useDispatch, useSelector } from 'react-redux'
-import { getAllPlaces } from '../features/places/PlacesThunks'
 import Heading from '../components/Heading'
 import FlexContainer from '../components/FlexContainer'
+import classnames from 'classnames'
+import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from 'react-icons/bs'
 
-const ContentPageLayout = ({ title, data }) => {
+const ContentPageLayout = ({
+  title,
+  data,
+  isPublic,
+  isFollowedByCurrentUser,
+  handleGetNextPage,
+  handleGetPrevPage,
+}) => {
   const [coordinates, setCoordinates] = useState(null)
 
+  const renderPageContent = () => {
+    if (!isPublic && !isFollowedByCurrentUser) return <LockedProfile />
+    if (!data.length) return <NoContent />
+    return (
+      <Content
+        updateCoordinates={setCoordinates}
+        data={data}
+        title={title}
+        handleGetPrevPage={handleGetPrevPage}
+        handleGetNextPage={handleGetNextPage}
+      />
+    )
+  }
+
   return (
-    <FlexContainer col className='gap-0 h-full bg-off-white text-dark-gray'>
+    <FlexContainer col className='h-full bg-off-white text-dark-gray'>
       <div className='h-96'>
         <Gmap coordinates={coordinates} />
       </div>
 
-      <FlexContainer col className=''>
-        {/* title */}
-        <Heading h3>{title}</Heading>
-
-        {/* container to wrap arrows and all places */}
-        <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
-          {/* left arrow */}
-          {/* <button className='hidden relative -top-5 md:block'>
-    <BiRightArrow className='w-8 h-8 text-accent rotate-180' />
-  </button> */}
-
-          {/* places content container */}
-          <div className='flex gap-4 overflow-scroll'>
-            {data.map((place, index) => (
-              <Place key={index} {...place} updateCoordinates={setCoordinates} />
-            ))}
-          </div>
-          {/* right arrow */}
-          {/* <button className='hidden relative -top-5 md:block'>
-    <BiRightArrow className='w-8 h-8 text-accent' />
-  </button> */}
-        </div>
-      </FlexContainer>
+      {renderPageContent()}
     </FlexContainer>
   )
 }
 
 export default ContentPageLayout
+
+const Content = ({ title, data, updateCoordinates, handleGetPrevPage, handleGetNextPage }) => {
+  const contentCenterDivClasses = classnames('gap-4 overflow-x-auto')
+
+  return (
+    <FlexContainer col className='p-4 pb-0'>
+      {/* title */}
+      <Heading h4 className='ml-12'>
+        {title}
+      </Heading>
+
+      {/* container to wrap arrows and all places */}
+      <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
+        {/* left arrow */}
+        <button className=' relative -top-5 ' onClick={handleGetPrevPage}>
+          <BsFillArrowLeftCircleFill className='w-6 h-6 text-accent ' />
+        </button>
+
+        {/* places content container */}
+        <FlexContainer className={contentCenterDivClasses}>
+          {data.map((place, index) => (
+            <Place key={index} {...place} updateCoordinates={updateCoordinates} />
+          ))}
+        </FlexContainer>
+        {/* right arrow */}
+        <button className=' relative -top-5 ' onClick={handleGetNextPage}>
+          <BsFillArrowRightCircleFill className='w-6 h-6 text-accent' />
+        </button>
+      </div>
+    </FlexContainer>
+  )
+}
+
+const LockedProfile = () => {
+  return (
+    <FlexContainer center gap className='flex-1'>
+      <div className='border border-black p-2 rounded-full'>
+        <TfiLock />
+      </div>
+      <div className='leading-3'>
+        <Heading h6 bold>
+          this account is private
+        </Heading>
+        <p>Follow this account to see their posts.</p>
+      </div>
+    </FlexContainer>
+  )
+}
+
+const NoContent = () => {
+  return (
+    <FlexContainer col center gap className='flex-1'>
+      <div className='border-2 border-black p-2 rounded-full'>
+        <FiCamera size={30} />
+      </div>
+      <Heading h4>No posts yet</Heading>
+    </FlexContainer>
+  )
+}

@@ -17,6 +17,8 @@ import customFetch from '../utils/axios/customFetch'
 import { getLocalStorage } from '../utils/localStorage/localStorage'
 import { renderLargeImage } from '../utils/rendeImage'
 
+const limit = 6
+
 const initialState = {
   followers: [],
   following: [],
@@ -34,7 +36,30 @@ const Person = () => {
   const [followModal, setFollowModal] = useState(false)
   const [selectedTab, setSelectedTab] = useState(null)
 
-  const { firstName, lastName, email, aboutMe, image, imageId, status, followers, following } = currentUser || {}
+  const [currentPage, setCurrentPage] = useState(0)
+
+  const handleGetPrevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1)
+  }
+
+  const handleGetNextPage = () => {
+    setCurrentPage(currentPage + 1)
+  }
+
+  const {
+    firstName,
+    lastName,
+    email,
+    aboutMe,
+    image,
+    imageId,
+    status,
+    followers,
+    following,
+    isPublic,
+    isFollowedByCurrentUser,
+    places,
+  } = currentUser || {}
 
   const closeLoginModal = () => setLoginModal(false)
   const closeFollowModal = () => setFollowModal(false)
@@ -89,8 +114,16 @@ const Person = () => {
 
   useEffect(() => {
     user ? dispatch(getUserInfoForSignedInUsers(userId)) : dispatch(getUserInfo(userId))
-    dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
   }, [userId])
+
+  useEffect(() => {
+    if (!placesByCurrentUser.length && currentPage > 0) setCurrentPage(currentPage - 1)
+  }, [placesByCurrentUser])
+
+  useEffect(() => {
+    if (isFollowedByCurrentUser || isPublic)
+      dispatch(getUserPlaces({ userId, signedInUser: user?.id, currentPage, limit }))
+  }, [currentUser, currentPage])
 
   useEffect(() => {
     if (!isLoading) setLoginModal(false)
@@ -132,7 +165,8 @@ const Person = () => {
           <Heading offWhite h6>
             places added
           </Heading>
-          <span className='text-8xl text-off-white'>{placesByCurrentUser.length}</span>
+          {/* <span className='text-8xl text-off-white'>{placesByCurrentUser.length}</span> */}
+          <span className='text-8xl text-off-white'>{places}</span>
         </FlexContainer>
 
         {renderFollowButton()}
@@ -140,7 +174,14 @@ const Person = () => {
 
       {/* right side google map */}
 
-      <ContentPageLayout title={'places added by ' + firstName} data={placesByCurrentUser} />
+      <ContentPageLayout
+        title={'places added by ' + firstName}
+        data={placesByCurrentUser}
+        isPublic={isPublic}
+        isFollowedByCurrentUser={isFollowedByCurrentUser}
+        handleGetPrevPage={handleGetPrevPage}
+        handleGetNextPage={handleGetNextPage}
+      />
 
       {/* login modal */}
       {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}

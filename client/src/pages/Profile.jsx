@@ -14,12 +14,15 @@ import { getUserInfo, updateUser } from '../features/user/userThunk'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import EmptyPageLayout from '../components/EmptyPageLayout'
 
+const limit = 6
+
 const initialState = {
   firstName: '',
   lastName: '',
   aboutMe: '',
   email: '',
   tags: [],
+  isPublic: false,
   image: null,
 }
 
@@ -28,20 +31,33 @@ const Profile = () => {
   const { user, isLoading, currentUser } = useSelector(store => store.user)
   const { placesByCurrentUser } = useSelector(store => store.places)
 
-  const { firstName, lastName, email, aboutMe, image, imageId } = currentUser || {}
+  const { firstName, lastName, email, aboutMe, image, imageId, isPublic } = currentUser || {}
 
   const [selectedImage, setSelectedImage] = useState('')
   const [coordinates, setCoordinates] = useState(null)
+  const [currentPage, setCurrentPage] = useState(0)
   const [values, setValues] = useState(initialState)
   const { id: userId } = user || {}
 
+  const handleGetPrevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1)
+  }
+
+  const handleGetNextPage = () => {
+    setCurrentPage(currentPage + 1)
+  }
+
   const onChangeHandler = e => {
-    const { name, value, files } = e.target
+    const { name, value, files, checked } = e.target
 
     if (name === 'image') {
       const image = files[0]
       setSelectedImage(URL.createObjectURL(image))
       return setValues({ ...values, image })
+    }
+
+    if (name === 'isPublic') {
+      return setValues({ ...values, isPublic: checked })
     }
 
     setValues({ ...values, [name]: value })
@@ -84,12 +100,12 @@ const Profile = () => {
   useEffect(() => {
     if (!userId) return
     dispatch(getUserInfo(userId))
-    dispatch(getUserPlaces({ userId, signedInUser: user?.id }))
+    dispatch(getUserPlaces({ userId, signedInUser: user?.id, currentPage, limit }))
   }, [userId])
 
   useEffect(() => {
     if (currentUser) {
-      setValues({ ...values, firstName, lastName, email, aboutMe })
+      setValues({ ...values, firstName, lastName, email, aboutMe, isPublic })
       setSelectedImage(image)
     }
   }, [currentUser])
@@ -107,6 +123,20 @@ const Profile = () => {
 
           {renderProfileInputs}
 
+          <FlexContainer gap>
+            <input
+              type='checkbox'
+              name='isPublic'
+              id='isPublic'
+              className='hover:cursor-pointer'
+              checked={values.isPublic}
+              onChange={onChangeHandler}
+            />
+            <label htmlFor='isPublic' className='hover:cursor-pointer'>
+              Make account public
+            </label>
+          </FlexContainer>
+
           {/* <Tags tags={values.tags} updateTags={updateTags} /> */}
 
           <AccentButton small full primary isLoading={isLoading}>
@@ -117,7 +147,14 @@ const Profile = () => {
 
       {/* right side google map */}
 
-      <ContentPageLayout title={'places added by you'} data={placesByCurrentUser} />
+      <ContentPageLayout
+        title='places added by you'
+        data={placesByCurrentUser}
+        isPublic={true}
+        isFollowedByCurrentUser={true}
+        handleGetPrevPage={handleGetPrevPage}
+        handleGetNextPage={handleGetNextPage}
+      />
     </section>
   )
 }

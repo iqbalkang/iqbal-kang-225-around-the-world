@@ -14,30 +14,38 @@ export const postPlace = createAsyncThunk('places/postPlace', async (formData, t
   }
 })
 
-export const getAllPlaces = createAsyncThunk('places/getAllPlaces', async (userId, thunkAPI) => {
-  let url = '/places'
+export const getAllPlaces = createAsyncThunk(
+  'places/getAllPlaces',
+  async ({ userId, currentPage, limit }, thunkAPI) => {
+    let url
 
-  if (userId) url = `${url}?user=${userId}`
+    if (!userId) url = `/places?page=${currentPage}&limit=${limit}`
+    if (userId) url = `/places?user=${userId}&page=${currentPage}&limit=${limit}`
 
-  try {
-    const { data } = await customFetch.get(url)
-    return data
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    try {
+      const { data } = await customFetch.get(url)
+      return data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message)
+    }
   }
-})
+)
 
-export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async ({ userId, signedInUser }, thunkAPI) => {
-  let url = `/places/user-places/${userId}`
-  if (signedInUser) url = `${url}?signedInUser=${signedInUser}`
+export const getUserPlaces = createAsyncThunk(
+  'places/getUserPlaces',
+  async ({ userId, signedInUser, currentPage, limit }, thunkAPI) => {
+    let url = '/places/user-places/'
+    if (!signedInUser) url = url + `${userId}?page=${currentPage}&limit=${limit}`
+    if (signedInUser) url = url + `${userId}?signedInUser=${signedInUser}&page=${currentPage}&limit=${limit}`
 
-  try {
-    const { data } = await customFetch.get(url)
-    return data
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    try {
+      const { data } = await customFetch.get(url)
+      return data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message)
+    }
   }
-})
+)
 
 export const toggleLikedPlace = createAsyncThunk('places/toggleLikedPlace', async (placeId, thunkAPI) => {
   try {
@@ -52,18 +60,21 @@ export const toggleLikedPlace = createAsyncThunk('places/toggleLikedPlace', asyn
   }
 })
 
-export const getUserFavorites = createAsyncThunk('places/getUserFavorites', async (_, thunkAPI) => {
-  try {
-    const { data } = await customFetch.get(`/places/favorites`, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    })
-    return data
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+export const getUserFavorites = createAsyncThunk(
+  'places/getUserFavorites',
+  async ({ currentPage, limit }, thunkAPI) => {
+    try {
+      const { data } = await customFetch.get(`/places/favorites?page=${currentPage}&limit=${limit}`, {
+        headers: {
+          authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+        },
+      })
+      return data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message)
+    }
   }
-})
+)
 
 export const getSinglePlace = createAsyncThunk('places/getSinglePlace', async ({ userId, placeId }, thunkAPI) => {
   let url = `places/${placeId}`

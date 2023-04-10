@@ -3,24 +3,15 @@ import FlexContainer from './FlexContainer'
 import { renderSmallImage } from '../utils/rendeImage'
 import AccentButton from './AccentButton'
 import { useDispatch, useSelector } from 'react-redux'
-import { getLocalStorage } from '../utils/localStorage/localStorage'
-import customFetch from '../utils/axios/customFetch'
-import { toast } from 'react-toastify'
-import { getUserInfoForSignedInUsers } from '../features/user/userThunk'
-import {
-  sendFollowRequest,
-  sendFollowRequestFromModal,
-  sendFollowRequestFromSinglePlace,
-} from '../features/followers/followersThunks'
+import { sendFollowRequest, sendFollowRequestFromSinglePlace } from '../features/followers/followersThunks'
 import LoginModal from './LoginModal'
-import { getSinglePlace } from '../features/places/PlacesThunks'
+import { Link } from 'react-router-dom'
 
-const FollowingContainer = ({ id, firstName, lastName, image, status, singlePage, placeId }) => {
+const FollowingContainer = ({ id, firstName, lastName, image, status, singlePage, placeId, closeModal }) => {
   const dispatch = useDispatch()
 
   const [loginModal, setLoginModal] = useState(false)
   const { user, currentUser, isLoading } = useSelector(store => store.user)
-  const { isLoading: isFollowInfoLoading } = useSelector(store => store.followers)
   const { id: signedInUserId } = user || {}
 
   const handleFollowRequestClick = async () => {
@@ -52,6 +43,7 @@ const FollowingContainer = ({ id, firstName, lastName, image, status, singlePage
       )
   }
 
+  const closeFollowModal = () => closeModal()
   const closeLoginModal = () => setLoginModal(false)
 
   useEffect(() => {
@@ -63,9 +55,9 @@ const FollowingContainer = ({ id, firstName, lastName, image, status, singlePage
       <div className='h-10 w-10 overflow-hidden rounded-full border border-dark-gray'>
         {renderSmallImage(image, firstName, lastName)}
       </div>
-      <p className='mr-auto capitalize font-semibold text-sm'>
+      <Link to={'/people/' + id} className='mr-auto capitalize font-semibold text-sm' onClick={closeFollowModal}>
         {firstName} {lastName}
-      </p>
+      </Link>
       {renderFollowButton()}
 
       {/* login modal */}

@@ -17,10 +17,10 @@ import CountryWithRating from './CountryWithRating'
 import CustomDescriptionLink from './CustomDescriptionLink'
 import Image from './Image'
 
-const shortenDescription = description => {
-  if (!description) return
-  if (description.length > 350) return description.slice(0, 350) + '...'
-  return description
+const shortenText = (text, length) => {
+  if (!text) return
+  if (text.length > length) return text.slice(0, length) + '...'
+  return text
 }
 
 const Place = ({
@@ -53,7 +53,7 @@ const Place = ({
   const handleGetCoordinates = () => updateCoordinates({ lat, lng })
 
   const imageContainerClasses =
-    'relative w-48 h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
+    'relative w-36 h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
   const overlayClasses = 'absolute inset-0 bg-black/30 group-hover:bg-black/70 duration-200'
   const searchButtonClasses =
     'hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:block z-10'
@@ -77,7 +77,7 @@ const Place = ({
   return (
     <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
       {/* container for photo and place description */}
-      <div className='flex gap-2 h-72'>
+      <div className='flex gap-2 h-52'>
         {/* container for place image, favorite & search */}
         <div className={imageContainerClasses}>
           <Image src={image} alt={title} />
@@ -103,7 +103,9 @@ const Place = ({
       </div>
       {/* container for place info */}
       <FlexContainer col className='gap-0'>
-        <Heading h6>{title}</Heading>
+        <p className='font-semibold capitalize' title={title}>
+          {shortenText(title, 16)}
+        </p>
         <CountryWithRating rating={rating} country={country} className='text-sm' />
       </FlexContainer>
 
@@ -121,8 +123,10 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
   return (
     <div className={containerBaseClasses + containerExtraClasses}>
       <FlexContainer col className='h-full w-[400px] text-sm'>
-        <Heading h5>about taj mahal</Heading>
-        <p className='flex-1'>{shortenDescription(description)}</p>
+        <Heading offWhite h6>
+          about {title}
+        </Heading>
+        <p className='flex-1'>{shortenText(description, 300)}</p>
         <FlexContainer justifyBetween>
           <CustomDescriptionLink text='added by' value={value} to={'/people/' + toUser} />
           <CustomDescriptionLink text='take me to' value={title} to={'/places/' + toPlace} />
