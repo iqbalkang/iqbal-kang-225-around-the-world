@@ -54,9 +54,9 @@ export const getUserInfoForSignedInUsers = createAsyncThunk('user/getUserInfo', 
   }
 })
 
-export const getAllUsers = createAsyncThunk('user/getAllUsers', async (_, thunkAPI) => {
+export const getAllUsers = createAsyncThunk('user/getAllUsers', async ({ currentPage, limit }, thunkAPI) => {
   try {
-    const { data } = await customFetch.get('/authentication/all-users')
+    const { data } = await customFetch.get(`/authentication/all-users?page=${currentPage}&limit=${limit}`)
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)

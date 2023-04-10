@@ -51,6 +51,23 @@ const FormRow = ({
     )
   }
 
+  if (type === 'checkbox') {
+    return (
+      <FlexContainer className={flexClasses}>
+        <textarea
+          className={inputClasses}
+          name={label}
+          id={label}
+          onChange={onChange}
+          value={value}
+          placeholder={placeholder}
+          rows={4}
+        />
+        <Label label={label}>{labelText || label}</Label>
+      </FlexContainer>
+    )
+  }
+
   return (
     <FlexContainer col className={flexClasses}>
       <input

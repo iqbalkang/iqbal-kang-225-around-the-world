@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'
 import Modal from './Modal'
 import FlexContainer from './FlexContainer'
 import FollowingContainer from './FollowingContainer'
+import Heading from './Heading'
+import { HiOutlineUsers } from 'react-icons/hi2'
 
 const FollowModal = ({ closeModal, followInfo, selectedTab, updateTab }) => {
   const { followers, following } = followInfo
@@ -9,9 +11,17 @@ const FollowModal = ({ closeModal, followInfo, selectedTab, updateTab }) => {
   const followersRef = useRef()
   const followingRef = useRef()
 
-  const renderFollowers = () => followers.map((follower, index) => <FollowingContainer key={index} {...follower} />)
+  const renderFollowers = () => {
+    if (!followers.length) return <NoUsers text='No followers' />
+    return followers.map((follower, index) => <FollowingContainer key={index} {...follower} closeModal={closeModal} />)
+  }
 
-  const renderFollowing = () => following.map((following, index) => <FollowingContainer key={index} {...following} />)
+  const renderFollowing = () => {
+    if (!following.length) return <NoUsers text='Not follwoing anyone' />
+    return following.map((following, index) => (
+      <FollowingContainer key={index} {...following} closeModal={closeModal} />
+    ))
+  }
 
   const renderOutput = selectedTab === 'followers' ? renderFollowers() : renderFollowing()
 
@@ -34,7 +44,7 @@ const FollowModal = ({ closeModal, followInfo, selectedTab, updateTab }) => {
   }, [])
 
   return (
-    <Modal closeModal={closeModal} className='w-[350px]'>
+    <Modal closeModal={closeModal} className='w-[350px] min-h-[300px] max-h-[500px] overflow-y-scroll flex flex-col'>
       <FlexContainer center className='gap-6'>
         <button className='capitalize' ref={followersRef} onClick={handleFollowersClick}>
           followers
@@ -50,3 +60,12 @@ const FollowModal = ({ closeModal, followInfo, selectedTab, updateTab }) => {
 }
 
 export default FollowModal
+
+const NoUsers = ({ text }) => {
+  return (
+    <FlexContainer col center className='flex-1'>
+      <HiOutlineUsers size={30} />
+      <Heading h6> {text} </Heading>
+    </FlexContainer>
+  )
+}

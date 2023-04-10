@@ -11,12 +11,11 @@ import CountryWithRating from '../components/CountryWithRating'
 import CustomDescriptionLink from '../components/CustomDescriptionLink'
 import Image from '../components/Image'
 import WebsiteContainer from '../components/WebsiteContainer'
-import { render } from 'react-dom'
 import { useState } from 'react'
 import LoginModal from '../components/LoginModal'
+import Gmap from '../components/Gmap'
 
 import Comments from '../components/Comments'
-import { renderSmallImage } from '../utils/rendeImage'
 import FollowingContainer from '../components/FollowingContainer'
 
 const SinglePage = () => {
@@ -43,6 +42,8 @@ const SinglePage = () => {
     image,
     isFavorite,
     addedBy,
+    lat,
+    lng,
     userId: addedByUserId,
   } = singlePlace || {}
 
@@ -130,6 +131,11 @@ const SinglePage = () => {
           {/* comments */}
           <Comments ref={commentsRef} />
         </WebsiteContainer>
+
+        {/* google map */}
+        <div className='h-[500px] pt-8'>
+          <Gmap coordinates={{ lat, lng }} />
+        </div>
       </div>
 
       {/* login modal */}

@@ -7,9 +7,9 @@ const postReply = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
   const { commentId, reply } = req.body
 
-  // const tags = reply.match(/[^(]+(?=\))/g)
+  const tags = reply.match(/[^(]+(?=\))/g)
 
-  // console.log(reply)
+  console.log(reply)
 
   if (!commentId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
   if (!reply) return next(new AppError('please enter a comment', StatusCodes.BAD_REQUEST))

@@ -155,7 +155,7 @@ const FollowAlert = ({ image, firstName, lastName, alertFrom, onClick }) => {
         <Link to={'/people/' + alertFrom} className='mr-1'>
           {firstName} {lastName}
         </Link>
-        has requested to follow you
+        requested to follow you
       </p>
       <Button responseButton onClick={onClick.bind(null, alertFrom, 'accepted')}>
         <AiOutlineCheckCircle />
@@ -178,7 +178,7 @@ const PostAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) 
           {firstName} {lastName}
         </Link>
         <Link to={'places/' + placeId} onClick={onClick.bind(null, placeId)}>
-          has added a new post
+          added a new post
         </Link>
       </p>
     </FlexContainer>
@@ -196,7 +196,7 @@ const TagAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) =
           {firstName} {lastName}
         </Link>
         <Link to={'places/' + placeId} onClick={onClick.bind(null, placeId)}>
-          has tagged you in a comment
+          tagged you in a comment
         </Link>
       </p>
     </FlexContainer>

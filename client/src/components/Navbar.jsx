@@ -21,7 +21,7 @@ const Navbar = () => {
     return navigate('/people')
   }
 
-  const listItems = navListItems.map(item => <ListItem key={item} item={item} />)
+  const listItems = navListItems.map(item => <ListItem key={item} item={item} className='hov' />)
 
   return (
     <div className='bg-accent'>
@@ -29,7 +29,7 @@ const Navbar = () => {
 
       <WebsiteContainer>
         <nav>
-          <ul className='flex-container-between capitalize'>
+          <ul className='flex items-center justify-between capitalize py-1'>
             {/* logo */}
             <Link to='/'>
               <Image src={logo} alt='around the world logo' />
@@ -58,7 +58,7 @@ const ListItem = ({ item }) => {
   const linkURL = item === 'places' ? '' : item
   return (
     <li>
-      <NavLink to={'/' + linkURL} end={true} className={({ isActive }) => (isActive ? ` active` : '')}>
+      <NavLink to={'/' + linkURL} end={true} className={({ isActive }) => (isActive ? `hov active` : 'hov')}>
         {item}
       </NavLink>
     </li>

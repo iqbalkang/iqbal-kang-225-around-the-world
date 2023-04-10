@@ -34,11 +34,14 @@ class Place {
     return data.rows[0]
   }
 
-  static async find() {
-    const dbQuery = `SELECT places.*, first_name 
-                     FROM places
-                     JOIN users 
-                     ON places.user_id = users.id
+  static async find(skip, limit) {
+    const dbQuery = `
+                      SELECT places.*, first_name
+                      FROM places
+                      JOIN users 
+                      ON places.user_id = users.id
+                      WHERE users.is_public = true
+                      OFFSET ${skip} LIMIT ${limit}
                     `
 
     const data = await db.query(dbQuery)
@@ -94,33 +97,52 @@ class Place {
     return data.rows
   }
 
-  static async findAllPlacesByUserId(userId) {
-    const dbQuery = `SELECT places.*, first_name,
-                     CASE
-                        WHEN likes.user_id = '${userId}' then true
-                        ELSE false
-                        END AS is_favorite
-                     FROM places
-                     LEFT JOIN users 
-                     ON places.user_id = users.id
-                     LEFT JOIN likes 
-                     ON places.id = likes.place_id AND likes.user_id = '${userId}'`
+  static async findAllPlacesByUserId(userId, skip, limit) {
+    const dbQuery = `(
+                      SELECT places.*, first_name,
+                        CASE
+                          WHEN likes.user_id = ${userId} then true
+                          ELSE false
+                          END AS is_favorite
+                      FROM places
+                      LEFT JOIN users 
+                      ON places.user_id = users.id
+                      LEFT JOIN likes 
+                      ON places.id = likes.place_id AND likes.user_id = ${userId}
+                      WHERE places.user_id = ${userId} OR users.is_public = true
+                     )
+                      UNION
+                     (
+                      SELECT places.*, first_name,
+                        CASE
+                          WHEN likes.user_id = ${userId} then true
+                          ELSE false
+                          END AS is_favorite
+                      FROM places
+                      JOIN users 
+                      ON places.user_id = users.id
+                      LEFT JOIN likes 
+                      ON places.id = likes.place_id AND likes.user_id = ${userId}
+                      JOIN followers 
+                      ON followers.following_id = users.id And followers.follower_id = ${userId} AND status = 'accepted'
+                     ) OFFSET ${skip} LIMIT ${limit}`
 
     const data = await db.query(dbQuery)
     return data.rows
   }
 
-  static async findUserPlacesByUserId(userId) {
+  static async findUserPlacesByUserId(userId, skip, limit) {
     const dbQuery = `SELECT places.*, first_name                    
                      FROM places                     
                      LEFT JOIN users ON users.id = places.user_id
-                     WHERE users.id = ${userId}`
+                     WHERE users.id = ${userId}
+                     OFFSET ${skip} LIMIT ${limit} `
 
     const data = await db.query(dbQuery)
     return data.rows
   }
 
-  static async findUserPlacesByUserIdAndSignedInUser(userId, signedInUser) {
+  static async findUserPlacesByUserIdAndSignedInUser(userId, signedInUser, skip, limit) {
     const dbQuery = `SELECT places.*, first_name,
                      CASE
                          WHEN likes.user_id = ${signedInUser} THEN true
@@ -129,7 +151,8 @@ class Place {
                      FROM places
                      LEFT JOIN likes ON likes.place_id = places.id AND likes.user_id = ${signedInUser}
                      LEFT JOIN users ON users.id = places.user_id
-                     WHERE users.id = ${userId}`
+                     WHERE users.id = ${userId}
+                     OFFSET ${skip} LIMIT ${limit} `
 
     const data = await db.query(dbQuery)
     return data.rows
@@ -160,7 +183,7 @@ class Place {
     return data.rows
   }
 
-  static async findUserFavorites(userId) {
+  static async findUserFavorites(userId, skip, limit) {
     const dbQuery = `SELECT places.*,first_name,
                      CASE
                         WHEN likes.user_id = '${userId}' then true
@@ -170,7 +193,8 @@ class Place {
                      LEFT JOIN users 
                      ON places.user_id = users.id
                      INNER JOIN likes 
-                     ON places.id = likes.place_id AND likes.user_id = '${userId}'`
+                     ON places.id = likes.place_id AND likes.user_id = '${userId}'
+                     OFFSET ${skip} LIMIT ${limit} `
 
     const data = await db.query(dbQuery)
     return data.rows
