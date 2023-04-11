@@ -162,6 +162,33 @@ const getSinglePlace = asyncHandler(async (req, res, next) => {
   })
 })
 
+const getSimilarPlacesForSignedInUsers = asyncHandler(async (req, res, next) => {
+  const { placeId } = req.params
+  const { id: userId } = req.user
+
+  if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  const places = await Place.findSimilarForSignedInUsers(placeId, userId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    places: formatPlaces(places),
+  })
+})
+
+const getSimilarPlaces = asyncHandler(async (req, res, next) => {
+  const { placeId } = req.params
+
+  if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  const places = await Place.findSimilarPlaces(placeId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    places: formatPlaces(places),
+  })
+})
+
 module.exports = {
   postPlace,
   getAllPlaces,
@@ -169,4 +196,6 @@ module.exports = {
   getUserFavorites,
   getSinglePlace,
   getUserPlaces,
+  getSimilarPlacesForSignedInUsers,
+  getSimilarPlaces,
 }

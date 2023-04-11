@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Gmap from '../components/Gmap'
 import { TfiLock } from 'react-icons/tfi'
 import { FiCamera } from 'react-icons/fi'
-import Place from '../components/Place'
 import Heading from '../components/Heading'
 import FlexContainer from '../components/FlexContainer'
-import classnames from 'classnames'
-import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from 'react-icons/bs'
+import Content from './Content'
 
 const ContentPageLayout = ({
   title,
@@ -44,38 +42,6 @@ const ContentPageLayout = ({
 }
 
 export default ContentPageLayout
-
-const Content = ({ title, data, updateCoordinates, handleGetPrevPage, handleGetNextPage }) => {
-  const contentCenterDivClasses = classnames('gap-4 overflow-x-auto')
-
-  return (
-    <FlexContainer col className='p-4 pb-0'>
-      {/* title */}
-      <Heading h4 className='ml-12'>
-        {title}
-      </Heading>
-
-      {/* container to wrap arrows and all places */}
-      <div className='grid gap-4 grid-cols-[min-content,1fr,min-content] flex-1 items-center'>
-        {/* left arrow */}
-        <button className=' relative -top-5 ' onClick={handleGetPrevPage}>
-          <BsFillArrowLeftCircleFill className='w-6 h-6 text-accent ' />
-        </button>
-
-        {/* places content container */}
-        <FlexContainer className={contentCenterDivClasses}>
-          {data.map((place, index) => (
-            <Place key={index} {...place} updateCoordinates={updateCoordinates} />
-          ))}
-        </FlexContainer>
-        {/* right arrow */}
-        <button className=' relative -top-5 ' onClick={handleGetNextPage}>
-          <BsFillArrowRightCircleFill className='w-6 h-6 text-accent' />
-        </button>
-      </div>
-    </FlexContainer>
-  )
-}
 
 const LockedProfile = () => {
   return (

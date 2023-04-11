@@ -9,6 +9,8 @@ const {
   toggleLikedPlace,
   deleteUserFavorite,
   postPlace,
+  getSimilarPlaces,
+  getSimilarPlacesForSignedInUsers,
 } = require('../controllers/placesController')
 const isAuthenticated = require('../middlewares/isAuthenticated')
 const uploadImage = require('../middlewares/upload')
@@ -20,6 +22,8 @@ router.get('/favorites', isAuthenticated, getUserFavorites)
 router.get('/', getAllPlaces)
 router.get('/user-places/:userId', getUserPlaces)
 router.get('/:placeId', getSinglePlace)
+router.get('/auth/similar/:placeId', isAuthenticated, getSimilarPlacesForSignedInUsers)
+router.get('/similar/:placeId', getSimilarPlaces)
 
 router.post('/', isAuthenticated, uploadImage.single('image'), postPlace)
 router.post('/like/:placeId', isAuthenticated, toggleLikedPlace)

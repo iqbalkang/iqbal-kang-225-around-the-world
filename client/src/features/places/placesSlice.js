@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {
   getAllPlaces,
+  getSimilarPlaces,
   getSinglePlace,
   getUserFavorite,
   getUserFavorites,
@@ -15,6 +16,7 @@ const initialState = {
   places: [],
   placesByCurrentUser: [],
   currentUserFavorites: [],
+  similarPlaces: [],
   singlePlace: null,
   isLoading: false,
 }
@@ -122,41 +124,19 @@ const placesSlice = createSlice({
         toast.error(payload)
       })
 
-    // add favorite place
-    // .addCase(postUserFavorite.pending, state => {
-    //   state.isLoading = true
-    // })
-    // .addCase(postUserFavorite.fulfilled, (state, { payload: { favPlace, favoritePlaces } }) => {
-    //   console.log(favoritePlaces)
-    //   state.isLoading = false
-    //   const updatedFavPlaceIndex = state.placesByCurrentUser.findIndex(place => place._id === favPlace.placeID)
-
-    //   // if(updatedFavPlaceIndex === -1) {
-
-    //   // }
-    //   state.placesByCurrentUser[updatedFavPlaceIndex].isFavorite = !state.placesByCurrentUser[updatedFavPlaceIndex].isFavorite
-    // })
-    // .addCase(postUserFavorite.rejected, (state, { payload }) => {
-    //   state.isLoading = false
-    //   console.log(payload)
-    // })
-
-    // delete favorite place
-    // .addCase(deleteUserFavorite.pending, state => {
-    //   state.isLoading = true
-    // })
-    // .addCase(deleteUserFavorite.fulfilled, (state, { payload: { deletedPlace } }) => {
-    //   state.isLoading = false
-    //   const updatedFavPlaceIndex = state.placesByCurrentUser.findIndex(place => place._id === deletedPlace.placeID)
-    //   console.log(updatedFavPlaceIndex)
-    //   state.placesByCurrentUser[updatedFavPlaceIndex].isFavorite = !state.placesByCurrentUser[updatedFavPlaceIndex].isFavorite
-    // })
-    // .addCase(deleteUserFavorite.rejected, (state, { payload }) => {
-    //   state.isLoading = false
-    //   console.log(payload)
-    // })
-
-    // get favorite places
+      // get similar places
+      .addCase(getSimilarPlaces.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(getSimilarPlaces.fulfilled, (state, { payload }) => {
+        const { places } = payload
+        state.isLoading = false
+        state.similarPlaces = places
+      })
+      .addCase(getSimilarPlaces.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
   },
 })
 

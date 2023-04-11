@@ -200,12 +200,46 @@ class Place {
     return data.rows
   }
 
-  // static async find() {
-  //   const dbQuery = `SELECT * FROM places`
+  static async findSimilarForSignedInUsers(placeId, userId) {
+    const dbQuery = `SELECT places.*, first_name,
+                        CASE
+                            WHEN likes.user_id = ${userId} then true
+                            ELSE false
+                            END AS is_favorite
+                      FROM places
+                      JOIN tags ON tags.place_id = places.id
+                      JOIN users ON places.user_id = users.id
+                      LEFT JOIN likes ON likes.place_id = places.id AND likes.user_id = ${userId}
+                      WHERE places.id != ${placeId} AND users.is_public = true AND tag IN 
+                            (
+                              SELECT tag FROM places 
+                              JOIN tags ON tags.place_id = places.id
+                              WHERE tags.place_id = ${placeId}
+                            )
+                      GROUP BY places.id, first_name, likes.user_id
+                      LIMIT 8 `
 
-  //   const data = await db.query(dbQuery)
-  //   return data.rows
-  // }
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
+
+  static async findSimilarPlaces(placeId) {
+    const dbQuery = `SELECT places.*, first_name
+                      FROM places
+                      JOIN tags ON tags.place_id = places.id
+                      JOIN users ON places.user_id = users.id
+                      WHERE places.id != ${placeId} AND users.is_public = true AND tag IN 
+                            (
+                              SELECT tag FROM places 
+                              JOIN tags ON tags.place_id = places.id
+                              WHERE tags.place_id = ${placeId}
+                            )
+                      GROUP BY places.id, first_name
+                      LIMIT 8 `
+
+    const data = await db.query(dbQuery)
+    return data.rows
+  }
 }
 
 module.exports = Place

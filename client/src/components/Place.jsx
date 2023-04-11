@@ -1,16 +1,13 @@
 import React, { useEffect } from 'react'
 import { BiSearch } from 'react-icons/bi'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
-import taj from '../images/taj.jpg'
 
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteUserFavorite, postUserFavorite, toggleLikedPlace } from '../features/places/PlacesThunks'
+import { toggleLikedPlace } from '../features/places/PlacesThunks'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
-import LoginForm from '../components/LoginForm'
-import { loginUser } from '../features/user/userThunk'
-import Modal from '../components/Modal'
+
 import LoginModal from './LoginModal'
 import RoundButton from './RoundButton'
 import CountryWithRating from './CountryWithRating'
@@ -40,7 +37,7 @@ const Place = ({
   const dispatch = useDispatch()
   const { isLoading, user } = useSelector(store => store.user)
 
-  const [isDescVisible, setIsDescVisible] = useState(true)
+  const [isDescVisible, setIsDescVisible] = useState(false)
   const [loginModal, setLoginModal] = useState(false)
 
   const toggleDescription = () => setIsDescVisible(prevState => !prevState)
@@ -50,7 +47,9 @@ const Place = ({
     dispatch(toggleLikedPlace(placeId))
   }
 
-  const handleGetCoordinates = () => updateCoordinates({ lat, lng })
+  const handleGetCoordinates = () => {
+    if (updateCoordinates) updateCoordinates({ lat, lng })
+  }
 
   const imageContainerClasses =
     'relative w-36 h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
@@ -73,6 +72,10 @@ const Place = ({
   useEffect(() => {
     if (!isLoading) setLoginModal(false)
   }, [isLoading])
+
+  useEffect(() => {
+    setIsDescVisible(false)
+  }, [title])
 
   return (
     <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
@@ -119,7 +122,8 @@ export default Place
 const Description = ({ description, isDescVisible, title, toPlace, toUser, value }) => {
   const containerBaseClasses =
     'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
-  const containerExtraClasses = isDescVisible ? ' scale-x-0 w-0 h-60' : ' scale-x-100 p-6'
+  const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0 h-60'
+
   return (
     <div className={containerBaseClasses + containerExtraClasses}>
       <FlexContainer col className='h-full w-[400px] text-sm'>
