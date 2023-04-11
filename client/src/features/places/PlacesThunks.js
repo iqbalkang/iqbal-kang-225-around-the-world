@@ -88,31 +88,31 @@ export const getSinglePlace = createAsyncThunk('places/getSinglePlace', async ({
   }
 })
 
-////////////////////////////////
+export const getSimilarPlacesForSignedInUsers = createAsyncThunk(
+  'places/getSimilarPlaces',
+  async (placeID, thunkAPI) => {
+    let url = '/places/auth/similar/' + placeID
 
-// export const getUserPlaces = createAsyncThunk('places/getUserPlaces', async (userID, thunkAPI) => {
-//   try {
-//     const { data } = await customFetch.get(`/places/${userID}`, {
-//       headers: {
-//         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-//       },
-//     })
-//     return data
-//   } catch (error) {
-//     return thunkAPI.rejectWithValue(error.response.data.message)
-//   }
-// })
+    try {
+      const { data } = await customFetch.get(url, {
+        headers: {
+          authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+        },
+      })
+      return data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message)
+    }
+  }
+)
 
-// export const deleteUserFavorite = createAsyncThunk('places/deleteUserFavorite', async (placeID, thunkAPI) => {
-//   try {
-//     const { data } = await customFetch.delete(`places/${placeID}`, {
-//       headers: {
-//         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-//       },
-//     })
-//     // console.log(data)
-//     return data
-//   } catch (error) {
-//     console.log(error.response)
-//   }
-// })
+export const getSimilarPlaces = createAsyncThunk('places/getSimilarPlaces', async (placeID, thunkAPI) => {
+  let url = '/places/similar/' + placeID
+
+  try {
+    const { data } = await customFetch.get(url)
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})

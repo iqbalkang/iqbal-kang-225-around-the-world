@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import FlexContainer from '../components/FlexContainer'
 import Heading from '../components/Heading'
-import { getSinglePlace, toggleLikedPlace } from '../features/places/PlacesThunks'
+import {
+  getSimilarPlaces,
+  getSimilarPlacesForSignedInUsers,
+  getSinglePlace,
+  toggleLikedPlace,
+} from '../features/places/PlacesThunks'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { BiMessageSquare } from 'react-icons/bi'
 import RoundButton from '../components/RoundButton'
@@ -17,6 +22,7 @@ import Gmap from '../components/Gmap'
 
 import Comments from '../components/Comments'
 import FollowingContainer from '../components/FollowingContainer'
+import Place from '../components/Place'
 
 const SinglePage = () => {
   const { placeId } = useParams()
@@ -25,7 +31,7 @@ const SinglePage = () => {
 
   const [loginModal, setLoginModal] = useState(false)
 
-  const { singlePlace } = useSelector(store => store.places)
+  const { singlePlace, similarPlaces } = useSelector(store => store.places)
   const { comments } = useSelector(store => store.comments)
   const { user, isLoading } = useSelector(store => store.user) || {}
   const { id: userId } = user || {}
@@ -49,6 +55,7 @@ const SinglePage = () => {
 
   useEffect(() => {
     dispatch(getSinglePlace({ userId, placeId }))
+    user ? dispatch(getSimilarPlacesForSignedInUsers(placeId)) : dispatch(getSimilarPlaces(placeId))
   }, [isFavorite, placeId])
 
   useEffect(() => {
@@ -108,8 +115,8 @@ const SinglePage = () => {
       </div>
 
       {/* place info */}
-      <div className='py-4'>
-        <WebsiteContainer>
+      <div>
+        <WebsiteContainer className='py-6'>
           {/* plave label with  rating */}
           <FlexContainer alignEnd gap>
             <Heading h2 offWhite>
@@ -132,8 +139,10 @@ const SinglePage = () => {
           <Comments ref={commentsRef} />
         </WebsiteContainer>
 
+        {similarPlaces.length > 0 && <SimilarPlaces similarPlaces={similarPlaces} />}
+
         {/* google map */}
-        <div className='h-[500px] pt-8'>
+        <div className='h-[500px]'>
           <Gmap coordinates={{ lat, lng }} />
         </div>
       </div>
@@ -161,4 +170,18 @@ const ValueWithIcon = ({ children, value, text, onClick }) => {
 
 const Tag = ({ title }) => {
   return <span className='bg-off-white text-accent text-xs rounded-3xl p-1 px-3 capitalize'>{title}</span>
+}
+
+const SimilarPlaces = ({ similarPlaces }) => {
+  console.log('ran')
+  return (
+    <FlexContainer col className='overflow-x-auto bg-off-white text-dark-gray p-6'>
+      <Heading h4>similar places</Heading>
+      <div className='flex gap-4'>
+        {similarPlaces.map((place, index) => (
+          <Place key={index} {...place} />
+        ))}
+      </div>
+    </FlexContainer>
+  )
 }
