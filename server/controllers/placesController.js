@@ -7,6 +7,7 @@ const Follow = require('../models/FollowModel')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
+const cloudinary = require('cloudinary').v2
 const formatPlaces = require('../utils/formatPlaces')
 const formatUser = require('../utils/formatUser')
 
@@ -189,6 +190,79 @@ const getSimilarPlaces = asyncHandler(async (req, res, next) => {
   })
 })
 
+const deletePlace = asyncHandler(async (req, res, next) => {
+  const { placeId } = req.params
+
+  const place = await Place.findByPlaceId(placeId)
+  const tags = await Place.findPlaceTags(placeId)
+
+  if (!place) return next(new AppError('No place was found', StatusCodes.NOT_FOUND))
+
+  const { image_id } = place
+  if (image_id) {
+    const { result } = await cloudinary.uploader.destroy(image_id)
+    if (result !== 'ok') return next(new AppError('Could not delete the image from cloud.', StatusCodes.NOT_MODIFIED))
+  }
+
+  if (tags.length) {
+    tags.map(async tag => await Tag.findByIdAndDelete(placeId))
+  }
+
+  await Place.findByIdAndDelete(placeId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: 'Place deleted successfully',
+  })
+})
+
+const editPlace = asyncHandler(async (req, res, next) => {
+  const image = req.file
+  const { title, description, country, lat, lng, rating, address, tags, id: placeId } = req.body
+  const { id: userId } = req.user
+
+  if (!address || !title || !country || !lat || !lng || !rating)
+    return next(new AppError('Missing fields'), StatusCodes.BAD_REQUEST)
+
+  let imageUrl = null
+  let imageId = null
+  const oldPlace = await Place.findByPlaceId(placeId)
+  const oldImageId = oldPlace?.image_id
+
+  if (image && oldImageId) {
+    const { result } = await cloudinary.uploader.destroy(oldImageId)
+    if (result !== 'ok') return next(new AppError('Could not delete the image from cloud.', StatusCodes.NOT_MODIFIED))
+  }
+
+  if (image) {
+    const { url, public_id } = await cloudinaryUpload(image.path)
+    imageUrl = url
+    imageId = public_id
+  }
+
+  if (!imageUrl) imageUrl = oldPlace.image
+  if (!imageId) imageId = oldPlace.image_id
+
+  const newPlace = new Place(userId, address, country, lat, lng, title, description, rating, imageUrl, imageId)
+  const place = await newPlace.updateOne(placeId)
+
+  if (tags) {
+    place.tags = []
+    await Tag.findByIdAndDelete(placeId)
+    JSON.parse(tags).map(async tag => {
+      place.tags.push(tag)
+      const newTag = new Tag(tag, place.id)
+      await newTag.save()
+    })
+  }
+
+  res.status(StatusCodes.CREATED).json({
+    status: 'success',
+    message: 'new place added',
+    place,
+  })
+})
+
 module.exports = {
   postPlace,
   getAllPlaces,
@@ -198,4 +272,6 @@ module.exports = {
   getUserPlaces,
   getSimilarPlacesForSignedInUsers,
   getSimilarPlaces,
+  deletePlace,
+  editPlace,
 }

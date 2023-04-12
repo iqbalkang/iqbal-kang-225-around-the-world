@@ -14,6 +14,13 @@ class Tag {
     const data = await db.query(dbQuery, values)
     return data.rows
   }
+
+  static async findByIdAndDelete(placeId) {
+    const dbQuery = `DELETE FROM tags WHERE tags.place_id = ${placeId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
 }
 
 module.exports = Tag
