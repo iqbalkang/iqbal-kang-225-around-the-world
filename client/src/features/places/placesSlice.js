@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import {
+  deletePlace,
+  editPlace,
   getAllPlaces,
   getSimilarPlaces,
   getSinglePlace,
@@ -19,11 +21,17 @@ const initialState = {
   similarPlaces: [],
   singlePlace: null,
   isLoading: false,
+  isEditing: false,
 }
 
 const placesSlice = createSlice({
   name: 'places',
   initialState,
+  reducers: {
+    toggleEditPlace: state => {
+      state.isEditing = !state.isEditing
+    },
+  },
   extraReducers: builder => {
     builder
 
@@ -137,7 +145,42 @@ const placesSlice = createSlice({
         state.isLoading = false
         toast.error(payload)
       })
+
+      // delete a place
+      .addCase(deletePlace.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(deletePlace.fulfilled, (state, { payload }) => {
+        state.isLoading = false
+        state.places = state.places.filter(place => place.id !== payload)
+        state.placesByCurrentUser = state.placesByCurrentUser.filter(place => place.id !== payload)
+        state.currentUserFavorites = state.currentUserFavorites.filter(place => place.id !== payload)
+        state.similarPlaces = state.similarPlaces.filter(place => place.id !== payload)
+      })
+      .addCase(deletePlace.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // edit a place
+      .addCase(editPlace.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(editPlace.fulfilled, (state, { payload }) => {
+        const { place } = payload
+        state.isLoading = false
+        console.log(place)
+        // state.places = state.places.filter(place => place.id !== payload)
+        // state.placesByCurrentUser = state.placesByCurrentUser.filter(place => place.id !== payload)
+        // state.currentUserFavorites = state.currentUserFavorites.filter(place => place.id !== payload)
+        state.singlePlace = place
+      })
+      .addCase(editPlace.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
   },
 })
 
+export const { toggleEditPlace } = placesSlice.actions
 export default placesSlice.reducer

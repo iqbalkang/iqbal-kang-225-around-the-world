@@ -5,6 +5,7 @@ import { FiCamera } from 'react-icons/fi'
 import Heading from '../components/Heading'
 import FlexContainer from '../components/FlexContainer'
 import Content from './Content'
+import { useSelector } from 'react-redux'
 
 const ContentPageLayout = ({
   title,
@@ -15,9 +16,10 @@ const ContentPageLayout = ({
   handleGetPrevPage,
 }) => {
   const [coordinates, setCoordinates] = useState(null)
+  const { currentUser, user } = useSelector(store => store.user)
 
   const renderPageContent = () => {
-    if (!isPublic && !isFollowedByCurrentUser) return <LockedProfile />
+    if (!isPublic && !isFollowedByCurrentUser && currentUser?.id !== user?.id) return <LockedProfile />
     if (!data.length) return <NoContent />
     return (
       <Content

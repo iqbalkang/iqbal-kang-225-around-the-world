@@ -173,7 +173,6 @@ const Tag = ({ title }) => {
 }
 
 const SimilarPlaces = ({ similarPlaces }) => {
-  console.log('ran')
   return (
     <FlexContainer col className='overflow-x-auto bg-off-white text-dark-gray p-6'>
       <Heading h4>similar places</Heading>

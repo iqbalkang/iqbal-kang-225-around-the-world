@@ -47,12 +47,14 @@ export const getCommentsForSignedInUsers = createAsyncThunk(
 )
 
 export const toggleCommentReaction = createAsyncThunk('comments/toggleCommentReaction', async (body, thunkAPI) => {
+  console.log(body)
   try {
     const { data } = await customFetch.post(`/comments/reaction`, body, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
     })
+    thunkAPI.dispatch(getCommentsForSignedInUsers(body.placeId))
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)

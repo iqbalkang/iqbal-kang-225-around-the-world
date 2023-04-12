@@ -106,11 +106,42 @@ export const getSimilarPlacesForSignedInUsers = createAsyncThunk(
   }
 )
 
-export const getSimilarPlaces = createAsyncThunk('places/getSimilarPlaces', async (placeID, thunkAPI) => {
-  let url = '/places/similar/' + placeID
+export const getSimilarPlaces = createAsyncThunk('places/getSimilarPlaces', async (placeId, thunkAPI) => {
+  let url = '/places/similar/' + placeId
 
   try {
     const { data } = await customFetch.get(url)
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+export const deletePlace = createAsyncThunk('places/deletePlace', async (placeId, thunkAPI) => {
+  let url = '/places/' + placeId
+
+  try {
+    const { data } = await customFetch.delete(url, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return placeId
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+export const editPlace = createAsyncThunk('places/editPlace', async (formData, thunkAPI) => {
+  let url = '/places/' + formData.id
+  console.log(formData)
+
+  try {
+    const { data } = await customFetch.patch(url, formData, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
     return data
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response.data.message)

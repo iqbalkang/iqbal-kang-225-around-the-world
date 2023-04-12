@@ -7,6 +7,7 @@ import useMaps from '../hooks/useMaps'
 
 const PlacesAutoComplete = ({ address, setAddress, setCoordinates }) => {
   const isLoaded = useMaps()
+  if (!address) address = ' '
 
   if (!isLoaded) return
 

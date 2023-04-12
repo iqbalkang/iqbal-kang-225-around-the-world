@@ -81,7 +81,6 @@ const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
 
 const toggleCommentReaction = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
-  // const { commentId } = req.params
   const { type, commentId } = req.body
 
   const reaction = await Reaction.findOne(userId, commentId)

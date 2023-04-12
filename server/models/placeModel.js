@@ -64,6 +64,24 @@ class Place {
     return data.rows[0]
   }
 
+  async updateOne(placeId) {
+    const dbQuery = `UPDATE places SET
+                      title = '${this.title}', 
+                      address = '${this.address}', 
+                      country = '${this.country}',
+                      lat = ${this.lat},
+                      lng    = ${this.lng},
+                      rating = ${this.rating},
+                      image = '${this.image}',
+                      image_id = '${this.imageId}',
+                      user_id = ${this.userId},
+                      description =  '${this.description}'  
+                      WHERE places.id = '${placeId}' RETURNING *`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
   static async findLikes(placeId) {
     const dbQuery = `SELECT users.id, first_name, last_name, users.image FROM places
                      JOIN likes ON likes.place_id = places.id
@@ -174,7 +192,7 @@ class Place {
   }
 
   static async findPlaceTags(placeId) {
-    const dbQuery = `SELECT tag
+    const dbQuery = `SELECT tag, id
                     FROM tags
                     WHERE tags.place_id = '${placeId}'
                     `
@@ -239,6 +257,13 @@ class Place {
 
     const data = await db.query(dbQuery)
     return data.rows
+  }
+
+  static async findByIdAndDelete(placeId) {
+    const dbQuery = `DELETE FROM places WHERE places.id = ${placeId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
   }
 }
 

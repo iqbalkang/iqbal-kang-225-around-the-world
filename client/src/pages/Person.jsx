@@ -121,7 +121,7 @@ const Person = () => {
   }, [placesByCurrentUser])
 
   useEffect(() => {
-    if (isFollowedByCurrentUser || isPublic)
+    if (isFollowedByCurrentUser || isPublic || currentUser?.id === user?.id)
       dispatch(getUserPlaces({ userId, signedInUser: user?.id, currentPage, limit }))
   }, [currentUser, currentPage])
 

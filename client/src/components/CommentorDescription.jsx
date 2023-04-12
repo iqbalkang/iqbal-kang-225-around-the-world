@@ -1,24 +1,39 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { renderSmallImage } from '../utils/rendeImage'
 import FlexContainer from './FlexContainer'
 
-const CommentorDescription = ({ props, children }) => {
-  const {
-    image,
-    first_name: commentorFirstName,
-    last_name: commentorLastName,
-    comment,
-    user_id: userId,
-    reply,
-    mentions,
-  } = props
+const getUserName = tag => {
+  const name = tag.split('@[')[1].split(']')[0]
+  return name
+}
 
-  const renderMentions = mentions?.map(mention => (
-    <Link key={mention.id} className='hover:underline capitalize text-xs text-blue-600' to={'/people/' + mention.id}>
-      {mention.first_name} {mention.last_name}
-    </Link>
-  ))
+const getUserLink = (name, id) => {
+  return `<a href='/people/${id}' style='text-transform:capitalize; color:#3366CC'>${name}</a>`
+}
+
+const getTagedComment = comment => {
+  const tags = comment.match(/\@\[[\w\s]+\]\(\d+\)/g)
+  tags?.forEach(tag => {
+    const name = getUserName(tag)
+    const id = tag.split('(')[1].split(')')[0]
+    const re = new RegExp(`\\@\\[${name}\\]\\(${id}\\)`)
+    comment = comment.replace(re, getUserLink(name, id))
+  })
+  return comment
+}
+
+const CommentorDescription = ({ props, children }) => {
+  const { image, first_name: commentorFirstName, last_name: commentorLastName, comment, user_id: userId, reply } = props
+
+  function createMarkup() {
+    if (comment) return { __html: getTagedComment(comment) }
+    else return { __html: getTagedComment(reply) }
+  }
+
+  function MyComponent() {
+    return <p dangerouslySetInnerHTML={createMarkup()}></p>
+  }
 
   return (
     <FlexContainer gap>
@@ -35,14 +50,7 @@ const CommentorDescription = ({ props, children }) => {
               {commentorFirstName} {commentorLastName}
             </p>
           </Link>
-          <p>{comment || reply}</p>
-          {/* tagged people (mentions) */}
-          {mentions?.length > 0 && (
-            <FlexContainer alignCenter gap>
-              <p>Mentions: </p>
-              <FlexContainer gap>{renderMentions}</FlexContainer>
-            </FlexContainer>
-          )}
+          <MyComponent />
         </div>
 
         {children}
