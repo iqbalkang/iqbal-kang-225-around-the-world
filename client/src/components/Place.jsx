@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { BiSearch } from 'react-icons/bi'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import { MdModeEdit, MdDeleteForever } from 'react-icons/md'
 
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleLikedPlace } from '../features/places/PlacesThunks'
+import { deletePlace, editPlace, getSinglePlace, toggleLikedPlace } from '../features/places/PlacesThunks'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
 
@@ -13,6 +14,9 @@ import RoundButton from './RoundButton'
 import CountryWithRating from './CountryWithRating'
 import CustomDescriptionLink from './CustomDescriptionLink'
 import Image from './Image'
+import { useNavigate } from 'react-router-dom'
+import { toggleEditPlace } from '../features/places/placesSlice'
+import Spinner from './Spinner'
 
 const shortenText = (text, length) => {
   if (!text) return
@@ -20,22 +24,13 @@ const shortenText = (text, length) => {
   return text
 }
 
-const Place = ({
-  title,
-  country,
-  rating,
-  description,
-  id,
-  isFavorite,
-  firstName,
-  lat,
-  lng,
-  image,
-  updateCoordinates,
-  userId,
-}) => {
+const Place = props => {
   const dispatch = useDispatch()
+  const placeRef = useRef()
+
   const { isLoading, user } = useSelector(store => store.user)
+  const { title, country, rating, description, id, isFavorite, firstName, lat, lng, image, updateCoordinates, userId } =
+    props
 
   const [isDescVisible, setIsDescVisible] = useState(false)
   const [loginModal, setLoginModal] = useState(false)
@@ -78,7 +73,7 @@ const Place = ({
   }, [title])
 
   return (
-    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
+    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer' ref={placeRef}>
       {/* container for photo and place description */}
       <div className='flex gap-2 h-52'>
         {/* container for place image, favorite & search */}
@@ -124,12 +119,47 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
     'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
   const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0 h-60'
 
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { user } = useSelector(store => store.user)
+  const { isLoading } = useSelector(store => store.places)
+
+  const handlePlaceEditClick = placeId => {
+    dispatch(toggleEditPlace())
+    dispatch(getSinglePlace({ placeId }))
+    navigate('/explore/')
+    // setTimeout(() => {
+    // navigate('/explore/')
+    // }, 200)
+  }
+
+  const handlePlaceDeleteClick = placeId => dispatch(deletePlace(placeId))
+
+  const renderButtons = () => {
+    const buttonClasses = 'hover:text-accent duration-200'
+    if (toUser === user.id)
+      return (
+        <FlexContainer gap className='mr-4'>
+          <button onClick={handlePlaceEditClick.bind(null, toPlace)}>
+            <MdModeEdit size={16} className={buttonClasses} />
+          </button>
+          <button onClick={handlePlaceDeleteClick.bind(null, toPlace)}>
+            {isLoading ? <Spinner /> : <MdDeleteForever size={16} className={buttonClasses} />}
+          </button>
+        </FlexContainer>
+      )
+  }
+
   return (
     <div className={containerBaseClasses + containerExtraClasses}>
       <FlexContainer col className='h-full w-[400px] text-sm'>
-        <Heading offWhite h6>
-          about {title}
-        </Heading>
+        {/* heading, delete and edit buttons */}
+        <FlexContainer justifyBetween>
+          <Heading offWhite h6>
+            about {title}
+          </Heading>
+          {renderButtons()}
+        </FlexContainer>
         <p className='flex-1'>{shortenText(description, 300)}</p>
         <FlexContainer justifyBetween>
           <CustomDescriptionLink text='added by' value={value} to={'/people/' + toUser} />

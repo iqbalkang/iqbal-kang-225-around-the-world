@@ -16,7 +16,7 @@ function MyComponent({ coordinates }) {
   const [map, setMap] = React.useState(null)
 
   useEffect(() => {
-    if (coordinates) setCenter(coordinates)
+    if (coordinates?.lat && coordinates?.lng) setCenter(coordinates)
   }, [coordinates])
 
   if (!isLoaded) return

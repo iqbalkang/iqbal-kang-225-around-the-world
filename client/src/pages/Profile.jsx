@@ -98,10 +98,14 @@ const Profile = () => {
   })
 
   useEffect(() => {
+    if (!placesByCurrentUser.length && currentPage > 0) setCurrentPage(currentPage - 1)
+  }, [placesByCurrentUser])
+
+  useEffect(() => {
     if (!userId) return
     dispatch(getUserInfo(userId))
     dispatch(getUserPlaces({ userId, signedInUser: user?.id, currentPage, limit }))
-  }, [userId])
+  }, [userId, currentPage])
 
   useEffect(() => {
     if (currentUser) {

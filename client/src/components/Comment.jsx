@@ -15,10 +15,11 @@ import CommentorDescription from './CommentorDescription'
 import customFetch from '../utils/axios/customFetch'
 import LoginModal from './LoginModal'
 import CommentFormNew from './CommentFormNew'
+import moment from 'moment'
 
 const buttonBaseClasses = 'flex items-center gap-1 capitalize hover:underline'
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, placeId }) => {
   const dispatch = useDispatch()
 
   const { user, isLoading, allUsers } = useSelector(store => store.user)
@@ -46,10 +47,10 @@ const Comment = ({ comment }) => {
 
     if (selectedReaction) {
       setSelectedReaction(null)
-      dispatch(toggleCommentReaction({ commentId, type: selectedReaction }))
+      dispatch(toggleCommentReaction({ commentId, type: selectedReaction, placeId }))
     } else {
       setSelectedReaction('like')
-      dispatch(toggleCommentReaction({ commentId, type: 'like' }))
+      dispatch(toggleCommentReaction({ commentId, type: 'like', placeId }))
     }
   }
 
@@ -105,6 +106,8 @@ const Comment = ({ comment }) => {
 
   const renderReplies = replies.map((reply, index) => <CommentorDescription key={index} props={reply} />)
 
+  const renderTime = time => moment(time).fromNow()
+
   useEffect(() => {
     setSelectedReaction(reaction)
   }, [reaction])
@@ -131,13 +134,17 @@ const Comment = ({ comment }) => {
           <button className={buttonBaseClasses} onClick={toggleCommentForm}>
             reply
           </button>
-          <p className='text-light-gray'>1h ago</p>
+          <p className='text-light-gray'> {renderTime(comment.created_at)} </p>
         </FlexContainer>
 
-        <div className='flex items-center gap-2'>
-          <BsEmojiExpressionless />
-          <p>You and 85 others</p>
-        </div>
+        {comment.likes_count > 0 && (
+          <div className='flex items-center gap-2'>
+            <Like />
+            <p>
+              {comment.likes_count} {comment.likes_count > 1 ? 'likes' : 'like'}
+            </p>
+          </div>
+        )}
       </FlexContainer>
       {/* button to display total number of replies */}
       {replyCount > 0 && showReplyButton && (

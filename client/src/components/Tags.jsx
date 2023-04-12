@@ -50,7 +50,7 @@ const Tags = ({ updateTags, tags }) => {
     updateTags(enteredTags)
   }, [enteredTags])
 
-  const renderTags = tags.map(tag => <Tag key={tag} text={tag} deleteTag={deleteTag} />)
+  const renderTags = tags?.map(tag => <Tag key={tag} text={tag} deleteTag={deleteTag} />)
 
   return (
     <div>
@@ -68,7 +68,7 @@ const Tags = ({ updateTags, tags }) => {
           onKeyDown={handleKeyDown}
           onFocus={handleOnFocus}
           onBlur={handleOnBlur}
-          className={`bg-transparent outline-none text-dark-gray ${tags.length ? 'w-20' : 'w-full'}`}
+          className={`bg-transparent outline-none text-dark-gray ${tags?.length ? 'w-20' : 'w-full'}`}
         />
       </div>
     </div>

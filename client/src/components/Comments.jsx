@@ -20,7 +20,7 @@ const Comments = React.forwardRef((props, ref) => {
     user ? dispatch(getCommentsForSignedInUsers(placeId)) : dispatch(getComments(placeId))
   }, [placeId])
 
-  const renderComments = comments.map((comment, index) => <Comment key={index} comment={comment} />)
+  const renderComments = comments.map((comment, index) => <Comment key={index} comment={comment} placeId={placeId} />)
 
   return (
     <div className='w-[42rem] text-sm' ref={ref}>

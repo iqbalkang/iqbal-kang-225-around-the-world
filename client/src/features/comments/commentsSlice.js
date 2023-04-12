@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { toast } from 'react-toastify'
-import { getComments, getCommentsForSignedInUsers, postComment } from './commentsThunks'
+import { getComments, getCommentsForSignedInUsers, postComment, toggleCommentReaction } from './commentsThunks'
 
 const initialState = {
   comments: [],

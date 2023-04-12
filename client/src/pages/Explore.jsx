@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import ReactDOM from 'react-dom'
 import Gmap from '../components/Gmap'
 import exploreInputs from '../utils/data/explore-inputs'
-import { HiChevronDown } from 'react-icons/hi'
 
 import AccentButton from '../components/AccentButton'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { postPlace } from '../features/places/PlacesThunks'
+import { editPlace, postPlace } from '../features/places/PlacesThunks'
 import Stars from '../components/Stars'
-import Modal from '../components/Modal'
 import FormRow from '../components/FormRow'
-import Label from '../components/Label'
-import { MdOutlineLocationSearching } from 'react-icons/md'
 import FlexContainer from '../components/FlexContainer'
 import ImageUploader from '../components/ImageUploader'
 import PlacesAutoComplete from '../components/PlacesAutoComplete'
@@ -31,8 +26,8 @@ const initialState = {
 const Explore = () => {
   const dispatch = useDispatch()
   const { user, isLoading: isUserLoading } = useSelector(store => store.user)
-  const { isLoading: isPlaceLoading } = useSelector(store => store.places)
-
+  const { isLoading: isPlaceLoading, singlePlace, isEditing } = useSelector(store => store.places)
+  const { address: placeAddress, lat, lng, country, title, image, rating, description, tags, id } = singlePlace || {}
   const [selectedImage, setSelectedImage] = useState('')
   const [address, setAddress] = useState('')
   const [coordinates, setCoordinates] = useState(null)
@@ -75,10 +70,14 @@ const Explore = () => {
       else formData.append(key, values[key])
     }
 
-    dispatch(postPlace(formData))
+    if (isEditing) formData.append('id', id)
+
+    isEditing ? dispatch(editPlace(formData)) : dispatch(postPlace(formData))
   }
 
   const generatePropsObject = (index, input) => {
+    if (!values) return
+    if (!input) return
     return {
       index: index,
       input: input,
@@ -94,7 +93,16 @@ const Explore = () => {
   }, [isUserLoading])
 
   useEffect(() => {
-    if (!isPlaceLoading && user) {
+    if (isEditing) {
+      setValues({ ...initialState, title, country, description, rating, tags })
+      setAddress(placeAddress)
+      setSelectedImage(image)
+      setCoordinates({ lat, lng })
+    }
+  }, [isEditing, isPlaceLoading])
+
+  useEffect(() => {
+    if (!isPlaceLoading && user && !isEditing) {
       setAddress('')
       setSelectedImage('')
       setCoordinates(null)
@@ -103,6 +111,7 @@ const Explore = () => {
   }, [isPlaceLoading])
 
   const renderExploreInputs = exploreInputs.map((input, index) => {
+    if (!input) return
     const propsObj = generatePropsObject(index, input)
     return <FormRow key={index} {...propsObj} />
   })
@@ -118,15 +127,15 @@ const Explore = () => {
 
           {renderExploreInputs}
 
-          <Tags tags={values.tags} updateTags={updateTags} />
+          <Tags tags={values?.tags} updateTags={updateTags} />
 
           <FlexContainer alignCenter>
             <p>How much would you rate this place?</p>
-            <Stars handleRating={updateRating} rating={values.rating} />
+            <Stars handleRating={updateRating} rating={values?.rating} />
           </FlexContainer>
 
           <AccentButton small full primary isLoading={isPlaceLoading}>
-            add place
+            {isEditing ? 'update place' : 'add place'}
           </AccentButton>
         </form>
       </FlexContainer>
