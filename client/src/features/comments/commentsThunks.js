@@ -47,7 +47,6 @@ export const getCommentsForSignedInUsers = createAsyncThunk(
 )
 
 export const toggleCommentReaction = createAsyncThunk('comments/toggleCommentReaction', async (body, thunkAPI) => {
-  console.log(body)
   try {
     const { data } = await customFetch.post(`/comments/reaction`, body, {
       headers: {
