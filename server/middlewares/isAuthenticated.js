@@ -3,7 +3,7 @@ const AppError = require('../utils/AppError')
 
 const jwt = require('jsonwebtoken')
 const asyncHandler = require('express-async-handler')
-const User = require('../models/UserModel')
+const User = require('../models/userModel')
 
 const isAuthenticated = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization
