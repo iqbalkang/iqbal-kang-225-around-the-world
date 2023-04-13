@@ -34,10 +34,15 @@ const postPlace = asyncHandler(async (req, res, next) => {
 
   const followers = await Follow.getFollowers(userId)
   if (followers.length > 0) {
-    followers.map(async follower => {
+    await Promise.all(followers.map( async(follower) => {
       const newAlert = new Alert(follower.id, userId, 'post', placeId)
-      await newAlert.save()
-    })
+      const alert = await newAlert.save()
+      const alertData = await Alert.findById(alert.id);
+      console.log(alertData)
+      req.app
+        .get('eventEmitter')
+        .emit('alert', { type: 'post', data: alertData });
+    }))
   }
 
   if (tags) {

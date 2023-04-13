@@ -12,6 +12,7 @@ const MyPlaces = () => {
 
   useEffect(() => {
     dispatch(getUserPlaces(user.id))
+    
   }, [])
 
   if (userPlaces?.length === 0) {

@@ -8,30 +8,40 @@ const Alert = require('../models/AlertModel')
 const Mention = require('../models/MentionModel')
 
 const postComment = asyncHandler(async (req, res, next) => {
-  const { id: userId } = req.user
-  const { placeId, comment } = req.body
-  const tags = comment.match(/[^(]+(?=\))/g)
+  const { id: userId } = req.user;
+  const { placeId, comment } = req.body;
+  const tags = comment.match(/[^(]+(?=\))/g);
 
-  if (!placeId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
-  if (!comment) return next(new AppError('please enter a comment', StatusCodes.BAD_REQUEST))
+  if (!placeId)
+    return next(new AppError("invalid request", StatusCodes.BAD_REQUEST));
+  if (!comment)
+    return next(
+      new AppError("please enter a comment", StatusCodes.BAD_REQUEST)
+    );
 
-  const newComment = new Comment(comment, placeId, userId)
-  const savedComment = await newComment.save()
+  const newComment = new Comment(comment, placeId, userId);
+  const savedComment = await newComment.save();
 
   if (tags) {
-    tags.map(async tag => {
-      const newAlert = new Alert(tag, userId, 'tag', placeId, savedComment.id)
-      const newMention = new Mention(tag, userId, savedComment.id)
-      await newAlert.save()
-      await newMention.save()
-    })
+    await Promise.all(tags.map(async (tag) => {
+      const newAlert = new Alert(tag, userId, "tag", placeId, savedComment.id);
+      const newMention = new Mention(tag, userId, savedComment.id);
+      const alert = await newAlert.save();
+      const alertData = await Alert.findById(alert.id);
+      
+      req.app
+        .get('eventEmitter')
+        .emit('alert', { type: 'tag', data: alertData });
+    
+      await newMention.save();
+    }));
   }
 
   res.status(StatusCodes.OK).json({
-    status: 'success',
-    message: 'comments was successfully posted',
+    status: "success",
+    message: "comments was successfully posted",
     comment: savedComment,
-  })
+  });
 })
 
 const getComments = asyncHandler(async (req, res, next) => {

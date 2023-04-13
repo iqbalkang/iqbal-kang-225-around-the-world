@@ -13,6 +13,7 @@ import Profile from './pages/Profile'
 import Person from './pages/Person'
 
 const App = () => {
+
   return (
     <Routes>
       <Route path='/' element={<Home />}>
