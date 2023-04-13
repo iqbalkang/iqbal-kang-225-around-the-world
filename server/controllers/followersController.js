@@ -11,25 +11,39 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
 
   if (!followingId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
 
-  let response
-
   const follow = await Follow.findOne(followingId, followerId)
 
   if (follow) {
     await Follow.findByIdsAndDelete(followingId, followerId)
     await Alert.findByIdsAndDelete(followingId, followerId)
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: {},
+    });
   } else {
-    const newFollower = new Follow(followingId, followerId, 'pending')
-    response = await newFollower.save()
+    const newFollower = new Follow(followingId, followerId, 'pending');
+    response = await newFollower.save();
 
-    const newAlert = new Alert(followingId, followerId, 'follow')
-    await newAlert.save()
+    const newAlert = new Alert(followingId, followerId, 'follow');
+    const alert = await newAlert.save();
+    const alertData = await Alert.findById(alert.id);// get Alert & user information
+
+    req.app
+      .get('eventEmitter')
+      .emit('alert', { type: 'follow', data: alertData });
+
+    //const eventData = JSON.stringify({type: 'follow', data: alert})
+    res.status(StatusCodes.OK).json({
+      status: 'success',
+      data: response,
+    });
+    
   }
 
-  res.status(StatusCodes.OK).json({
-    status: 'success',
-    data: response,
-  })
+  // res.status(StatusCodes.OK).json({
+  //   status: 'success',
+  //   data: response,
+  // })
 })
 
 const responseToFollowRequest = asyncHandler(async (req, res, next) => {
