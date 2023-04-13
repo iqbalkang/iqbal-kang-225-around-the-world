@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes')
 const multer = require('multer')
-const AppError = require('../utils/AppError')
+const AppError = require('../utils/appError')
 
 const storage = multer.diskStorage({})
 
