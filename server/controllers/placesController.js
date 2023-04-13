@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes')
-const Place = require('../models/PlaceModel')
+const Place = require('../models/placeModel')
 const Like = require('../models/LikeModel')
 const Tag = require('../models/TagModel')
 const Alert = require('../models/AlertModel')
