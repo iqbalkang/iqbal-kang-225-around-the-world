@@ -1,7 +1,7 @@
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
-const Place = require('../models/PlaceModel')
+const Place = require('../models/placeModel')
 const Comment = require('../models/CommentModel')
 const Reaction = require('../models/ReactionModel')
 const Alert = require('../models/AlertModel')
