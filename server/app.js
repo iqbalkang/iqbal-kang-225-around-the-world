@@ -1,10 +1,3 @@
-const express = require('express')
-const { StatusCodes } = require('http-status-codes')
-const cors = require('cors')
-const app = express()
-const httpServer = require('http').createServer(app)
-const fs = require('fs')
-
 const AppError = require('./utils/appError')
 const errorHandler = require('./controllers/errorsController')
 const userRouter = require('./routes/userRouter')
@@ -13,13 +6,15 @@ const commentsRouter = require('./routes/commentsRouter')
 const repliesRouter = require('./routes/repliesRouter')
 const followersRouter = require('./routes/followersRouter')
 const alertsRouter = require('./routes/alertsRouter')
-<<<<<<< HEAD
 const sseRouter = require('./routes/sseRouter')
-=======
 const path = require('path')
 
+const express = require('express')
+const { StatusCodes } = require('http-status-codes')
+const cors = require('cors')
 const app = express()
->>>>>>> b712783 (before pulling somys code)
+
+const httpServer = require('http').createServer(app)
 
 app.use(express.json())
 app.use(cors())
@@ -42,8 +37,8 @@ app.use('*', (req, res, next) => {
 // global error handler
 app.use(errorHandler)
 
-const EventEmitter = require("events");
-const eventEmitter = new EventEmitter();
-app.set("eventEmitter", eventEmitter);
+const EventEmitter = require('events')
+const eventEmitter = new EventEmitter()
+app.set('eventEmitter', eventEmitter)
 
 module.exports = httpServer

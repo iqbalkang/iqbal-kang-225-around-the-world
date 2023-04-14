@@ -18,7 +18,7 @@ const Alerts = () => {
   const dispatch = useDispatch()
   const alertsRef = useRef()
   const alertsButtonRef = useRef()
-  const { user } = useSelector((store) => store.user);
+  const { user } = useSelector(store => store.user)
   const { alerts } = useSelector(store => store.alerts)
 
   const [areAlertsShown, setAreAlertsShown] = useState(false)
@@ -43,7 +43,6 @@ const Alerts = () => {
     }
   }
 
-
   const handleClearAlertsClick = () => {
     dispatch(deleteAlerts())
   }
@@ -52,26 +51,26 @@ const Alerts = () => {
 
   // Event Listener From Server
   useEffect(() => {
-    const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}api/v1/sse`);
+    const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}/api/v1/sse`)
 
-    eventSource.addEventListener('alert', (e) => {
-      const alertData = JSON.parse(e.data);
-      
-      alertData.data.userId = user.id;
+    eventSource.addEventListener('alert', e => {
+      const alertData = JSON.parse(e.data)
+
+      alertData.data.userId = user.id
       if (alertData.type === 'follow') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} requested to follow you`;
+        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} requested to follow you`
       } else if (alertData.type === 'post') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} added a new post`;
+        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} added a new post`
       } else if (alertData.type === 'tag') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} tagged you in a comment`;
+        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} tagged you in a comment`
       }
-      dispatch(addAlert(alertData.data));
+      dispatch(addAlert(alertData.data))
     })
 
     return () => {
-      eventSource.close();
+      eventSource.close()
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     dispatch(getAlerts())
