@@ -1,7 +1,11 @@
 const { StatusCodes } = require('http-status-codes')
 const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
+<<<<<<< HEAD
 const Place = require('../models/placeModel')
+=======
+const Place = require('../models/PlaceModel')
+>>>>>>> b712783 (before pulling somys code)
 const Comment = require('../models/commentModel')
 const Reaction = require('../models/ReactionModel')
 const Alert = require('../models/AlertModel')

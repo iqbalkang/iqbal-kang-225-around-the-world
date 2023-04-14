@@ -137,7 +137,7 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
 
   const renderButtons = () => {
     const buttonClasses = 'hover:text-accent duration-200'
-    if (toUser === user.id)
+    if (toUser === user?.id)
       return (
         <FlexContainer gap className='mr-4'>
           <button onClick={handlePlaceEditClick.bind(null, toPlace)}>

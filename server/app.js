@@ -13,10 +13,19 @@ const commentsRouter = require('./routes/commentsRouter')
 const repliesRouter = require('./routes/repliesRouter')
 const followersRouter = require('./routes/followersRouter')
 const alertsRouter = require('./routes/alertsRouter')
+<<<<<<< HEAD
 const sseRouter = require('./routes/sseRouter')
+=======
+const path = require('path')
+
+const app = express()
+>>>>>>> b712783 (before pulling somys code)
 
 app.use(express.json())
 app.use(cors())
+
+// Production
+app.use('/', express.static(path.join(__dirname, '../client/build')))
 
 app.use('/api/v1/authentication', userRouter)
 app.use('/api/v1/places', placesRouter)
