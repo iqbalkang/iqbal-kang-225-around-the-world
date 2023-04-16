@@ -20,29 +20,52 @@ const postPlace = asyncHandler(async (req, res, next) => {
     return next(new AppError('Missing fields'), StatusCodes.BAD_REQUEST)
 
   let imageUrl = null
+  let smallImageUrl = null
   let imageId = null
 
   if (image) {
-    const { url, public_id } = await cloudinaryUpload(image.path)
+    const { url, public_id, responsive_breakpoints } = await cloudinary.uploader.upload(image.path, {
+      transformation: { width: 1280, height: 720 },
+      responsive_breakpoints: {
+        create_derived: true,
+        max_width: 640,
+        max_height: 480,
+        max_images: 1,
+      },
+    })
     imageUrl = url
     imageId = public_id
+    console.log(responsive_breakpoints.breakpoints)
+    smallImageUrl = responsive_breakpoints[0].breakpoints[0].url
   }
 
-  const newPlace = new Place(userId, address, country, lat, lng, title, description, rating, imageUrl, imageId)
+  const newPlace = new Place(
+    userId,
+    address,
+    country,
+    lat,
+    lng,
+    title,
+    description,
+    rating,
+    imageUrl,
+    smallImageUrl,
+    imageId
+  )
+
   const place = await newPlace.save()
   const placeId = place.id
 
   const followers = await Follow.getFollowers(userId)
   if (followers.length > 0) {
-    await Promise.all(followers.map( async(follower) => {
-      const newAlert = new Alert(follower.id, userId, 'post', placeId)
-      const alert = await newAlert.save()
-      const alertData = await Alert.findById(alert.id);
-      console.log(alertData)
-      req.app
-        .get('eventEmitter')
-        .emit('alert', { type: 'post', data: alertData });
-    }))
+    await Promise.all(
+      followers.map(async follower => {
+        const newAlert = new Alert(follower.id, userId, 'post', placeId)
+        const alert = await newAlert.save()
+        const alertData = await Alert.findById(alert.id)
+        req.app.get('eventEmitter').emit('alert', { type: 'post', data: alertData })
+      })
+    )
   }
 
   if (tags) {
@@ -206,7 +229,7 @@ const deletePlace = asyncHandler(async (req, res, next) => {
   const { image_id } = place
   if (image_id) {
     const { result } = await cloudinary.uploader.destroy(image_id)
-    if (result !== 'ok') return next(new AppError('Could not delete the image from cloud.', StatusCodes.NOT_MODIFIED))
+    // if (result !== 'ok') return next(new AppError('Could not delete the image from cloud.', StatusCodes.NOT_MODIFIED))
   }
 
   if (tags.length) {

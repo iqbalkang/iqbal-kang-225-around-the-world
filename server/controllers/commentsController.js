@@ -5,6 +5,7 @@ const Comment = require('../models/commentModel')
 const Reaction = require('../models/ReactionModel')
 const Alert = require('../models/AlertModel')
 const Mention = require('../models/MentionModel')
+const Place = require('../models/PlaceModel')
 
 const postComment = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
@@ -16,6 +17,13 @@ const postComment = asyncHandler(async (req, res, next) => {
 
   const newComment = new Comment(comment, placeId, userId)
   const savedComment = await newComment.save()
+
+  const { user_id: addedBy } = await Place.findAddedBy(placeId)
+
+  const newAlert = new Alert(addedBy, userId, 'comment', placeId, savedComment.id)
+  const alert = await newAlert.save()
+  const alertData = await Alert.findById(alert.id)
+  req.app.get('eventEmitter').emit('alert', { type: 'comment', data: alertData })
 
   if (tags) {
     await Promise.all(
