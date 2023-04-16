@@ -29,8 +29,21 @@ const Place = props => {
   const placeRef = useRef()
 
   const { isLoading, user } = useSelector(store => store.user)
-  const { title, country, rating, description, id, isFavorite, firstName, lat, lng, image, updateCoordinates, userId } =
-    props
+  const {
+    title,
+    country,
+    rating,
+    description,
+    id,
+    isFavorite,
+    firstName,
+    lat,
+    lng,
+    image,
+    small_image,
+    updateCoordinates,
+    userId,
+  } = props
 
   const [isDescVisible, setIsDescVisible] = useState(false)
   const [loginModal, setLoginModal] = useState(false)
@@ -78,7 +91,7 @@ const Place = props => {
       <div className='flex gap-2 h-52'>
         {/* container for place image, favorite & search */}
         <div className={imageContainerClasses}>
-          <Image src={image} alt={title} />
+          <Image src={small_image} alt={title} />
           <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
             {favoriteIcon(isFavorite)}
           </RoundButton>
@@ -117,7 +130,7 @@ export default Place
 const Description = ({ description, isDescVisible, title, toPlace, toUser, value }) => {
   const containerBaseClasses =
     'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
-  const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0 h-60'
+  const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0'
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
