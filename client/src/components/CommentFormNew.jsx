@@ -70,6 +70,10 @@ const CommentFormNew = props => {
     setCommentValue('')
   }
 
+  const handleOnKeyDown = e => {
+    if (e.key === 'Enter') handleOnSubmit(e)
+  }
+
   const handleOnSubmit = reply ? handleReplySubmit : handleCommentSubmit
 
   const closeLoginModal = () => setLoginModal(false)
@@ -85,6 +89,7 @@ const CommentFormNew = props => {
           value={reply ? replyValue : commentValue}
           className='w-[94%]'
           onChange={handleOnChange}
+          onKeyDown={handleOnKeyDown}
           style={defaultStyles}
         >
           <Mention data={searchUsers} className='bg-accent' />

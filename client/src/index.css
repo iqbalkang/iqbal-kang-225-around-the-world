@@ -4,8 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
-.toast-position {
+.toast {
   top: 3rem !important;
+  text-transform: capitalize;
 }
 
 .pac-item {

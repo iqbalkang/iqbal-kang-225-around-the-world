@@ -105,7 +105,7 @@ const Comment = ({ comment, placeId }) => {
 
   const renderReplies = replies.map((reply, index) => <CommentorDescription key={index} props={reply} />)
 
-  const renderTime = time => moment(time).fromNow()
+  const renderTime = time => moment(time).calendar()
 
   useEffect(() => {
     setSelectedReaction(reaction)
