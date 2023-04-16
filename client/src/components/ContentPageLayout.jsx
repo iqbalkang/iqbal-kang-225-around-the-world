@@ -34,9 +34,9 @@ const ContentPageLayout = ({
 
   return (
     <FlexContainer col className='h-full bg-off-white text-dark-gray'>
-      <div className='h-96'>
+      <FlexContainer className='h-96 flex-1'>
         <Gmap coordinates={coordinates} />
-      </div>
+      </FlexContainer>
 
       {renderPageContent()}
     </FlexContainer>

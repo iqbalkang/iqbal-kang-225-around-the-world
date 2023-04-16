@@ -21,7 +21,7 @@ const reactionsToggleClasses = [
 const reactionsContainerClasses = `bg-white rounded-3xl text-dark-gray flex gap-2 p-2 text-lg absolute bottom-0 opacity-0 invisible 
 group-hover:visible group-hover:opacity-100 group-hover:bottom-full duration-200 delay-1000`
 
-const Reactions = ({ updateReaction, commentId }) => {
+const Reactions = ({ updateReaction, commentId, placeId }) => {
   const reactionsContainerRef = useRef()
   const dispatch = useDispatch()
 
@@ -41,19 +41,16 @@ const Reactions = ({ updateReaction, commentId }) => {
   const handleOnMouseEnter = index => setActiveReaction(index)
 
   const handleReactionSelection = selection => {
-    dispatch(toggleCommentReaction({ commentId, type: selection }))
+    dispatch(toggleCommentReaction({ commentId, type: selection, placeId }))
     // setSelectedReaction(selection)
     updateReaction(selection)
     setActiveReaction(-1)
     reactionsContainerRef.current.classList.remove(...reactionsToggleClasses)
 
     // if (reactionsContainerRef)
-    const interval = setInterval(() => reactionsContainerRef.current.classList.add(...reactionsToggleClasses), 1000)
-    clearInterval(interval)
+    const interval = setTimeout(() => reactionsContainerRef.current.classList.add(...reactionsToggleClasses), 1000)
+    // clearInterval(interval)
   }
-
-  // const reactionsContainerClasses = `bg-white rounded-3xl text-dark-gray flex gap-2 p-2 text-lg absolute bottom-0 opacity-0 invisible
-  //   group-hover:visible group-hover:opacity-100 group-hover:bottom-full duration-200 delay-1000`
 
   const reactions = Object.entries(allReactions)
 

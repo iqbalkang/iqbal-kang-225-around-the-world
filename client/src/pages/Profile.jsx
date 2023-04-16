@@ -14,7 +14,7 @@ import { getUserInfo, updateUser } from '../features/user/userThunk'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import EmptyPageLayout from '../components/EmptyPageLayout'
 
-const limit = 6
+const limit = 10
 
 const initialState = {
   firstName: '',
@@ -122,7 +122,7 @@ const Profile = () => {
       <FlexContainer center className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
         <form className='space-y-3 w-full' onSubmit={handleSubmit}>
           <FlexContainer center>
-            <ImageUploader rounded onChange={onChangeHandler} selectedImage={selectedImage} className='h-48 w-48' />
+            <ImageUploader rounded onChange={onChangeHandler} selectedImage={selectedImage} className='' />
           </FlexContainer>
 
           {renderProfileInputs}

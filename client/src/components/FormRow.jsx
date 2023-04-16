@@ -38,7 +38,7 @@ const FormRow = ({
     return (
       <FlexContainer col className={flexClasses}>
         <textarea
-          className={inputClasses}
+          className={inputClasses + ' 2xl:h-48'}
           name={label}
           id={label}
           onChange={onChange}

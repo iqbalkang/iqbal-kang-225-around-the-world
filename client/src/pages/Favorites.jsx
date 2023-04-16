@@ -4,7 +4,7 @@ import { getUserFavorites } from '../features/places/PlacesThunks'
 import ContentPageLayout from '../components/ContentPageLayout'
 import EmptyPageLayout from '../components/EmptyPageLayout'
 
-const limit = 8
+const limit = 15
 
 const Favorites = () => {
   const dispatch = useDispatch()

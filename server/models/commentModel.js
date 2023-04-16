@@ -17,8 +17,8 @@ class Comment {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT comment,comments.id, users.id as user_id,created_at, first_name, last_name, image, 
-                    (SELECT COUNT(*) from reactions WHERE reactions.comment_id = comments.id) AS likes_count
+    const dbQuery = `SELECT comment,comments.id, users.id as user_id, comments.created_at, first_name, last_name, image, 
+                    (SELECT COUNT(*) from reactions WHERE reactions.comment_id = comments.id) AS likes_count,
                      COUNT(reply)::integer AS reply_count
                      FROM comments
                      JOIN users ON comments.user_id = users.id

@@ -6,7 +6,7 @@ import { getAllUsers } from '../features/user/userThunk'
 import WebsiteContainer from '../components/WebsiteContainer'
 import FlexContainer from '../components/FlexContainer'
 
-const limit = 9
+const limit = 12
 
 const People = () => {
   const dispatch = useDispatch()
@@ -37,8 +37,8 @@ const People = () => {
   return (
     <section className='h-full bg-dark-gray p-6'>
       <WebsiteContainer>
-        <div className='grid gap-6 justify-center place-content-start lg:grid-cols-3 min-h-[600px]'>{renderPeople}</div>
-        <FlexContainer gap center className='gap-4'>
+        <div className='grid gap-6 justify-center place-content-start lg:grid-cols-3'>{renderPeople}</div>
+        <FlexContainer gap center className='gap-4 mt-4'>
           <PageControllButton onClick={handleGetPrevPage} text='prev' />
           <PageControllButton onClick={handleGetNextPage} text='next' />
         </FlexContainer>

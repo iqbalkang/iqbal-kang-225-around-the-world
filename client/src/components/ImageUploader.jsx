@@ -6,7 +6,7 @@ import Image from './Image'
 const ImageUploader = ({ onChange, selectedImage, className, square, rounded }) => {
   const imageUploaderContainerClasses = classnames(className, {
     'rounded-full overflow-hidden': rounded,
-    'rounded h-36': square,
+    'rounded h-36 2xl:h-56': square,
     'border border-light-gray border-dashed': !selectedImage,
   })
 

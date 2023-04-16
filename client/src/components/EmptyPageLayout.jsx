@@ -48,8 +48,8 @@ import FlexContainer from './FlexContainer'
 const EmptyPageLayout = () => {
   // return <section className='h-full bg-green-200'></section>
   return (
-    <FlexContainer col className='max-h-screen bg-off-white'>
-      <div className='relative flex justify-center'>
+    <FlexContainer col className='h-full  bg-off-white'>
+      <div className='relative flex justify-center h-[calc(100%-57px)] '>
         <img src={parachuteBg} />
         <motion.img
           animate={{ rotate: [1, -1, 1], x: [10, -10, 10] }}
