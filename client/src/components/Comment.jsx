@@ -5,7 +5,6 @@ import { BiLike as Like, BiConfused as Think } from 'react-icons/bi'
 import { BsEmojiLaughing as Haha } from 'react-icons/bs'
 import { renderSmallImage } from '../utils/rendeImage'
 import FlexContainer from './FlexContainer'
-import { BsEmojiExpressionless } from 'react-icons/bs'
 import { CgMailReply } from 'react-icons/cg'
 import Reactions from './Reactions'
 import { useDispatch, useSelector } from 'react-redux'
@@ -129,7 +128,7 @@ const Comment = ({ comment, placeId }) => {
         <FlexContainer className='gap-4 mb-2'>
           <div className='relative group'>
             {renderReaction()}
-            <Reactions updateReaction={updateReaction} commentId={commentId} />
+            <Reactions updateReaction={updateReaction} commentId={commentId} placeId={placeId} />
           </div>
           <button className={buttonBaseClasses} onClick={toggleCommentForm}>
             reply
