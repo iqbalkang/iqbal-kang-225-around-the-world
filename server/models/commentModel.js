@@ -49,6 +49,13 @@ class Comment {
     const data = await db.query(dbQuery)
     return data.rows
   }
+
+  static async findAddedBy(commentId) {
+    const dbQuery = `SELECT user_id, place_id from comments where comments.id = ${commentId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
 }
 
 module.exports = Comment

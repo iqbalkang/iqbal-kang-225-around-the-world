@@ -19,6 +19,7 @@ CREATE TABLE places (
   country varchar(30),
   rating decimal default 0,
   image text,
+  small_image text,
   image_id text,
   lat real not null,
   lng real not null,
