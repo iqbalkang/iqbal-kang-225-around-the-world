@@ -1,4 +1,4 @@
-const AppError = require('./utils/appError')
+const AppError = require('./utils/AppError')
 const errorHandler = require('./controllers/errorsController')
 const userRouter = require('./routes/userRouter')
 const placesRouter = require('./routes/placesRouter')
