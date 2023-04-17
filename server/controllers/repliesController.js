@@ -1,8 +1,8 @@
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../utils/appError')
+const AppError = require('../utils/AppError')
 const asyncHandler = require('express-async-handler')
 const Reply = require('../models/ReplyModel')
-const Comment = require('../models/commentModel')
+const Comment = require('../models/CommentModel')
 const Alert = require('../models/AlertModel')
 
 const postReply = asyncHandler(async (req, res, next) => {
