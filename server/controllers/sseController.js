@@ -1,8 +1,4 @@
-const { StatusCodes } = require('http-status-codes')
-const AppError = require('../utils/appError')
-
 const setupAddListener = (req, res) => {
-
   //res.userid = req.user.id
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
@@ -12,20 +8,19 @@ const setupAddListener = (req, res) => {
 
   console.log('setup sse')
   const pingInterval = setInterval(() => {
-    res.write('event: ping\n');
-    res.write('data: {}\n\n');
+    res.write('event: ping\n')
+    res.write('data: {}\n\n')
   }, 5000)
 
   req.on('close', () => {
-    clearInterval(pingInterval);
+    clearInterval(pingInterval)
   })
 
-  
   const eventEmitter = req.app.get('eventEmitter')
-  eventEmitter.on('alert', (data) => {
+  eventEmitter.on('alert', data => {
     res.write(`event: alert\n`)
     res.write(`data: ${JSON.stringify(data)}\n\n`)
   })
 }
 
-module.exports = {setupAddListener}
+module.exports = { setupAddListener }

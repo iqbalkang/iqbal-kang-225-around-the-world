@@ -1,10 +1,10 @@
 const { StatusCodes } = require('http-status-codes')
-const Place = require('../models/placeModel')
+const Place = require('../models/PlaceModel')
 const Like = require('../models/LikeModel')
 const Tag = require('../models/TagModel')
 const Alert = require('../models/AlertModel')
 const Follow = require('../models/FollowModel')
-const AppError = require('../utils/appError')
+const AppError = require('../utils/AppError')
 const asyncHandler = require('express-async-handler')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')
 const cloudinary = require('cloudinary').v2
