@@ -1,5 +1,3 @@
-const User = require('../models/userModel')
-
 const formatUser = user => {
   const { id, first_name, last_name, email, about_me, image, image_id, total_places, token } = user
 
