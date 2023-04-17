@@ -94,7 +94,14 @@ const Alerts = () => {
 
       if (type === 'follow') {
         return (
-          <GenericAlert key={index} firstName={firstName} lastName={lastName} image={image} alertFrom={alertFrom}>
+          <GenericAlert
+            key={index}
+            firstName={firstName}
+            lastName={lastName}
+            image={image}
+            alertFrom={alertFrom}
+            text='requested to follow you.'
+          >
             <Button responseButton onClick={handleFollowResponseClick.bind(null, alertFrom, 'accepted')}>
               <AiOutlineCheckCircle />
             </Button>
@@ -221,7 +228,7 @@ const GenericAlert = ({ image, firstName, lastName, alertFrom, placeId, alertId,
         <Link to={'/people/' + alertFrom} className='mr-1 hover:underline'>
           {firstName} {lastName}
         </Link>
-        <Link to={'places/' + placeId} onClick={onClick.bind(null, alertId)} className='lowercase'>
+        <Link to={'places/' + placeId} onClick={onClick?.bind(null, alertId)} className='lowercase'>
           {text}
         </Link>
       </p>
