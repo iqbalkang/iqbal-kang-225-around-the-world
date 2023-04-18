@@ -56,6 +56,23 @@ class Comment {
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
+
+  static async findByIdAndDelete(commentId) {
+    const dbQuery = `DELETE FROM comments WHERE comments.id = ${commentId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findByIdAndUpdate(commentId, comment) {
+    const dbQuery = `UPDATE comments
+                     SET comment = '${comment}'
+                     WHERE comments.id = ${commentId}
+                     RETURNING *`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
 }
 
 module.exports = Comment

@@ -60,6 +60,14 @@ class Alert {
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
+
+  static async deleteLikeAlert(commentId, placeId, type) {
+    const dbQuery = `DELETE FROM alerts
+                     WHERE comment_id = ${commentId} AND place_id= ${placeId} and type='${type}';`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
 }
 
 module.exports = Alert

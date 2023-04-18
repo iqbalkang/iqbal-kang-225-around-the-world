@@ -10,6 +10,7 @@ const cloudinaryUpload = require('../utils/cloudinaryUpload')
 const cloudinary = require('cloudinary').v2
 const formatPlaces = require('../utils/formatPlaces')
 const formatUser = require('../utils/formatUser')
+const sendAlert = require('../utils/sendAlert')
 
 const postPlace = asyncHandler(async (req, res, next) => {
   const image = req.file
@@ -57,16 +58,9 @@ const postPlace = asyncHandler(async (req, res, next) => {
   const placeId = place.id
 
   const followers = await Follow.getFollowers(userId)
-  if (followers.length > 0) {
-    await Promise.all(
-      followers.map(async follower => {
-        const newAlert = new Alert(follower.id, userId, 'post', placeId)
-        const alert = await newAlert.save()
-        const alertData = await Alert.findById(alert.id)
-        req.app.get('eventEmitter').emit('alert', { type: 'post', data: alertData })
-      })
-    )
-  }
+
+  if (followers.length > 0)
+    await Promise.all(followers.map(async follower => await sendAlert(req, follower.id, userId, 'post', placeId)))
 
   if (tags) {
     JSON.parse(tags).map(async tag => {
