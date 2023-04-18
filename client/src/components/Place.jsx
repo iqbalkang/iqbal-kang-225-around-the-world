@@ -17,6 +17,7 @@ import Image from './Image'
 import { useNavigate } from 'react-router-dom'
 import { toggleEditPlace } from '../features/places/placesSlice'
 import Spinner from './Spinner'
+import EditDeleteButtons from './EditDeleteButtons'
 
 const shortenText = (text, length) => {
   if (!text) return
@@ -141,27 +142,9 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
     dispatch(toggleEditPlace())
     dispatch(getSinglePlace({ placeId }))
     navigate('/explore/')
-    // setTimeout(() => {
-    // navigate('/explore/')
-    // }, 200)
   }
 
   const handlePlaceDeleteClick = placeId => dispatch(deletePlace(placeId))
-
-  const renderButtons = () => {
-    const buttonClasses = 'hover:text-accent duration-200'
-    if (toUser === user?.id)
-      return (
-        <FlexContainer gap className='mr-4'>
-          <button onClick={handlePlaceEditClick.bind(null, toPlace)}>
-            <MdModeEdit size={16} className={buttonClasses} />
-          </button>
-          <button onClick={handlePlaceDeleteClick.bind(null, toPlace)}>
-            {isLoading ? <Spinner /> : <MdDeleteForever size={16} className={buttonClasses} />}
-          </button>
-        </FlexContainer>
-      )
-  }
 
   return (
     <div className={containerBaseClasses + containerExtraClasses}>
@@ -171,7 +154,14 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
           <Heading offWhite h6>
             about {title}
           </Heading>
-          {renderButtons()}
+          <EditDeleteButtons
+            isLoading={isLoading}
+            addedByUserId={toUser}
+            signedInUserId={user?.id}
+            onDelete={handlePlaceDeleteClick}
+            onEdit={handlePlaceEditClick}
+            id={toPlace}
+          />
         </FlexContainer>
         <p className='flex-1'>{shortenText(description, 300)}</p>
         <FlexContainer justifyBetween>

@@ -4,8 +4,8 @@ const asyncHandler = require('express-async-handler')
 const Comment = require('../models/CommentModel')
 const Reaction = require('../models/ReactionModel')
 const Alert = require('../models/AlertModel')
-const Mention = require('../models/MentionModel')
 const Place = require('../models/PlaceModel')
+const sendAlert = require('../utils/sendAlert')
 
 const postComment = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
@@ -20,25 +20,9 @@ const postComment = asyncHandler(async (req, res, next) => {
 
   const { user_id: addedBy } = await Place.findAddedBy(placeId)
 
-  const newAlert = new Alert(addedBy, userId, 'comment', placeId, savedComment.id)
-  const alert = await newAlert.save()
-  const alertData = await Alert.findById(alert.id)
-  req.app.get('eventEmitter').emit('alert', { type: 'comment', data: alertData })
+  await sendAlert(req, addedBy, userId, 'comment', placeId, savedComment.id)
 
-  if (tags) {
-    await Promise.all(
-      tags.map(async tag => {
-        const newAlert = new Alert(tag, userId, 'tag', placeId, savedComment.id)
-        const newMention = new Mention(tag, userId, savedComment.id)
-        const alert = await newAlert.save()
-        const alertData = await Alert.findById(alert.id)
-
-        req.app.get('eventEmitter').emit('alert', { type: 'tag', data: alertData })
-
-        await newMention.save()
-      })
-    )
-  }
+  if (tags) await Promise.all(tags.map(async tag => await sendAlert(req, tag, userId, 'tag', placeId, savedComment.id)))
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -54,12 +38,6 @@ const getComments = asyncHandler(async (req, res, next) => {
 
   const comments = await Comment.findByPlaceId(placeId)
 
-  // const mentions = comments.map(async comment => {
-  //   return await Mention.findByCommentId(comment.id)
-  // })
-
-  // console.log(mentions)
-
   res.status(StatusCodes.OK).json({
     status: 'success',
     comments,
@@ -74,17 +52,17 @@ const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
 
   const comments = await Comment.findByPlaceAndUserId(placeId, userId)
 
-  const mentions = comments.map(async comment => {
-    comment.mentions = []
+  // const mentions = comments.map(async comment => {
+  //   comment.mentions = []
 
-    const mentions = await Mention.findByCommentId(comment.id)
+  //   const mentions = await Mention.findByCommentId(comment.id)
 
-    return mentions.map(mention => {
-      if (mention.comment_id === comment.id) return comment.mentions.push(mention)
-    })
-  })
+  //   return mentions.map(mention => {
+  //     if (mention.comment_id === comment.id) return comment.mentions.push(mention)
+  //   })
+  // })
 
-  await Promise.all(mentions)
+  // await Promise.all(mentions)
 
   res.status(StatusCodes.OK).json({
     status: 'success',
@@ -94,17 +72,21 @@ const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
 
 const toggleCommentReaction = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
-  const { type, commentId } = req.body
+  const { type, commentId, placeId } = req.body
 
   const reaction = await Reaction.findOne(userId, commentId)
 
   if (reaction && reaction.type === type) {
     await Reaction.findByIdAndDelete(userId, commentId)
+    await Alert.deleteLikeAlert(commentId, placeId, type)
   }
 
   if (!reaction) {
     const newReaction = new Reaction(type, commentId, userId)
     await newReaction.save()
+
+    const commentBelongsTo = await Comment.findAddedBy(commentId)
+    await sendAlert(req, commentBelongsTo.user_id, userId, 'like', placeId, commentId)
   }
 
   if (reaction && reaction.type !== type) {
@@ -118,9 +100,37 @@ const toggleCommentReaction = asyncHandler(async (req, res, next) => {
   })
 })
 
+const deleteComment = asyncHandler(async (req, res, next) => {
+  const { commentId } = req.params
+  if (!commentId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  await Comment.findByIdAndDelete(commentId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: 'comment deleted successfully',
+  })
+})
+
+const editComment = asyncHandler(async (req, res, next) => {
+  const { commentId } = req.params
+  const { comment } = req.body
+  if (!commentId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  const updatedComment = await Comment.findByIdAndUpdate(commentId, comment)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: 'comment updated successfully',
+    updatedComment,
+  })
+})
+
 module.exports = {
   postComment,
   getComments,
   toggleCommentReaction,
   getCommentsForSignedInUsers,
+  deleteComment,
+  editComment,
 }

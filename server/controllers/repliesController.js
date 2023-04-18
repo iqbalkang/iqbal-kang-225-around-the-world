@@ -4,6 +4,7 @@ const asyncHandler = require('express-async-handler')
 const Reply = require('../models/ReplyModel')
 const Comment = require('../models/CommentModel')
 const Alert = require('../models/AlertModel')
+const sendAlert = require('../utils/sendAlert')
 
 const postReply = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
@@ -14,10 +15,7 @@ const postReply = asyncHandler(async (req, res, next) => {
 
   const { user_id: addedBy, place_id: placeId } = await Comment.findAddedBy(commentId)
 
-  const newAlert = new Alert(addedBy, userId, 'reply', placeId, commentId)
-  const alert = await newAlert.save()
-  const alertData = await Alert.findById(alert.id)
-  req.app.get('eventEmitter').emit('alert', { type: 'reply', data: alertData })
+  await sendAlert(req, addedBy, userId, 'reply', placeId, commentId)
 
   const newReply = new Reply(reply, commentId, userId)
   const savedReply = await newReply.save()
@@ -42,6 +40,32 @@ const getReplies = asyncHandler(async (req, res, next) => {
   })
 })
 
+const editReply = asyncHandler(async (req, res, next) => {
+  const { replyId } = req.params
+  const { reply } = req.body
+  if (!replyId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  const updatedReply = await Reply.findByIdAndUpdate(replyId, reply)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: 'reply updated successfully',
+    updatedReply,
+  })
+})
+
+const deleteReply = asyncHandler(async (req, res, next) => {
+  const { replyId } = req.params
+  if (!replyId) return next(new AppError('invalid request', StatusCodes.BAD_REQUEST))
+
+  await Reply.findByIdAndDelete(replyId)
+
+  res.status(StatusCodes.OK).json({
+    status: 'success',
+    message: 'reply deleted successfully',
+  })
+})
+
 // const getCommentsForSignedInUsers = asyncHandler(async (req, res, next) => {
 //   const { placeId } = req.params
 //   const { id: userId } = req.user
@@ -59,4 +83,6 @@ const getReplies = asyncHandler(async (req, res, next) => {
 module.exports = {
   postReply,
   getReplies,
+  deleteReply,
+  editReply,
 }

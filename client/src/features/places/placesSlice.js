@@ -169,10 +169,6 @@ const placesSlice = createSlice({
       .addCase(editPlace.fulfilled, (state, { payload }) => {
         const { place } = payload
         state.isLoading = false
-        console.log(place)
-        // state.places = state.places.filter(place => place.id !== payload)
-        // state.placesByCurrentUser = state.placesByCurrentUser.filter(place => place.id !== payload)
-        // state.currentUserFavorites = state.currentUserFavorites.filter(place => place.id !== payload)
         state.singlePlace = place
       })
       .addCase(editPlace.rejected, (state, { payload }) => {
