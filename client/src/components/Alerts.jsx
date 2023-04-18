@@ -54,21 +54,26 @@ const Alerts = () => {
     const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}/api/v1/sse`)
 
     eventSource.addEventListener('alert', e => {
-      const alertData = JSON.parse(e.data)
+      const { type, data } = JSON.parse(e.data)
+      const { first_name: firstName, last_name: lastName } = data
 
-      alertData.data.userId = user.id
-      if (alertData.type === 'follow') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} requested to follow you`
-      } else if (alertData.type === 'post') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} added a new post`
-      } else if (alertData.type === 'tag') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} tagged you in a comment`
-      } else if (alertData.type === 'comment') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} commented on your post`
-      } else if (alertData.type === 'reply') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} replied to your comment`
+      const name = firstName + ' ' + lastName
+
+      data.userId = user.id
+      if (type === 'follow') {
+        data.message = `${name} requested to follow you`
+      } else if (type === 'post') {
+        data.message = `${name} added a new post`
+      } else if (type === 'tag') {
+        data.message = `${name} tagged you in a comment`
+      } else if (type === 'comment') {
+        data.message = `${name} commented on your post`
+      } else if (type === 'reply') {
+        data.message = `${name} replied to your comment`
+      } else if (type === 'like') {
+        data.message = `${name} liked your comment`
       }
-      dispatch(addAlert(alertData.data))
+      dispatch(addAlert(data))
     })
 
     return () => {
@@ -172,6 +177,22 @@ const Alerts = () => {
             placeId={placeId}
             alertId={id}
             text='replied to your comment.'
+          ></GenericAlert>
+        )
+      }
+
+      if (type === 'like') {
+        return (
+          <GenericAlert
+            key={index}
+            firstName={firstName}
+            lastName={lastName}
+            image={image}
+            alertFrom={alertFrom}
+            onClick={handlePostAlertClick}
+            placeId={placeId}
+            alertId={id}
+            text='liked your comment.'
           ></GenericAlert>
         )
       }

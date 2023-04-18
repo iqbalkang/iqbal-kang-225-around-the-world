@@ -15,13 +15,14 @@ import customFetch from '../utils/axios/customFetch'
 import LoginModal from './LoginModal'
 import CommentFormNew from './CommentFormNew'
 import moment from 'moment'
+import { getLocalStorage } from '../utils/localStorage/localStorage'
 
 const buttonBaseClasses = 'flex items-center gap-1 capitalize hover:underline'
 
 const Comment = ({ comment, placeId }) => {
   const dispatch = useDispatch()
 
-  const { user, isLoading, allUsers } = useSelector(store => store.user)
+  const { user, isLoading } = useSelector(store => store.user)
 
   const [replies, setReplies] = useState([])
   const [selectedReaction, setSelectedReaction] = useState(null)
@@ -94,6 +95,37 @@ const Comment = ({ comment, placeId }) => {
     }
   }
 
+  const handleDeleteReplies = async replyId => {
+    try {
+      const { token } = getLocalStorage('user')
+      const { data } = await customFetch.delete(`/reply/${replyId}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      handleGetReplies()
+      setShowReplyButton(false)
+    } catch (error) {
+      toast(error.response.data.message)
+    }
+  }
+
+  const handleEditReplies = async (e, body) => {
+    e.preventDefault()
+    try {
+      if (!body.reply) return new Promise((resolve, reject) => reject(toast('please enter a reply')))
+      const { token } = getLocalStorage('user')
+      const { data } = await customFetch.patch(`/reply/${body.replyId}`, body, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      handleGetReplies()
+    } catch (error) {
+      toast(error.response.data.message)
+    }
+  }
+
   const updateReplies = reply => {
     reply.first_name = firstName
     reply.last_name = lastName
@@ -103,7 +135,14 @@ const Comment = ({ comment, placeId }) => {
     setReplyCountButtonText('view other replies')
   }
 
-  const renderReplies = replies.map((reply, index) => <CommentorDescription key={index} props={reply} />)
+  const renderReplies = replies.map((reply, index) => (
+    <CommentorDescription
+      key={index}
+      props={reply}
+      handleDeleteReplies={handleDeleteReplies}
+      handleEditReplies={handleEditReplies}
+    />
+  ))
 
   const renderTime = time => moment(time).calendar()
 
@@ -161,7 +200,7 @@ const Comment = ({ comment, placeId }) => {
           <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
             {renderSmallImage(image, firstName, lastName)}
           </div>
-          <CommentFormNew commentId={commentId} updateReplies={updateReplies} allUsers={allUsers} reply />
+          <CommentFormNew commentId={commentId} updateReplies={updateReplies} reply />
         </FlexContainer>
       )}
 

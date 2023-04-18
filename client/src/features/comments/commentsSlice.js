@@ -1,7 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { toast } from 'react-toastify'
-import { getComments, getCommentsForSignedInUsers, postComment, toggleCommentReaction } from './commentsThunks'
+import {
+  deleteComment,
+  editComment,
+  getComments,
+  getCommentsForSignedInUsers,
+  postComment,
+  toggleCommentReaction,
+} from './commentsThunks'
 
 const initialState = {
   comments: [],
@@ -54,6 +61,36 @@ const commentsSlice = createSlice({
         state.comments = comments
       })
       .addCase(getCommentsForSignedInUsers.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // delete a comment
+      .addCase(deleteComment.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(deleteComment.fulfilled, (state, { payload }) => {
+        state.isLoading = false
+        state.comments = state.comments.filter(comment => comment.id !== payload)
+      })
+      .addCase(deleteComment.rejected, (state, { payload }) => {
+        state.isLoading = false
+        toast.error(payload)
+      })
+
+      // delete a comment
+      .addCase(editComment.pending, state => {
+        state.isLoading = true
+      })
+      .addCase(editComment.fulfilled, (state, { payload }) => {
+        const { updatedComment } = payload
+        state.isLoading = false
+        state.comments = state.comments.map(comment => {
+          if (comment.id === updatedComment.id) return { ...comment, comment: updatedComment.comment }
+          else return comment
+        })
+      })
+      .addCase(editComment.rejected, (state, { payload }) => {
         state.isLoading = false
         toast.error(payload)
       })

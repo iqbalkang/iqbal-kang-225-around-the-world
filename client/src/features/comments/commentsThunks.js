@@ -59,3 +59,31 @@ export const toggleCommentReaction = createAsyncThunk('comments/toggleCommentRea
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
+
+export const deleteComment = createAsyncThunk('comments/deleteComment', async (commentId, thunkAPI) => {
+  try {
+    const { data } = await customFetch.delete(`/comments/${commentId}`, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return commentId
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
+export const editComment = createAsyncThunk('places/editComment', async (body, thunkAPI) => {
+  let url = '/comments/' + body.commentId
+
+  try {
+    const { data } = await customFetch.patch(url, body, {
+      headers: {
+        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+      },
+    })
+    return data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})

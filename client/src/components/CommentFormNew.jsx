@@ -4,7 +4,7 @@ import Spinner from './Spinner'
 import classnames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import LoginModal from './LoginModal'
-import { postComment } from '../features/comments/commentsThunks'
+import { editComment, postComment } from '../features/comments/commentsThunks'
 import { toast } from 'react-toastify'
 import customFetch from '../utils/axios/customFetch'
 import { getLocalStorage } from '../utils/localStorage/localStorage'
@@ -12,8 +12,20 @@ import { MentionsInput, Mention } from 'react-mentions'
 import defaultStyles from '../utils/defaultStyles'
 
 const CommentFormNew = props => {
-  const { isLoading, marginLeft, placeId, commentId, reply, updateReplies } = props
+  const {
+    isLoading,
+    marginLeft,
+    placeId,
+    commentId,
+    reply,
+    updateReplies,
+    edit,
+    text,
+    setShowEditCommentForm,
+    handleEditReplies,
+  } = props
   const dispatch = useDispatch()
+  const commentFormRef = useRef()
 
   const { user, isLoading: isUserLoading } = useSelector(store => store.user)
 
@@ -70,11 +82,37 @@ const CommentFormNew = props => {
     setCommentValue('')
   }
 
+  const handleCommentEditSubmit = e => {
+    e.preventDefault()
+
+    if (!commentValue) return toast.error('Please enter a comment')
+    dispatch(editComment({ comment: commentValue, commentId }))
+    setCommentValue('')
+    setShowEditCommentForm(false)
+  }
+
   const handleOnKeyDown = e => {
     if (e.key === 'Enter') handleOnSubmit(e)
   }
 
-  const handleOnSubmit = reply ? handleReplySubmit : handleCommentSubmit
+  useEffect(() => {
+    if (edit && reply) setReplyValue(text)
+    if (edit) setCommentValue(text)
+  }, [edit])
+
+  const handleOnSubmit = async e => {
+    if (edit && reply) {
+      await handleEditReplies(e, { replyId: reply, reply: replyValue })
+      return setShowEditCommentForm(false)
+    }
+    if (reply) return handleReplySubmit(e)
+    if (edit) return handleCommentEditSubmit(e)
+    return handleCommentSubmit(e)
+  }
+
+  useEffect(() => {
+    if (reply) commentFormRef.current.focus()
+  }, [])
 
   const closeLoginModal = () => setLoginModal(false)
 
@@ -91,6 +129,7 @@ const CommentFormNew = props => {
           onChange={handleOnChange}
           onKeyDown={handleOnKeyDown}
           style={defaultStyles}
+          inputRef={commentFormRef}
         >
           <Mention data={searchUsers} className='bg-accent' />
         </MentionsInput>
