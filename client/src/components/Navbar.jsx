@@ -24,7 +24,7 @@ const Navbar = () => {
   const listItems = navListItems.map(item => <ListItem key={item} item={item} className='hov' />)
 
   return (
-    <div className='bg-accent'>
+    <div className='bg-accent relative z-30'>
       {/* Navbar inner container to wrap logo and navigation links */}
 
       <WebsiteContainer>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, forwardRef } from 'react'
 import { BiSearch } from 'react-icons/bi'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { MdModeEdit, MdDeleteForever } from 'react-icons/md'
@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom'
 import { toggleEditPlace } from '../features/places/placesSlice'
 import Spinner from './Spinner'
 import EditDeleteButtons from './EditDeleteButtons'
+import Modal from './Modal'
 
 const shortenText = (text, length) => {
   if (!text) return
@@ -25,9 +26,9 @@ const shortenText = (text, length) => {
   return text
 }
 
-const Place = props => {
+const Place = forwardRef((props, ref) => {
   const dispatch = useDispatch()
-  const placeRef = useRef()
+  // const placeRef = useRef()
 
   const { isLoading, user } = useSelector(store => store.user)
   const {
@@ -43,13 +44,15 @@ const Place = props => {
     image,
     small_image,
     updateCoordinates,
+    coordinates,
     userId,
+    activeIndex,
+    toggleDescriptionVisibility,
   } = props
 
-  const [isDescVisible, setIsDescVisible] = useState(false)
   const [loginModal, setLoginModal] = useState(false)
 
-  const toggleDescription = () => setIsDescVisible(prevState => !prevState)
+  const toggleDescription = () => toggleDescriptionVisibility(id)
 
   const handleToggleFavorite = placeId => {
     if (!user) return setLoginModal(true)
@@ -61,7 +64,7 @@ const Place = props => {
   }
 
   const imageContainerClasses =
-    'relative w-36 h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
+    'relative h-full rounded-3xl shadow-md shadow-dark-gray shadow-dark-gray overflow-hidden group'
   const overlayClasses = 'absolute inset-0 bg-black/30 group-hover:bg-black/70 duration-200'
   const searchButtonClasses =
     'hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:block z-10'
@@ -82,14 +85,10 @@ const Place = props => {
     if (!isLoading) setLoginModal(false)
   }, [isLoading])
 
-  useEffect(() => {
-    setIsDescVisible(false)
-  }, [title])
-
   return (
-    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer' ref={placeRef}>
+    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer ' ref={ref}>
       {/* container for photo and place description */}
-      <div className='flex gap-2 h-52'>
+      <div className='flex gap-2 h-52 sm:h-64 lg:h-[calc(100vw-85vw)]'>
         {/* container for place image, favorite & search */}
         <div className={imageContainerClasses}>
           <Image src={small_image} alt={title} />
@@ -97,7 +96,7 @@ const Place = props => {
             {favoriteIcon(isFavorite)}
           </RoundButton>
           <RoundButton className={searchButtonClasses} onClick={toggleDescription}>
-            <BiSearch className='text-accent w-10 h-10' />
+            <BiSearch className='text-accent w-10 h-10 search' />
           </RoundButton>
           {/* overlay */}
           <div className={overlayClasses}></div>
@@ -106,11 +105,12 @@ const Place = props => {
         {/* description container */}
         <Description
           description={description}
-          isDescVisible={isDescVisible}
+          isDescVisible={activeIndex === id}
           title={title}
           toPlace={id}
           toUser={userId}
           value={firstName}
+          coordinates={coordinates}
         />
       </div>
       {/* container for place info */}
@@ -124,13 +124,13 @@ const Place = props => {
       {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
     </article>
   )
-}
+})
 
 export default Place
 
-const Description = ({ description, isDescVisible, title, toPlace, toUser, value }) => {
+const Description = ({ description, isDescVisible, title, toPlace, toUser, value, coordinates }) => {
   const containerBaseClasses =
-    'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
+    'absolute h-[calc(100vw-85vw)] z-20 ml-4 bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-75 cursor-auto'
   const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0'
 
   const dispatch = useDispatch()
@@ -147,8 +147,11 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
   const handlePlaceDeleteClick = placeId => dispatch(deletePlace(placeId))
 
   return (
-    <div className={containerBaseClasses + containerExtraClasses}>
-      <FlexContainer col className='h-full w-[400px] text-sm'>
+    <div
+      style={{ left: coordinates.left, top: coordinates.top }}
+      className={containerBaseClasses + containerExtraClasses}
+    >
+      <FlexContainer col className='h-full w-[400px] text-sm gap-4'>
         {/* heading, delete and edit buttons */}
         <FlexContainer justifyBetween>
           <Heading offWhite h6>
@@ -163,7 +166,7 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
             id={toPlace}
           />
         </FlexContainer>
-        <p className='flex-1'>{shortenText(description, 300)}</p>
+        <p className='flex-1 overflow-scroll'>{description}</p>
         <FlexContainer justifyBetween>
           <CustomDescriptionLink text='added by' value={value} to={'/people/' + toUser} />
           <CustomDescriptionLink text='take me to' value={title} to={'/places/' + toPlace} />
