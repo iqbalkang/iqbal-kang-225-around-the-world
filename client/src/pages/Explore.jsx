@@ -120,7 +120,7 @@ const Explore = () => {
     <section className='h-full grid grid-cols-[2fr,8fr]'>
       {/* left side form inputs */}
       <FlexContainer center className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
-        <form className='space-y-3' onSubmit={handleSubmit}>
+        <form className='space-y-3 w-full' onSubmit={handleSubmit}>
           <ImageUploader square onChange={onChangeHandler} selectedImage={selectedImage} />
 
           <PlacesAutoComplete address={address} setAddress={setAddress} setCoordinates={setCoordinates} />
@@ -129,7 +129,7 @@ const Explore = () => {
 
           <Tags tags={values?.tags} updateTags={updateTags} />
 
-          <FlexContainer alignCenter>
+          <FlexContainer alignCenter gap>
             <p>How much would you rate this place?</p>
             <Stars handleRating={updateRating} rating={values?.rating} />
           </FlexContainer>

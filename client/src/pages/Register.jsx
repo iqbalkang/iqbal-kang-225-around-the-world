@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import FormRowContainerWithLogo from '../components/FormRowContainerWithLogo'
 import { loginUser, registerUser } from '../features/user/userThunk'
 import bgImage from '../images/bg.png'
-import { loginInputs, registerInputs } from '../utils/data/authenticationInputs'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import AccentButton from '../components/AccentButton'
 import FlexContainer from '../components/FlexContainer'
 import LoginForm from '../components/LoginForm'
 import RegisterForm from '../components/RegisterForm'
@@ -78,7 +75,7 @@ const Register = () => {
       {/* form */}
       <div className={formContainerClasses}>
         <h2 className='text-3xl font-bold md:text-6xl'>{headingText}</h2>
-        <FlexContainer className='mb-4'>
+        <FlexContainer gap className='mb-4'>
           <p className='text-light-gray'>{paragraphText}</p>
           <button className='text-accent' onClick={toggleIsMember}>
             {buttonText}

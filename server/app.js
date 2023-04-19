@@ -1,11 +1,4 @@
-const express = require('express')
-const { StatusCodes } = require('http-status-codes')
-const cors = require('cors')
-const app = express()
-const httpServer = require('http').createServer(app)
-const fs = require('fs')
-
-const AppError = require('./utils/appError')
+const AppError = require('./utils/AppError')
 const errorHandler = require('./controllers/errorsController')
 const userRouter = require('./routes/userRouter')
 const placesRouter = require('./routes/placesRouter')
@@ -14,9 +7,20 @@ const repliesRouter = require('./routes/repliesRouter')
 const followersRouter = require('./routes/followersRouter')
 const alertsRouter = require('./routes/alertsRouter')
 const sseRouter = require('./routes/sseRouter')
+const path = require('path')
+
+const express = require('express')
+const { StatusCodes } = require('http-status-codes')
+const cors = require('cors')
+const app = express()
+
+const httpServer = require('http').createServer(app)
 
 app.use(express.json())
 app.use(cors())
+
+// Production
+app.use('/', express.static(path.join(__dirname, '../client/build')))
 
 app.use('/api/v1/authentication', userRouter)
 app.use('/api/v1/places', placesRouter)
@@ -33,8 +37,8 @@ app.use('*', (req, res, next) => {
 // global error handler
 app.use(errorHandler)
 
-const EventEmitter = require("events");
-const eventEmitter = new EventEmitter();
-app.set("eventEmitter", eventEmitter);
+const EventEmitter = require('events')
+const eventEmitter = new EventEmitter()
+app.set('eventEmitter', eventEmitter)
 
 module.exports = httpServer

@@ -1,5 +1,4 @@
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../utils/appError')
 const asyncHandler = require('express-async-handler')
 const Alert = require('../models/AlertModel')
 
@@ -26,9 +25,9 @@ const deleteAlerts = asyncHandler(async (req, res, next) => {
 
 const deleteSingleAlert = asyncHandler(async (req, res, next) => {
   const { id: userId } = req.user
-  const { placeId } = req.params
+  const { alertId } = req.params
 
-  await Alert.deletePostAlert(userId, placeId)
+  await Alert.deleteAlert(userId, alertId)
 
   res.status(StatusCodes.OK).json({
     status: 'success',

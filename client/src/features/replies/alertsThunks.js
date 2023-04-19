@@ -29,9 +29,9 @@ export const deleteAlerts = createAsyncThunk('alerts/deleteAlerts', async (_, th
   }
 })
 
-export const deleteSingleAlert = createAsyncThunk('alerts/deleteSingleAlert', async (placeId, thunkAPI) => {
+export const deleteSingleAlert = createAsyncThunk('alerts/deleteSingleAlert', async (alertId, thunkAPI) => {
   try {
-    const { data } = await customFetch.delete(`/alerts/${placeId}`, {
+    const { data } = await customFetch.delete(`/alerts/${alertId}`, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },

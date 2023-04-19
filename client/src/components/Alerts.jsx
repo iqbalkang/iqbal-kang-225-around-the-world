@@ -18,7 +18,7 @@ const Alerts = () => {
   const dispatch = useDispatch()
   const alertsRef = useRef()
   const alertsButtonRef = useRef()
-  const { user } = useSelector((store) => store.user);
+  const { user } = useSelector(store => store.user)
   const { alerts } = useSelector(store => store.alerts)
 
   const [areAlertsShown, setAreAlertsShown] = useState(false)
@@ -43,7 +43,6 @@ const Alerts = () => {
     }
   }
 
-
   const handleClearAlertsClick = () => {
     dispatch(deleteAlerts())
   }
@@ -52,26 +51,35 @@ const Alerts = () => {
 
   // Event Listener From Server
   useEffect(() => {
-    const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}api/v1/sse`);
+    const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}/api/v1/sse`)
 
-    eventSource.addEventListener('alert', (e) => {
-      const alertData = JSON.parse(e.data);
-      
-      alertData.data.userId = user.id;
-      if (alertData.type === 'follow') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} requested to follow you`;
-      } else if (alertData.type === 'post') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} added a new post`;
-      } else if (alertData.type === 'tag') {
-        alertData.data.message = `${alertData.data.first_name} ${alertData.data.last_name} tagged you in a comment`;
+    eventSource.addEventListener('alert', e => {
+      const { type, data } = JSON.parse(e.data)
+      const { first_name: firstName, last_name: lastName } = data
+
+      const name = firstName + ' ' + lastName
+
+      data.userId = user.id
+      if (type === 'follow') {
+        data.message = `${name} requested to follow you`
+      } else if (type === 'post') {
+        data.message = `${name} added a new post`
+      } else if (type === 'tag') {
+        data.message = `${name} tagged you in a comment`
+      } else if (type === 'comment') {
+        data.message = `${name} commented on your post`
+      } else if (type === 'reply') {
+        data.message = `${name} replied to your comment`
+      } else if (type === 'like') {
+        data.message = `${name} liked your comment`
       }
-      dispatch(addAlert(alertData.data));
+      dispatch(addAlert(data))
     })
 
     return () => {
-      eventSource.close();
+      eventSource.close()
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     dispatch(getAlerts())
@@ -80,6 +88,7 @@ const Alerts = () => {
   const renderAlerts = () =>
     alerts.map((alert, index) => {
       const {
+        id,
         first_name: firstName,
         last_name: lastName,
         type,
@@ -90,20 +99,27 @@ const Alerts = () => {
 
       if (type === 'follow') {
         return (
-          <FollowAlert
+          <GenericAlert
             key={index}
             firstName={firstName}
             lastName={lastName}
             image={image}
             alertFrom={alertFrom}
-            onClick={handleFollowResponseClick}
-          />
+            text='requested to follow you.'
+          >
+            <Button responseButton onClick={handleFollowResponseClick.bind(null, alertFrom, 'accepted')}>
+              <AiOutlineCheckCircle />
+            </Button>
+            <Button responseButton onClick={handleFollowResponseClick.bind(null, alertFrom, 'declined')}>
+              <AiOutlineCloseCircle />
+            </Button>
+          </GenericAlert>
         )
       }
 
       if (type === 'post') {
         return (
-          <PostAlert
+          <GenericAlert
             key={index}
             firstName={firstName}
             lastName={lastName}
@@ -111,13 +127,15 @@ const Alerts = () => {
             alertFrom={alertFrom}
             onClick={handlePostAlertClick}
             placeId={placeId}
-          />
+            alertId={id}
+            text='added a new post.'
+          ></GenericAlert>
         )
       }
 
       if (type === 'tag') {
         return (
-          <TagAlert
+          <GenericAlert
             key={index}
             firstName={firstName}
             lastName={lastName}
@@ -125,7 +143,57 @@ const Alerts = () => {
             alertFrom={alertFrom}
             onClick={handlePostAlertClick}
             placeId={placeId}
-          />
+            alertId={id}
+            text='tagged you in a comment.'
+          ></GenericAlert>
+        )
+      }
+
+      if (type === 'comment') {
+        return (
+          <GenericAlert
+            key={index}
+            firstName={firstName}
+            lastName={lastName}
+            image={image}
+            alertFrom={alertFrom}
+            onClick={handlePostAlertClick}
+            placeId={placeId}
+            alertId={id}
+            text='posted a comment on your post.'
+          ></GenericAlert>
+        )
+      }
+
+      if (type === 'reply') {
+        return (
+          <GenericAlert
+            key={index}
+            firstName={firstName}
+            lastName={lastName}
+            image={image}
+            alertFrom={alertFrom}
+            onClick={handlePostAlertClick}
+            placeId={placeId}
+            alertId={id}
+            text='replied to your comment.'
+          ></GenericAlert>
+        )
+      }
+
+      if (type === 'like') {
+        return (
+          <GenericAlert
+            key={index}
+            firstName={firstName}
+            lastName={lastName}
+            image={image}
+            alertFrom={alertFrom}
+            onClick={handlePostAlertClick}
+            placeId={placeId}
+            alertId={id}
+            text='liked your comment.'
+          ></GenericAlert>
         )
       }
     })
@@ -171,29 +239,7 @@ const Alerts = () => {
 
 export default Alerts
 
-const FollowAlert = ({ image, firstName, lastName, alertFrom, onClick }) => {
-  return (
-    <FlexContainer gap alignCenter className='bg-accent p-2'>
-      <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
-        {renderSmallImage(image, firstName, lastName)}
-      </div>
-      <p className='whitespace-nowrap flex-1'>
-        <Link to={'/people/' + alertFrom} className='mr-1'>
-          {firstName} {lastName}
-        </Link>
-        requested to follow you
-      </p>
-      <Button responseButton onClick={onClick.bind(null, alertFrom, 'accepted')}>
-        <AiOutlineCheckCircle />
-      </Button>
-      <Button responseButton onClick={onClick.bind(null, alertFrom, 'declined')}>
-        <AiOutlineCloseCircle />
-      </Button>
-    </FlexContainer>
-  )
-}
-
-const PostAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) => {
+const GenericAlert = ({ image, firstName, lastName, alertFrom, placeId, alertId, onClick, text, children }) => {
   return (
     <FlexContainer gap alignCenter className='bg-accent p-2'>
       <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
@@ -203,28 +249,11 @@ const PostAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) 
         <Link to={'/people/' + alertFrom} className='mr-1 hover:underline'>
           {firstName} {lastName}
         </Link>
-        <Link to={'places/' + placeId} onClick={onClick.bind(null, placeId)}>
-          added a new post
+        <Link to={'places/' + placeId} onClick={onClick?.bind(null, alertId)} className='lowercase'>
+          {text}
         </Link>
       </p>
-    </FlexContainer>
-  )
-}
-
-const TagAlert = ({ image, firstName, lastName, alertFrom, placeId, onClick }) => {
-  return (
-    <FlexContainer gap alignCenter className='bg-accent p-2'>
-      <div className='h-8 w-8 shrink-0 rounded-full overflow-hidden'>
-        {renderSmallImage(image, firstName, lastName)}
-      </div>
-      <p className='whitespace-nowrap flex-1'>
-        <Link to={'/people/' + alertFrom} className='mr-1 hover:underline'>
-          {firstName} {lastName}
-        </Link>
-        <Link to={'places/' + placeId} onClick={onClick.bind(null, placeId)}>
-          tagged you in a comment
-        </Link>
-      </p>
+      {children}
     </FlexContainer>
   )
 }

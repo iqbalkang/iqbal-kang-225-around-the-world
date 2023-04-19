@@ -13,7 +13,7 @@ root.render(
   <Provider store={store}>
     <BrowserRouter>
       <App />
-      <ToastContainer autoClose={3000} />
+      <ToastContainer autoClose={3000} className='toast' />
     </BrowserRouter>
   </Provider>
 )

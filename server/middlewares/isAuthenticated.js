@@ -1,9 +1,9 @@
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../utils/appError')
+const AppError = require('../utils/AppError')
 
 const jwt = require('jsonwebtoken')
 const asyncHandler = require('express-async-handler')
-const User = require('../models/userModel')
+const User = require('../models/UserModel')
 
 const isAuthenticated = asyncHandler(async (req, res, next) => {
   const authHeader = req.headers.authorization

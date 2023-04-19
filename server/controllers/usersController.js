@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes')
-const User = require('../models/userModel')
-const AppError = require('../utils/appError')
+const User = require('../models/UserModel')
+const AppError = require('../utils/AppError')
 const asyncHandler = require('express-async-handler')
 const formatUser = require('../utils/formatUser')
 const cloudinaryUpload = require('../utils/cloudinaryUpload')

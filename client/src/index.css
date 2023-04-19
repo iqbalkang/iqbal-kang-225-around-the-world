@@ -4,11 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer components {
-  .active-link {
-    @apply absolute -right-6 w-6 opacity-0 translate-x-5 group-hover:opacity-100 group-hover:translate-x-0 duration-200;
-  }
-} */
+.toast {
+  top: 3rem !important;
+  text-transform: capitalize;
+}
 
 .pac-item {
   font-size: 12px;

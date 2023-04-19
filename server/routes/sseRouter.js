@@ -1,10 +1,8 @@
-const express = require("express");
-const { setupAddListener } = require("../controllers/sseController");
-const isAuthenticated = require("../middlewares/isAuthenticated");
+const express = require('express')
+const { setupAddListener } = require('../controllers/sseController')
 
-const router = express.Router();
+const router = express.Router()
 
-//router.get("/", isAuthenticated, setupAddListener);
-router.get("/", setupAddListener);
+router.get('/', setupAddListener)
 
-module.exports = router;
+module.exports = router

@@ -17,8 +17,8 @@ class Comment {
   }
 
   static async findByPlaceId(placeId) {
-    const dbQuery = `SELECT comment,comments.id, users.id as user_id,created_at, first_name, last_name, image, 
-                    (SELECT COUNT(*) from reactions WHERE reactions.comment_id = comments.id) AS likes_count
+    const dbQuery = `SELECT comment,comments.id, users.id as user_id, comments.created_at, first_name, last_name, image, 
+                    (SELECT COUNT(*) from reactions WHERE reactions.comment_id = comments.id) AS likes_count,
                      COUNT(reply)::integer AS reply_count
                      FROM comments
                      JOIN users ON comments.user_id = users.id
@@ -48,6 +48,30 @@ class Comment {
 
     const data = await db.query(dbQuery)
     return data.rows
+  }
+
+  static async findAddedBy(commentId) {
+    const dbQuery = `SELECT user_id, place_id from comments where comments.id = ${commentId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findByIdAndDelete(commentId) {
+    const dbQuery = `DELETE FROM comments WHERE comments.id = ${commentId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findByIdAndUpdate(commentId, comment) {
+    const dbQuery = `UPDATE comments
+                     SET comment = '${comment}'
+                     WHERE comments.id = ${commentId}
+                     RETURNING *`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
   }
 }
 

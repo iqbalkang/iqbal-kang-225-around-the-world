@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.get('/', isAuthenticated, getAlerts)
 router.delete('/', isAuthenticated, deleteAlerts)
-router.delete('/:placeId', isAuthenticated, deleteSingleAlert)
+router.delete('/:alertId', isAuthenticated, deleteSingleAlert)
 // router.post('/', isAuthenticated, postComment)
 // router.post('/reaction', isAuthenticated, toggleCommentReaction)
 

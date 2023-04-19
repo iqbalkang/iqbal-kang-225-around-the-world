@@ -17,6 +17,7 @@ import Image from './Image'
 import { useNavigate } from 'react-router-dom'
 import { toggleEditPlace } from '../features/places/placesSlice'
 import Spinner from './Spinner'
+import EditDeleteButtons from './EditDeleteButtons'
 
 const shortenText = (text, length) => {
   if (!text) return
@@ -29,8 +30,21 @@ const Place = props => {
   const placeRef = useRef()
 
   const { isLoading, user } = useSelector(store => store.user)
-  const { title, country, rating, description, id, isFavorite, firstName, lat, lng, image, updateCoordinates, userId } =
-    props
+  const {
+    title,
+    country,
+    rating,
+    description,
+    id,
+    isFavorite,
+    firstName,
+    lat,
+    lng,
+    image,
+    small_image,
+    updateCoordinates,
+    userId,
+  } = props
 
   const [isDescVisible, setIsDescVisible] = useState(false)
   const [loginModal, setLoginModal] = useState(false)
@@ -78,7 +92,7 @@ const Place = props => {
       <div className='flex gap-2 h-52'>
         {/* container for place image, favorite & search */}
         <div className={imageContainerClasses}>
-          <Image src={image} alt={title} />
+          <Image src={small_image} alt={title} />
           <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
             {favoriteIcon(isFavorite)}
           </RoundButton>
@@ -117,7 +131,7 @@ export default Place
 const Description = ({ description, isDescVisible, title, toPlace, toUser, value }) => {
   const containerBaseClasses =
     'bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-200 cursor-auto'
-  const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0 h-60'
+  const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0'
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -128,27 +142,9 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
     dispatch(toggleEditPlace())
     dispatch(getSinglePlace({ placeId }))
     navigate('/explore/')
-    // setTimeout(() => {
-    // navigate('/explore/')
-    // }, 200)
   }
 
   const handlePlaceDeleteClick = placeId => dispatch(deletePlace(placeId))
-
-  const renderButtons = () => {
-    const buttonClasses = 'hover:text-accent duration-200'
-    if (toUser === user.id)
-      return (
-        <FlexContainer gap className='mr-4'>
-          <button onClick={handlePlaceEditClick.bind(null, toPlace)}>
-            <MdModeEdit size={16} className={buttonClasses} />
-          </button>
-          <button onClick={handlePlaceDeleteClick.bind(null, toPlace)}>
-            {isLoading ? <Spinner /> : <MdDeleteForever size={16} className={buttonClasses} />}
-          </button>
-        </FlexContainer>
-      )
-  }
 
   return (
     <div className={containerBaseClasses + containerExtraClasses}>
@@ -158,7 +154,14 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
           <Heading offWhite h6>
             about {title}
           </Heading>
-          {renderButtons()}
+          <EditDeleteButtons
+            isLoading={isLoading}
+            addedByUserId={toUser}
+            signedInUserId={user?.id}
+            onDelete={handlePlaceDeleteClick}
+            onEdit={handlePlaceEditClick}
+            id={toPlace}
+          />
         </FlexContainer>
         <p className='flex-1'>{shortenText(description, 300)}</p>
         <FlexContainer justifyBetween>

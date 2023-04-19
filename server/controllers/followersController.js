@@ -1,9 +1,10 @@
 const { StatusCodes } = require('http-status-codes')
-const AppError = require('../utils/appError')
+const AppError = require('../utils/AppError')
 const asyncHandler = require('express-async-handler')
 const Follow = require('../models/FollowModel')
 const Alert = require('../models/AlertModel')
 const formatUser = require('../utils/formatUser')
+const sendAlert = require('../utils/sendAlert')
 
 const postFollowRequest = asyncHandler(async (req, res, next) => {
   const { id: followerId } = req.user
@@ -19,31 +20,18 @@ const postFollowRequest = asyncHandler(async (req, res, next) => {
     res.status(StatusCodes.OK).json({
       status: 'success',
       data: {},
-    });
+    })
   } else {
-    const newFollower = new Follow(followingId, followerId, 'pending');
-    response = await newFollower.save();
+    const newFollower = new Follow(followingId, followerId, 'pending')
+    response = await newFollower.save()
 
-    const newAlert = new Alert(followingId, followerId, 'follow');
-    const alert = await newAlert.save();
-    const alertData = await Alert.findById(alert.id);// get Alert & user information
+    await sendAlert(req, followingId, followerId, 'follow')
 
-    req.app
-      .get('eventEmitter')
-      .emit('alert', { type: 'follow', data: alertData });
-
-    //const eventData = JSON.stringify({type: 'follow', data: alert})
     res.status(StatusCodes.OK).json({
       status: 'success',
       data: response,
-    });
-    
+    })
   }
-
-  // res.status(StatusCodes.OK).json({
-  //   status: 'success',
-  //   data: response,
-  // })
 })
 
 const responseToFollowRequest = asyncHandler(async (req, res, next) => {

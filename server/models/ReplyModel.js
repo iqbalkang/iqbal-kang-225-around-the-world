@@ -17,7 +17,7 @@ class Reply {
   }
 
   static async findByCommentId(commentId) {
-    const dbQuery = `SELECT reply, users.id as user_id, first_name, last_name, image
+    const dbQuery = `SELECT reply,replies.id as reply_id, users.id as user_id, first_name, last_name, image
                      FROM replies
                      JOIN users ON replies.user_id = users.id
                      WHERE replies.comment_id = ${commentId}
@@ -26,6 +26,23 @@ class Reply {
 
     const data = await db.query(dbQuery)
     return data.rows
+  }
+
+  static async findByIdAndDelete(replyId) {
+    const dbQuery = `DELETE FROM replies WHERE replies.id = ${replyId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findByIdAndUpdate(replyId, reply) {
+    const dbQuery = `UPDATE replies
+                     SET reply = '${reply}'
+                     WHERE replies.id = ${replyId}
+                     RETURNING *`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
   }
 
   // static async findByPlaceAndUserId(commentId, userId) {

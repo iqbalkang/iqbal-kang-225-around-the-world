@@ -1,7 +1,7 @@
 const db = require('../utils/connectDB')
 
 class Place {
-  constructor(userId, address, country, lat, lng, title, description, rating, image, imageId) {
+  constructor(userId, address, country, lat, lng, title, description, rating, image, smallImage, imageId) {
     this.userId = userId
     this.address = address
     this.country = country
@@ -11,12 +11,13 @@ class Place {
     this.description = description
     this.rating = rating
     this.image = image
+    this.smallImage = smallImage
     this.imageId = imageId
   }
 
   async save() {
-    const dbQuery = `INSERT INTO places (user_id, address, country, lat, lng, title, description, rating, image, image_id)
-                   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`
+    const dbQuery = `INSERT INTO places (user_id, address, country, lat, lng, title, description, rating, image, small_image, image_id)
+                   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`
     const values = [
       this.userId,
       this.address,
@@ -27,6 +28,7 @@ class Place {
       this.description,
       this.rating,
       this.image,
+      this.smallImage,
       this.imageId,
     ]
 
@@ -261,6 +263,13 @@ class Place {
 
   static async findByIdAndDelete(placeId) {
     const dbQuery = `DELETE FROM places WHERE places.id = ${placeId}`
+
+    const data = await db.query(dbQuery)
+    return data.rows[0]
+  }
+
+  static async findAddedBy(placeId) {
+    const dbQuery = `select user_id FROM places WHERE places.id = ${placeId}`
 
     const data = await db.query(dbQuery)
     return data.rows[0]
