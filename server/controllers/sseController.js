@@ -11,13 +11,13 @@ const setupAddListener = (req, res) => {
   })
 
   console.log('setup sse')
-  const pingInterval = setInterval(() => {
-    res.write('event: ping\n');
-    res.write('data: {}\n\n');
-  }, 5000)
+  // const pingInterval = setInterval(() => {
+  //   res.write('event: ping\n');
+  //   res.write('data: {}\n\n');
+  // }, 5000)
 
   req.on('close', () => {
-    clearInterval(pingInterval);
+    //clearInterval(pingInterval);
   })
 
   
