@@ -5,10 +5,10 @@ import Navbar from '../components/Navbar'
 
 const Home = () => {
   return (
-    <FlexContainer col className='h-screen min-h-screen text-white font-josefin'>
+    <FlexContainer col className='h-screen text-white font-josefin'>
       <Navbar />
 
-      <main className='flex-1'>
+      <main className='h-[calc(100vh-57px)]'>
         <Outlet />
       </main>
     </FlexContainer>
