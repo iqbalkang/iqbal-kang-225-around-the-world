@@ -41,7 +41,7 @@ const CommentorDescription = ({ props, children, handleDeleteReplies, handleEdit
   } = props
 
   const { user } = useSelector(store => store.user)
-  const { id: signedInUserId } = user
+  const { id: signedInUserId } = user || {}
   const dispatch = useDispatch()
 
   const [showEditCommentForm, setShowEditCommentForm] = useState(false)

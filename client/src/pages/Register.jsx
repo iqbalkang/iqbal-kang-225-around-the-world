@@ -7,7 +7,7 @@ import FlexContainer from '../components/FlexContainer'
 import LoginForm from '../components/LoginForm'
 import RegisterForm from '../components/RegisterForm'
 
-const formContainerClasses = 'relative z-10 text-white font-josefin px-6 min-w-[450px] w-full md:w-auto'
+const formContainerClasses = 'relative z-10 text-white font-josefin px-6 w-full max-w-lg'
 
 const initialInputsState = {
   firstName: '',
@@ -81,7 +81,6 @@ const Register = () => {
             {buttonText}
           </button>
         </FlexContainer>
-
         {/* auth form */}
         {authForm()}
       </div>

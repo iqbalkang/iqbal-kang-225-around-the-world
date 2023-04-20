@@ -34,7 +34,7 @@ const LoginModal = ({ closeModal, isLoading }) => {
         onSubmit={submitHandler}
         isLoading={isLoading}
         onChange={onChangeHandler}
-        className='w-[400px] '
+        className='w-[320px] md:w-[400px]'
         placeholderText='peer-focus:text-black'
       />
     </Modal>

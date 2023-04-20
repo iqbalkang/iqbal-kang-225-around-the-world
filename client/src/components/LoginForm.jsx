@@ -8,7 +8,7 @@ import classnames from 'classnames'
 const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary, className, placeholderText }) => {
   const accentButtonText = isMember ? 'create account' : 'log in'
 
-  const formClasses = classnames(className, 'grid grid-cols-2 gap-6  font-josefin')
+  const formClasses = classnames(className, 'grid gap-4 md:gap-6 font-josefin')
 
   const formLoginInputs = loginInputs.map((input, index) => {
     return (
@@ -27,7 +27,7 @@ const LoginForm = ({ onSubmit, isMember, isLoading, onChange, isPrimary, classNa
   return (
     <form className={formClasses} onSubmit={onSubmit}>
       {formLoginInputs}
-      <FlexContainer center className='col-span-2'>
+      <FlexContainer className='col-span-2'>
         <AccentButton big primary isLoading={isLoading}>
           {accentButtonText}
         </AccentButton>
