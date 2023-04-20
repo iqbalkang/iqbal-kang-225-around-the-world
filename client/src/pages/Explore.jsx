@@ -13,6 +13,7 @@ import ImageUploader from '../components/ImageUploader'
 import PlacesAutoComplete from '../components/PlacesAutoComplete'
 import Tags from '../components/Tags'
 import LoginModal from '../components/LoginModal'
+import { toast } from 'react-toastify'
 
 const initialState = {
   country: '',
@@ -61,14 +62,15 @@ const Explore = () => {
 
     const formData = new FormData()
 
-    formData.append('address', address)
-    formData.append('lat', coordinates.lat)
-    formData.append('lng', coordinates.lng)
-
     for (let key in values) {
+      if (!values[key] && key !== 'rating') return toast.error('missing inputs')
       if (key === 'tags') formData.append(key, JSON.stringify(values[key]))
       else formData.append(key, values[key])
     }
+
+    formData.append('address', address)
+    formData.append('lat', coordinates.lat)
+    formData.append('lng', coordinates.lng)
 
     if (isEditing) formData.append('id', id)
 
@@ -117,10 +119,16 @@ const Explore = () => {
   })
 
   return (
-    <section className='lg:h-full grid sm:grid-cols-[1fr,2fr] md:grid-cols-[4fr,8fr] lg:grid-cols-[2fr,8fr]'>
+    <section className='h-full grid sm:grid-cols-[1fr,2fr] md:grid-cols-[4fr,8fr] lg:grid-cols-[2fr,8fr]'>
       {/* left side form inputs */}
       <FlexContainer center className='bg-dark-gray p-4 overflow-scroll'>
-        <form className='space-y-3 w-64' onSubmit={handleSubmit}>
+        <form
+          className='space-y-3 w-64'
+          onSubmit={handleSubmit}
+          onKeyPress={e => {
+            e.key === 'Enter' && e.preventDefault()
+          }}
+        >
           <ImageUploader square onChange={onChangeHandler} selectedImage={selectedImage} />
 
           <PlacesAutoComplete address={address} setAddress={setAddress} setCoordinates={setCoordinates} />

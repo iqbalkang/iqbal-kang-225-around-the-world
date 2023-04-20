@@ -39,8 +39,10 @@ const Favorites = () => {
       data={currentUserFavorites}
       isPublic={true}
       isFollowedByCurrentUser={true}
-      handleGetPrevPage={handleGetPrevPage}
       handleGetNextPage={handleGetNextPage}
+      handleGetPrevPage={handleGetPrevPage}
+      mapClassName='md:block'
+      contentContainerClassName='md:grid-cols-[2fr,4fr] xl:grid-cols-[2fr,6fr]'
     />
   )
 }

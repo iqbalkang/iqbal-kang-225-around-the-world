@@ -13,7 +13,7 @@ const Home = () => {
     <FlexContainer col className='h-screen text-white font-josefin'>
       {width > breakpoint ? <Navbar /> : <MobileNav />}
 
-      <main className='flex-1 bg-dark-gray '>
+      <main className='bg-dark-gray h-[calc(100vh-57px)] '>
         <Outlet />
       </main>
     </FlexContainer>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, forwardRef } from 'react'
 import { BiSearch } from 'react-icons/bi'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
-import { MdModeEdit, MdDeleteForever } from 'react-icons/md'
 
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,7 +15,6 @@ import CustomDescriptionLink from './CustomDescriptionLink'
 import Image from './Image'
 import { Link, useNavigate } from 'react-router-dom'
 import { toggleEditPlace } from '../features/places/placesSlice'
-import Spinner from './Spinner'
 import EditDeleteButtons from './EditDeleteButtons'
 import useBreakpoint from '../hooks/useBreakpoint'
 

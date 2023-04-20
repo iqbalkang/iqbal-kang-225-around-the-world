@@ -3,17 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import AccentButton from '../components/AccentButton'
 import FlexContainer from '../components/FlexContainer'
 import FormRow from '../components/FormRow'
-import Heading from '../components/Heading'
 import ImageUploader from '../components/ImageUploader'
-import Place from '../components/Place'
-import Tags from '../components/Tags'
 import profileInputs from '../utils/data/profileInputs'
-import Gmap from '../components/Gmap'
 import ContentPageLayout from '../components/ContentPageLayout'
 import { getUserInfo, updateUser } from '../features/user/userThunk'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import EmptyPageLayout from '../components/EmptyPageLayout'
-import ProfileContentPageLayout from '../components/ProfilesContentPageLayout'
 
 const limit = 10
 
@@ -63,8 +58,6 @@ const Profile = () => {
 
     setValues({ ...values, [name]: value })
   }
-
-  const updateTags = tags => setValues({ ...values, tags })
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -118,9 +111,9 @@ const Profile = () => {
   if (!userId) return <EmptyPageLayout />
 
   return (
-    <section className='grid h-full gap-6 sm:grid-cols-[2fr,2fr]'>
+    <section className='grid h-full sm:grid-cols-[2fr,2fr] md:grid-cols-[1fr,2fr] lg:grid-cols-[1fr,4fr]'>
       {/* left side form inputs */}
-      <FlexContainer center className='px-4 overflow-scroll'>
+      <FlexContainer center className='p-4 h-[calc(100vh-57px)]'>
         <form className='space-y-3 w-full' onSubmit={handleSubmit}>
           <FlexContainer center>
             <ImageUploader rounded onChange={onChangeHandler} selectedImage={selectedImage} className='' />
@@ -142,8 +135,6 @@ const Profile = () => {
             </label>
           </FlexContainer>
 
-          {/* <Tags tags={values.tags} updateTags={updateTags} /> */}
-
           <AccentButton small full primary isLoading={isLoading}>
             update profile
           </AccentButton>
@@ -152,14 +143,16 @@ const Profile = () => {
 
       {/* right side google map */}
 
-      <div>
-        <ProfileContentPageLayout
+      <div className='h-[calc(100vh-57px)]'>
+        <ContentPageLayout
           title='places added by you'
           data={placesByCurrentUser}
           isPublic={true}
           isFollowedByCurrentUser={true}
           handleGetPrevPage={handleGetPrevPage}
           handleGetNextPage={handleGetNextPage}
+          mapClassName='lg:block'
+          contentContainerClassName='lg:grid-cols-[1fr,2fr]'
         />
       </div>
     </section>

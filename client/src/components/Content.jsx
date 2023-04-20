@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-import FlexContainer from './FlexContainer'
 import Place from './Place'
 import classnames from 'classnames'
 import Heading from './Heading'
@@ -9,7 +8,7 @@ const Content = ({ title, data, updateCoordinates, className }) => {
   const placeRefs = useRef([])
   const [activeIndex, setActiveIndex] = useState(null)
 
-  const placesContainerClasses = classnames(className, 'grid gap-4')
+  const placesContainerClasses = classnames(className, 'grid gap-4 place-items-center')
 
   const toggleDescriptionVisibility = id => {
     const newActiveId = activeIndex === id ? null : id

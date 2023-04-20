@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Gmap from '../components/Gmap'
 import { TfiLock } from 'react-icons/tfi'
 import { FiCamera } from 'react-icons/fi'
@@ -6,6 +6,7 @@ import Heading from '../components/Heading'
 import FlexContainer from '../components/FlexContainer'
 import Content from './Content'
 import { useSelector } from 'react-redux'
+import classnames from 'classnames'
 
 const ContentPageLayout = ({
   title,
@@ -14,9 +15,17 @@ const ContentPageLayout = ({
   isFollowedByCurrentUser,
   handleGetNextPage,
   handleGetPrevPage,
+  contentContainerClassName,
+  mapClassName,
 }) => {
   const [coordinates, setCoordinates] = useState(null)
   const { currentUser, user } = useSelector(store => store.user)
+
+  const contentContainerClasses = classnames(
+    'h-full bg-off-white text-dark-gray grid overflow-y-scroll',
+    contentContainerClassName
+  )
+  const mapClasses = classnames('hidden', mapClassName)
 
   const renderPageContent = () => {
     if (!isPublic && !isFollowedByCurrentUser && currentUser?.id !== user?.id) return <LockedProfile />
@@ -28,16 +37,17 @@ const ContentPageLayout = ({
         title={title}
         handleGetPrevPage={handleGetPrevPage}
         handleGetNextPage={handleGetNextPage}
-        className='grid-cols-2 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-2'
+        className='grid-cols-[repeat(auto-fit,minmax(170px,1fr))]'
       />
     )
   }
 
   return (
-    <div className='h-full bg-off-white text-dark-gray grid md:grid-cols-[2fr,6fr] xl:grid-cols-[2fr,6fr]'>
+    <div className={contentContainerClasses}>
       {renderPageContent()}
 
-      <FlexContainer className='hidden md:block'>
+      {/* <FlexContainer className='hidden md:block'> */}
+      <FlexContainer className={mapClasses}>
         <Gmap coordinates={coordinates} />
       </FlexContainer>
     </div>
