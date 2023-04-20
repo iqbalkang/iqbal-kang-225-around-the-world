@@ -35,7 +35,7 @@ const People = () => {
   })
 
   return (
-    <section className='p-6'>
+    <section className='h-[calc(100vh-57px)] overflow-y-scroll p-6'>
       <WebsiteContainer>
         <div className='grid gap-6 justify-center md:grid-cols-2 lg:grid-cols-3'>{renderPeople}</div>
         <FlexContainer gap center className='gap-4 mt-4'>
