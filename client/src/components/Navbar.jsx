@@ -1,13 +1,13 @@
 import React from 'react'
 import logo from '../images/logosmall.svg'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../features/user/userSlice'
 import Image from './Image'
 import WebsiteContainer from './WebsiteContainer'
 import Alerts from './Alerts'
-
-const navListItems = ['places', 'people', 'favorites', 'explore', 'profile']
+import ListItem from './ListItem'
+import navListItems from '../utils/data/navListItems'
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -18,7 +18,7 @@ const Navbar = () => {
     if (!user) return navigate('/register')
 
     dispatch(logout())
-    return navigate('/people')
+    return navigate('/')
   }
 
   const listItems = navListItems.map(item => <ListItem key={item} item={item} className='hov' />)
@@ -42,9 +42,7 @@ const Navbar = () => {
             <Alerts />
 
             {/* auth button */}
-            <Link to='/register' onClick={handleAuth}>
-              {user ? 'Logout' : 'Login'}
-            </Link>
+            <button onClick={handleAuth}>{user ? 'Logout' : 'Login'}</button>
           </ul>
         </nav>
       </WebsiteContainer>
@@ -53,14 +51,3 @@ const Navbar = () => {
 }
 
 export default Navbar
-
-const ListItem = ({ item }) => {
-  const linkURL = item === 'places' ? '' : item
-  return (
-    <li>
-      <NavLink to={'/' + linkURL} end={true} className={({ isActive }) => (isActive ? `hov active` : 'hov')}>
-        {item}
-      </NavLink>
-    </li>
-  )
-}

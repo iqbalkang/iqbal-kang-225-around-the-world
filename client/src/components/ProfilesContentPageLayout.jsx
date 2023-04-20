@@ -7,7 +7,7 @@ import FlexContainer from '../components/FlexContainer'
 import Content from './Content'
 import { useSelector } from 'react-redux'
 
-const ContentPageLayout = ({
+const ProfileContentPageLayout = ({
   title,
   data,
   isPublic,
@@ -28,13 +28,13 @@ const ContentPageLayout = ({
         title={title}
         handleGetPrevPage={handleGetPrevPage}
         handleGetNextPage={handleGetNextPage}
-        className='grid-cols-2 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-2'
+        className=' md:grid-cols-2 md:grid-cols-1 lg:grid-cols-2'
       />
     )
   }
 
   return (
-    <div className='h-full bg-off-white text-dark-gray grid md:grid-cols-[2fr,6fr] xl:grid-cols-[2fr,6fr]'>
+    <div className='h-full bg-off-white text-dark-gray grid overflow-y-scroll'>
       {renderPageContent()}
 
       <FlexContainer className='hidden md:block'>
@@ -44,7 +44,7 @@ const ContentPageLayout = ({
   )
 }
 
-export default ContentPageLayout
+export default ProfileContentPageLayout
 
 const LockedProfile = () => {
   return (

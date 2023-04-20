@@ -14,11 +14,11 @@ import RoundButton from './RoundButton'
 import CountryWithRating from './CountryWithRating'
 import CustomDescriptionLink from './CustomDescriptionLink'
 import Image from './Image'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toggleEditPlace } from '../features/places/placesSlice'
 import Spinner from './Spinner'
 import EditDeleteButtons from './EditDeleteButtons'
-import Modal from './Modal'
+import useBreakpoint from '../hooks/useBreakpoint'
 
 const shortenText = (text, length) => {
   if (!text) return
@@ -26,9 +26,11 @@ const shortenText = (text, length) => {
   return text
 }
 
+const breakpoint = 768
+
 const Place = forwardRef((props, ref) => {
   const dispatch = useDispatch()
-  // const placeRef = useRef()
+  const width = useBreakpoint()
 
   const { isLoading, user } = useSelector(store => store.user)
   const {
@@ -54,7 +56,8 @@ const Place = forwardRef((props, ref) => {
 
   const toggleDescription = () => toggleDescriptionVisibility(id)
 
-  const handleToggleFavorite = placeId => {
+  const handleToggleFavorite = (placeId, e) => {
+    e.preventDefault()
     if (!user) return setLoginModal(true)
     dispatch(toggleLikedPlace(placeId))
   }
@@ -86,43 +89,73 @@ const Place = forwardRef((props, ref) => {
   }, [isLoading])
 
   return (
-    <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer ' ref={ref}>
-      {/* container for photo and place description */}
-      <div className='flex gap-2 h-52 sm:h-64 lg:h-[calc(100vw-85vw)]'>
-        {/* container for place image, favorite & search */}
-        <div className={imageContainerClasses}>
-          <Image src={small_image} alt={title} />
-          <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
-            {favoriteIcon(isFavorite)}
-          </RoundButton>
-          <RoundButton className={searchButtonClasses} onClick={toggleDescription}>
-            <BiSearch className='text-accent w-10 h-10 search' />
-          </RoundButton>
-          {/* overlay */}
-          <div className={overlayClasses}></div>
-        </div>
+    <>
+      {width > breakpoint ? (
+        <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer' ref={ref}>
+          {/* container for photo and place description */}
+          <div className='flex gap-2 h-52 sm:h-64 lg:h-[calc(100vw-85vw)]'>
+            {/* container for place image, favorite & search */}
+            <div className={imageContainerClasses}>
+              <Image src={small_image} alt={title} />
+              <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
+                {favoriteIcon(isFavorite)}
+              </RoundButton>
+              <RoundButton className={searchButtonClasses} onClick={toggleDescription}>
+                <BiSearch className='text-accent w-10 h-10 search' />
+              </RoundButton>
+              {/* overlay */}
+              <div className={overlayClasses}></div>
+            </div>
 
-        {/* description container */}
-        <Description
-          description={description}
-          isDescVisible={activeIndex === id}
-          title={title}
-          toPlace={id}
-          toUser={userId}
-          value={firstName}
-          coordinates={coordinates}
-        />
-      </div>
-      {/* container for place info */}
-      <FlexContainer col className='gap-0'>
-        <p className='font-semibold capitalize' title={title}>
-          {shortenText(title, 16)}
-        </p>
-        <CountryWithRating rating={rating} country={country} className='text-sm' />
-      </FlexContainer>
+            {/* description container */}
+            <Description
+              description={description}
+              isDescVisible={activeIndex === id}
+              title={title}
+              toPlace={id}
+              toUser={userId}
+              value={firstName}
+              coordinates={coordinates}
+            />
+          </div>
+          {/* container for place info */}
+          <FlexContainer col className='gap-0'>
+            <p className='font-semibold capitalize' title={title}>
+              {shortenText(title, 16)}
+            </p>
+            <CountryWithRating rating={rating} country={country} className='text-sm' />
+          </FlexContainer>
 
-      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
-    </article>
+          {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
+        </article>
+      ) : (
+        <Link to={'/places/' + id} onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer'>
+          {/* container for photo and place description */}
+          <div className='flex gap-2 h-64 sm:h-72'>
+            {/* container for place image, favorite & search */}
+            <div className={imageContainerClasses}>
+              <Image src={small_image} alt={title} />
+              <RoundButton primary className={favoriteButtonClasses} onClick={handleToggleFavorite.bind(null, id)}>
+                {favoriteIcon(isFavorite)}
+              </RoundButton>
+              {/* overlay */}
+              <div className={overlayClasses}></div>
+            </div>
+
+            {/* description container */}
+          </div>
+          {/* container for place info */}
+          <FlexContainer col className='gap-0'>
+            <p className='font-semibold capitalize' title={title}>
+              {shortenText(title, 16)}
+            </p>
+            <CountryWithRating rating={rating} country={country} className='text-sm' />
+          </FlexContainer>
+
+          {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
+        </Link>
+      )}
+    </>
   )
 })
 
@@ -130,7 +163,7 @@ export default Place
 
 const Description = ({ description, isDescVisible, title, toPlace, toUser, value, coordinates }) => {
   const containerBaseClasses =
-    'absolute h-[calc(100vw-85vw)] z-20 ml-4 bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-75 cursor-auto'
+    'absolute sm:h-64 lg:h-[calc(100vw-85vw)] z-20 ml-4 bg-dark-gray text-white rounded-3xl shadow-md shadow-dark-gray origin-left duration-75 cursor-auto'
   const containerExtraClasses = isDescVisible ? ' scale-x-100 p-6' : ' scale-x-0 w-0'
 
   const dispatch = useDispatch()

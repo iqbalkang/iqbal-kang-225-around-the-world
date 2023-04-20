@@ -117,10 +117,10 @@ const Explore = () => {
   })
 
   return (
-    <section className='h-full grid grid-cols-[2fr,8fr]'>
+    <section className='lg:h-full grid sm:grid-cols-[1fr,2fr] md:grid-cols-[4fr,8fr] lg:grid-cols-[2fr,8fr]'>
       {/* left side form inputs */}
-      <FlexContainer center className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
-        <form className='space-y-3 w-full' onSubmit={handleSubmit}>
+      <FlexContainer center className='bg-dark-gray p-4 overflow-scroll'>
+        <form className='space-y-3 w-64' onSubmit={handleSubmit}>
           <ImageUploader square onChange={onChangeHandler} selectedImage={selectedImage} />
 
           <PlacesAutoComplete address={address} setAddress={setAddress} setCoordinates={setCoordinates} />
@@ -141,7 +141,9 @@ const Explore = () => {
       </FlexContainer>
 
       {/* right side google map */}
-      <Gmap coordinates={coordinates} />
+      <div className='hidden sm:block'>
+        <Gmap coordinates={coordinates} />
+      </div>
 
       {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isUserLoading} />}
     </section>

@@ -40,6 +40,36 @@
 
 /* ////////////////////////////////// */
 
+.bounce {
+  animation: bounce 1s ease-in-out infinite;
+}
+.bounce-inverted {
+  animation: bounce2 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(5px);
+  }
+  50% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(5px);
+  }
+}
+@keyframes bounce2 {
+  0% {
+    transform: rotate(180deg) translateY(5px);
+  }
+  50% {
+    transform: rotate(180deg) translateY(0px);
+  }
+  100% {
+    transform: rotate(180deg) translateY(5px);
+  }
+}
+
 .hov {
   position: relative;
   padding: 5px;

@@ -13,6 +13,7 @@ import ContentPageLayout from '../components/ContentPageLayout'
 import { getUserInfo, updateUser } from '../features/user/userThunk'
 import { getUserPlaces } from '../features/places/PlacesThunks'
 import EmptyPageLayout from '../components/EmptyPageLayout'
+import ProfileContentPageLayout from '../components/ProfilesContentPageLayout'
 
 const limit = 10
 
@@ -117,9 +118,9 @@ const Profile = () => {
   if (!userId) return <EmptyPageLayout />
 
   return (
-    <section className='h-full grid grid-cols-[2fr,8fr]'>
+    <section className='grid h-full gap-6 sm:grid-cols-[2fr,2fr]'>
       {/* left side form inputs */}
-      <FlexContainer center className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
+      <FlexContainer center className='px-4 overflow-scroll'>
         <form className='space-y-3 w-full' onSubmit={handleSubmit}>
           <FlexContainer center>
             <ImageUploader rounded onChange={onChangeHandler} selectedImage={selectedImage} className='' />
@@ -151,14 +152,16 @@ const Profile = () => {
 
       {/* right side google map */}
 
-      <ContentPageLayout
-        title='places added by you'
-        data={placesByCurrentUser}
-        isPublic={true}
-        isFollowedByCurrentUser={true}
-        handleGetPrevPage={handleGetPrevPage}
-        handleGetNextPage={handleGetNextPage}
-      />
+      <div>
+        <ProfileContentPageLayout
+          title='places added by you'
+          data={placesByCurrentUser}
+          isPublic={true}
+          isFollowedByCurrentUser={true}
+          handleGetPrevPage={handleGetPrevPage}
+          handleGetNextPage={handleGetNextPage}
+        />
+      </div>
     </section>
   )
 }

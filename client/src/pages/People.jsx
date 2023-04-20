@@ -35,9 +35,9 @@ const People = () => {
   })
 
   return (
-    <section className='h-full bg-dark-gray p-6'>
+    <section className='p-6'>
       <WebsiteContainer>
-        <div className='grid gap-6 justify-center place-content-start lg:grid-cols-3'>{renderPeople}</div>
+        <div className='grid gap-6 justify-center md:grid-cols-2 lg:grid-cols-3'>{renderPeople}</div>
         <FlexContainer gap center className='gap-4 mt-4'>
           <PageControllButton onClick={handleGetPrevPage} text='prev' />
           <PageControllButton onClick={handleGetNextPage} text='next' />
