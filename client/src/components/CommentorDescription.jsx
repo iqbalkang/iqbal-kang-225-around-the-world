@@ -68,7 +68,7 @@ const CommentorDescription = ({ props, children, handleDeleteReplies, handleEdit
   const handleCommentEditClick = () => setShowEditCommentForm(prevState => !prevState)
 
   return (
-    <FlexContainer gap>
+    <FlexContainer gap className='text-xs sm:text-base'>
       {/* commentor's image - left side */}
       <div className='h-10 w-10 shrink-0 rounded-full overflow-hidden mt-2'>
         {renderSmallImage(image, commentorFirstName, commentorLastName)}
@@ -76,7 +76,7 @@ const CommentorDescription = ({ props, children, handleDeleteReplies, handleEdit
 
       {/* commentor's info - right side */}
       <div className='w-full'>
-        <div className='bg-light-gray rounded-3xl p-2 px-4 mb-1'>
+        <div className='bg-off-white rounded-3xl p-2 px-4 mb-1'>
           <FlexContainer justifyBetween>
             <Link to={'/people/' + userId} className='hover:underline'>
               <p className='font-semibold capitalize'>

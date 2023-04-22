@@ -35,10 +35,10 @@ const People = () => {
   })
 
   return (
-    <section className='h-[calc(100vh-57px)] overflow-y-scroll p-6'>
+    <section className='h-[calc(100vh-57px)] overflow-y-scroll py-6'>
       <WebsiteContainer>
         <div className='grid gap-6 justify-center md:grid-cols-2 lg:grid-cols-3'>{renderPeople}</div>
-        <FlexContainer gap center className='gap-4 mt-4'>
+        <FlexContainer gap center className='gap-4 py-6'>
           <PageControllButton onClick={handleGetPrevPage} text='prev' />
           <PageControllButton onClick={handleGetNextPage} text='next' />
         </FlexContainer>
@@ -51,7 +51,7 @@ export default People
 
 const PageControllButton = ({ onClick, text }) => {
   return (
-    <button onClick={onClick} className='hover:text-accent duration-200 capitalize'>
+    <button onClick={onClick} className='hover:text-accent text-dark-gray duration-200 capitalize'>
       {text}
     </button>
   )

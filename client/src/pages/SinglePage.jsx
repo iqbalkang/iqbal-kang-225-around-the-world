@@ -23,6 +23,7 @@ import Gmap from '../components/Gmap'
 import Comments from '../components/Comments'
 import FollowingContainer from '../components/FollowingContainer'
 import Place from '../components/Place'
+import Content from '../components/Content'
 
 const SinglePage = () => {
   const { placeId } = useParams()
@@ -82,73 +83,73 @@ const SinglePage = () => {
   const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />)
 
   return (
-    <section className='bg-dark-gray text-off-white'>
-      <div className='grid grid-cols-[3fr,1fr] h-[600px]'>
-        <div className='h-[600px]'>
-          <Image src={image} alt={title} />
-        </div>
-        {/* people who liked */}
-        <div className='grid grid-rows-[min-content,1fr,min-content] h-[600px]'>
-          <Heading h6 className='text-off-white  p-2'>
-            People who liked {title}
-          </Heading>
-          {/* person */}
-          <div className=' overflow-scroll px-4 divide-y-2 divide-[#555]'>{renderLikes}</div>
-
-          {/* place stats */}
-          <FlexContainer col className='bg-accent p-2 px-4 gap-1'>
-            <FlexContainer justifyBetween>
-              <ValueWithIcon
-                value={likes?.length}
-                text={likes?.length > 1 ? 'likes' : 'like'}
-                onClick={handleToggleFavorite.bind(null, placeId)}
-              >
-                {favoriteIcon(isFavorite)}
-              </ValueWithIcon>
-              <ValueWithIcon value={comments?.length} text='comments' onClick={handleCommentsClick}>
-                <BiMessageSquare />
-              </ValueWithIcon>
-            </FlexContainer>
-            <p className='text-sm'>{address}</p>
-          </FlexContainer>
-        </div>
-      </div>
-
-      {/* place info */}
-      <div>
-        <WebsiteContainer className='py-6'>
-          {/* plave label with  rating */}
-          <FlexContainer alignEnd gap>
-            <Heading h2 offWhite>
-              {title}
+    <section className='bg-gradient-to-r from-slate-200 to-rose-50 text-dark-gray'>
+      <WebsiteContainer>
+        <div className='grid sm:grid-cols-[1fr,1.25fr] md:grid-cols-[1.5fr,1fr] lg:grid-cols-[3fr,1fr] mt-4 bg-off-white rounded-3xl overflow-hidden shadow-lg shadow-dark-gray/25'>
+          <div>
+            <Image src={image} alt={title} />
+          </div>
+          {/* people who liked */}
+          <div className='grid grid-rows-[min-content,1fr,min-content] '>
+            <Heading h6 className='p-2'>
+              People who liked {title}
             </Heading>
-            <CountryWithRating rating={rating} country={country} className='text-md' isLabel />
-          </FlexContainer>
-          {/* tags */}
-          <FlexContainer gap className='mt-2 mb-4'>
-            {renderTags}
-          </FlexContainer>
+            {/* person */}
+            <div className=' overflow-scroll px-4 divide-y-2'>{renderLikes}</div>
 
-          {/* description */}
-          <FlexContainer col className='text-sm max-w-3xl'>
-            {description}
-            <CustomDescriptionLink text='added by' value={addedBy} to={'/people/' + addedByUserId} />
-          </FlexContainer>
-
-          {/* comments */}
-          <Comments ref={commentsRef} />
-        </WebsiteContainer>
-
-        {similarPlaces.length > 0 && <SimilarPlaces similarPlaces={similarPlaces} />}
-
-        {/* google map */}
-        <div className='h-[500px]'>
-          <Gmap coordinates={{ lat, lng }} />
+            {/* place stats */}
+            <FlexContainer col className='bg-accent p-2 px-4 gap-1 text-off-white'>
+              <FlexContainer justifyBetween>
+                <ValueWithIcon
+                  value={likes?.length}
+                  text={likes?.length > 1 ? 'likes' : 'like'}
+                  onClick={handleToggleFavorite.bind(null, placeId)}
+                >
+                  {favoriteIcon(isFavorite)}
+                </ValueWithIcon>
+                <ValueWithIcon value={comments?.length} text='comments' onClick={handleCommentsClick}>
+                  <BiMessageSquare />
+                </ValueWithIcon>
+              </FlexContainer>
+              <p className='text-sm'>{address}</p>
+            </FlexContainer>
+          </div>
         </div>
-      </div>
 
-      {/* login modal */}
-      {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
+        {/* place info */}
+        <div>
+          <WebsiteContainer className='py-6'>
+            {/* plave label with  rating */}
+            <FlexContainer alignEnd gap>
+              <Heading h2>{title}</Heading>
+              <CountryWithRating rating={rating} country={country} className='text-md' isLabel />
+            </FlexContainer>
+            {/* tags */}
+            <FlexContainer gap className='mt-2 mb-4'>
+              {renderTags}
+            </FlexContainer>
+
+            {/* description */}
+            <FlexContainer col className='text-sm max-w-3xl'>
+              {description}
+              <CustomDescriptionLink text='added by' value={addedBy} to={'/people/' + addedByUserId} />
+            </FlexContainer>
+
+            {/* comments */}
+            <Comments ref={commentsRef} />
+          </WebsiteContainer>
+
+          {similarPlaces.length > 0 && <SimilarPlaces similarPlaces={similarPlaces} />}
+
+          {/* google map */}
+          <div className='h-screen'>
+            <Gmap coordinates={{ lat, lng }} />
+          </div>
+        </div>
+
+        {/* login modal */}
+        {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
+      </WebsiteContainer>
     </section>
   )
 }
@@ -174,11 +175,11 @@ const Tag = ({ title }) => {
 
 const SimilarPlaces = ({ similarPlaces }) => {
   return (
-    <FlexContainer col className='overflow-x-auto bg-off-white text-dark-gray p-6'>
+    <FlexContainer col className='bg-off-white text-dark-gray p-6 rounded-3xl overflow-hidden mb-6'>
       <Heading h4>similar places</Heading>
-      <div className='flex gap-4'>
+      <div className='grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))]'>
         {similarPlaces.map((place, index) => (
-          <Place key={index} {...place} />
+          <Place key={index} {...place} mobilePlace />
         ))}
       </div>
     </FlexContainer>

@@ -57,7 +57,8 @@ const placesSlice = createSlice({
       .addCase(getAllPlaces.fulfilled, (state, { payload }) => {
         const { places } = payload
         state.isLoading = false
-        state.places = places
+        // state.places = places
+        state.places = [...state.places, ...places]
       })
       .addCase(getAllPlaces.rejected, (state, { payload }) => {
         state.isLoading = false

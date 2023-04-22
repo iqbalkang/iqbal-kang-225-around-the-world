@@ -144,7 +144,7 @@ const Comment = ({ comment, placeId }) => {
     />
   ))
 
-  const renderTime = time => moment(time).calendar()
+  const renderTime = time => moment(time).fromNow()
 
   useEffect(() => {
     setSelectedReaction(reaction)

@@ -181,6 +181,8 @@ const Person = () => {
         isFollowedByCurrentUser={isFollowedByCurrentUser}
         handleGetPrevPage={handleGetPrevPage}
         handleGetNextPage={handleGetNextPage}
+        mapClassName='lg:block'
+        contentContainerClassName='lg:grid-cols-[1fr,2fr]'
       />
 
       {/* login modal */}

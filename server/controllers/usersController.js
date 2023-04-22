@@ -20,7 +20,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   res.status(StatusCodes.CREATED).json({
     status: 'success',
-    message: 'registeration successfull',
+    message: 'registration successfull',
     user: formatUser(user),
   })
 })
@@ -109,10 +109,11 @@ const updateUser = asyncHandler(async (req, res, next) => {
     imageId = public_id
   }
 
-  if (!aboutMe) aboutMe = 'add some description'
+  if (aboutMe === 'undefined') aboutMe = 'add some description'
   if (!imageUrl) imageUrl = oldUser.image
   if (!imageId) imageId = oldUser.image_id
 
+  console.log(req.body)
   const userObj = new User(firstName, lastName, null, null, aboutMe, isPublic, imageUrl, imageId)
   const user = await userObj.updateOne(email)
 

@@ -230,7 +230,7 @@ class Place {
                       JOIN tags ON tags.place_id = places.id
                       JOIN users ON places.user_id = users.id
                       LEFT JOIN likes ON likes.place_id = places.id AND likes.user_id = ${userId}
-                      WHERE places.id != ${placeId} AND users.is_public = true AND tag IN 
+                      WHERE places.id != ${placeId} AND tag IN 
                             (
                               SELECT tag FROM places 
                               JOIN tags ON tags.place_id = places.id
@@ -248,7 +248,7 @@ class Place {
                       FROM places
                       JOIN tags ON tags.place_id = places.id
                       JOIN users ON places.user_id = users.id
-                      WHERE places.id != ${placeId} AND users.is_public = true AND tag IN 
+                      WHERE places.id != ${placeId} AND tag IN 
                             (
                               SELECT tag FROM places 
                               JOIN tags ON tags.place_id = places.id

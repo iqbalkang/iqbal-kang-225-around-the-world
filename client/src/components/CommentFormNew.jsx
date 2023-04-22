@@ -116,7 +116,7 @@ const CommentFormNew = props => {
 
   const closeLoginModal = () => setLoginModal(false)
 
-  const formClasses = classnames('border rounded-3xl  p-2', {
+  const formClasses = classnames('border border-accent rounded-3xl  p-2', {
     'ml-10': marginLeft,
   })
 
