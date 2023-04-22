@@ -32,7 +32,7 @@ const MobileNav = () => {
     <ListItem key={item} item={item} onClick={handleNavToggle} className='hov' />
   ))
 
-  const menuButtonClasses = classnames('fixed right-2 bounce', {
+  const menuButtonClasses = classnames('absolute right-2 bounce', {
     'bottom-2 bounce-inverted': isNavOpen,
   })
 

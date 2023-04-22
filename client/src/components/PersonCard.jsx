@@ -36,20 +36,13 @@
 // export default PersonCard
 
 import React from 'react'
-import userImage from '../images/user.png'
-import { useDispatch, useSelector } from 'react-redux'
-import { getUserPlaces } from '../features/places/PlacesThunks'
+
 import { Link } from 'react-router-dom'
 import FlexContainer from './FlexContainer'
 import Heading from './Heading'
-import Image from './Image'
 import { renderLargeImage } from '../utils/rendeImage'
 
 const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlaces }) => {
-  const dispatch = useDispatch()
-
-  const handleClick = () => {}
-
   const shortenDescription = description => {
     if (!description) return 'no description added'
     if (description?.length > 130) return description.slice(0, 130) + '...'
@@ -58,7 +51,7 @@ const PersonCard = ({ firstName, lastName, aboutMe, image, id: userId, totalPlac
   }
 
   return (
-    <FlexContainer gap justifyBetween className='bg-off-white text-dark-gray p-4 rounded-3xl'>
+    <FlexContainer gap justifyBetween className='bg-off-white text-dark-gray p-4 rounded-3xl shadow-md'>
       {/* left info col */}
       <FlexContainer col>
         <Heading h5 bold>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getAllPlaces } from '../features/places/PlacesThunks'
 import ContentPageLayout from '../components/ContentPageLayout'
 
-const limit = 15
+const limit = 10
 
 const Places = () => {
   const dispatch = useDispatch()

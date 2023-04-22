@@ -41,7 +41,7 @@ const Place = forwardRef((props, ref) => {
     firstName,
     lat,
     lng,
-    image,
+    mobilePlace,
     small_image,
     updateCoordinates,
     coordinates,
@@ -88,7 +88,7 @@ const Place = forwardRef((props, ref) => {
 
   return (
     <>
-      {width > breakpoint ? (
+      {width > breakpoint && !mobilePlace ? (
         <article onClick={handleGetCoordinates} className='flex-shrink-0 space-y-2 cursor-pointer' ref={ref}>
           {/* container for photo and place description */}
           <div className='flex gap-2 h-52 sm:h-64 lg:h-[calc(100vw-85vw)]'>
@@ -179,7 +179,7 @@ const Description = ({ description, isDescVisible, title, toPlace, toUser, value
 
   return (
     <div
-      style={{ left: coordinates.left, top: coordinates.top }}
+      style={{ left: coordinates?.left, top: coordinates?.top }}
       className={containerBaseClasses + containerExtraClasses}
     >
       <FlexContainer col className='h-full w-[400px] text-sm gap-4'>

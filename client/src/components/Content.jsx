@@ -3,7 +3,7 @@ import Place from './Place'
 import classnames from 'classnames'
 import Heading from './Heading'
 
-const Content = ({ title, data, updateCoordinates, className }) => {
+const Content = ({ title, data, updateCoordinates, className, handleGetNextPage }) => {
   const containerRef = useRef()
   const placeRefs = useRef([])
   const [activeIndex, setActiveIndex] = useState(null)
@@ -24,13 +24,21 @@ const Content = ({ title, data, updateCoordinates, className }) => {
     top: null,
   })
 
-  const handleScroll = index => {
+  const handleScroll = (index, e) => {
+    const scrollTop = e.target.scrollTop
+    const totalHeight = e.target.scrollHeight
+    const offHeight = e.target.offsetHeight
+
+    if (totalHeight === offHeight + scrollTop) handleGetNextPage()
+
     const rect = placeRefs.current[index]?.getBoundingClientRect()
     setCoordinates({ left: rect?.right, top: rect?.top })
   }
 
   useEffect(() => {
-    data.map((d, index) => containerRef.current.addEventListener('scroll', handleScroll.bind(null, index)))
+    data.map((d, index) => {
+      containerRef.current.addEventListener('scroll', handleScroll.bind(null, index))
+    })
 
     return () => {
       data.map((d, index) => containerRef.current?.removeEventListener('scroll', handleScroll))
@@ -47,7 +55,7 @@ const Content = ({ title, data, updateCoordinates, className }) => {
       {/* title */}
       <Heading h4>{title}</Heading>
 
-      {/* container to wrap arrows and all places */}
+      {/* container to wrap all places */}
       <div className={placesContainerClasses}>
         {data.map((place, index) => (
           <Place

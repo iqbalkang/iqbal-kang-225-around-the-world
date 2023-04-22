@@ -17,7 +17,7 @@ const initialState = {
   lastName: '',
   aboutMe: '',
   email: '',
-  tags: [],
+  // tags: [],
   isPublic: false,
   image: null,
 }
@@ -65,8 +65,9 @@ const Profile = () => {
     const formData = new FormData()
 
     for (let key in values) {
-      if (key === 'tags') formData.append(key, JSON.stringify(values[key]))
-      else formData.append(key, values[key])
+      formData.append(key, values[key])
+      // if (key === 'tags') formData.append(key, JSON.stringify(values[key]))
+      // else formData.append(key, values[key])
     }
 
     dispatch(updateUser(formData))
@@ -113,7 +114,7 @@ const Profile = () => {
   return (
     <section className='grid h-full sm:grid-cols-[2fr,2fr] md:grid-cols-[1fr,2fr] lg:grid-cols-[1fr,4fr]'>
       {/* left side form inputs */}
-      <FlexContainer center className='p-4 h-[calc(100vh-57px)]'>
+      <FlexContainer center className='p-4 h-[calc(100vh-57px)] bg-dark-gray'>
         <form className='space-y-3 w-full' onSubmit={handleSubmit}>
           <FlexContainer center>
             <ImageUploader rounded onChange={onChangeHandler} selectedImage={selectedImage} className='' />

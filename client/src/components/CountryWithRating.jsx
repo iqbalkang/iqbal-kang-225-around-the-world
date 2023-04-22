@@ -22,7 +22,7 @@ export default CountryWithRating
 const ValueWithIcon = ({ children, value, isLabel }) => (
   <FlexContainer alignCenter className='gap-0'>
     {children}
-    <p className='capitalize'>
+    <p className='capitalize text-xs sm:text-base'>
       {value}
       {isLabel && <span className='text-light-gray'>/5</span>}
     </p>

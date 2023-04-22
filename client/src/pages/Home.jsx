@@ -13,7 +13,7 @@ const Home = () => {
     <FlexContainer col className='h-screen text-white font-josefin'>
       {width > breakpoint ? <Navbar /> : <MobileNav />}
 
-      <main className='bg-dark-gray h-[calc(100vh-57px)] '>
+      <main className='bg-gradient-to-r from-slate-200 to-rose-50 h-[calc(100vh-57px)] '>
         <Outlet />
       </main>
     </FlexContainer>

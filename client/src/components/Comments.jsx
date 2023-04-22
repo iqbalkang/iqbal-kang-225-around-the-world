@@ -23,13 +23,11 @@ const Comments = React.forwardRef((props, ref) => {
   const renderComments = comments.map((comment, index) => <Comment key={index} comment={comment} placeId={placeId} />)
 
   return (
-    <div className='w-[42rem] text-sm' ref={ref}>
-      <Heading offWhite h4>
-        Comments
-      </Heading>
+    <div className='max-w-[42rem] text-sm' ref={ref}>
+      <Heading h4>Comments</Heading>
 
       {/* comments container */}
-      <div className='space-y-6 mt-2 mb-6 max-h-[600px] overflow-y-scroll'>{renderComments}</div>
+      <div className='space-y-6 mt-2 mb-6 max-h-[600px] overflow-y-scroll overflow-x-hidden'>{renderComments}</div>
 
       {/* comment form */}
       {/* <CommentForm marginLeft isLoading={isLoading} placeId={placeId} allUsers={allUsers} /> */}

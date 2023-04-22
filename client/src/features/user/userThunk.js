@@ -21,7 +21,7 @@ export const loginUser = createAsyncThunk('user/loginUser', async (user, thunkAP
 
 export const updateUser = createAsyncThunk('user/updateUser', async (user, thunkAPI) => {
   try {
-    const { data } = await customFetch.put(`/authentication/update`, user, {
+    const { data } = await customFetch.patch(`/authentication/update`, user, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
