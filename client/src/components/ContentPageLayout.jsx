@@ -58,7 +58,7 @@ export default ContentPageLayout
 
 const LockedProfile = () => {
   return (
-    <FlexContainer center gap className='flex-1'>
+    <FlexContainer center gap className='flex-1 min-h-[200px]'>
       <div className='border border-black p-2 rounded-full'>
         <TfiLock />
       </div>
@@ -74,7 +74,7 @@ const LockedProfile = () => {
 
 const NoContent = () => {
   return (
-    <FlexContainer col center gap className='flex-1'>
+    <FlexContainer col center gap className='flex-1 min-h-[200px]'>
       <div className='border-2 border-black p-2 rounded-full'>
         <FiCamera size={30} />
       </div>

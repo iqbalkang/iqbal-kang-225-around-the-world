@@ -134,9 +134,10 @@ const Person = () => {
   }, [isFollowInfoLoading])
 
   return (
-    <section className='h-full grid grid-cols-[2fr,8fr]'>
+    <section className='grid sm:grid-cols-[2fr,2fr] md:grid-cols-[1fr,2fr] lg:grid-cols-[1fr,4fr]'>
       {/* left side form inputs */}
-      <FlexContainer center col className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'>
+      <FlexContainer center col className='p-4 h-[calc(100vh-57px)] bg-dark-gray'>
+        {/* <FlexContainer center col className='bg-dark-gray px-4 max-h-[calc(100vh-49px)] overflow-scroll'> */}
         <FlexContainer center className='h-48 w-48 rounded-full mb-6 overflow-hidden'>
           {renderLargeImage(image, firstName, lastName)}
         </FlexContainer>
