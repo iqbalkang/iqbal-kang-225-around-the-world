@@ -14,22 +14,22 @@ export const postPlace = createAsyncThunk('places/postPlace', async (formData, t
   }
 })
 
-export const getAllPlaces = createAsyncThunk(
-  'places/getAllPlaces',
-  async ({ userId, currentPage, limit }, thunkAPI) => {
-    let url
+// export const getAllPlaces = createAsyncThunk(
+//   'places/getAllPlaces',
+//   async ({ userId, currentPage, limit }, thunkAPI) => {
+//     let url
 
-    if (!userId) url = `/places?page=${currentPage}&limit=${limit}`
-    if (userId) url = `/places?user=${userId}&page=${currentPage}&limit=${limit}`
+//     if (!userId) url = `/places?page=${currentPage}&limit=${limit}`
+//     if (userId) url = `/places?user=${userId}&page=${currentPage}&limit=${limit}`
 
-    try {
-      const { data } = await customFetch.get(url)
-      return data
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message)
-    }
-  }
-)
+//     try {
+//       const { data } = await customFetch.get(url)
+//       return data
+//     } catch (error) {
+//       return thunkAPI.rejectWithValue(error.response.data.message)
+//     }
+//   }
+// )
 
 export const getUserPlaces = createAsyncThunk(
   'places/getUserPlaces',

@@ -50,20 +50,20 @@ const placesSlice = createSlice({
         toast.error(payload)
       })
 
-      // get all places
-      .addCase(getAllPlaces.pending, state => {
-        state.isLoading = true
-      })
-      .addCase(getAllPlaces.fulfilled, (state, { payload }) => {
-        const { places } = payload
-        state.isLoading = false
-        // state.places = places
-        state.places = [...state.places, ...places]
-      })
-      .addCase(getAllPlaces.rejected, (state, { payload }) => {
-        state.isLoading = false
-        toast.error(payload)
-      })
+      // // get all places
+      // .addCase(getAllPlaces.pending, state => {
+      //   state.isLoading = true
+      // })
+      // .addCase(getAllPlaces.fulfilled, (state, { payload }) => {
+      //   const { places } = payload
+      //   state.isLoading = false
+      //   // state.places = places
+      //   state.places = [...state.places, ...places]
+      // })
+      // .addCase(getAllPlaces.rejected, (state, { payload }) => {
+      //   state.isLoading = false
+      //   toast.error(payload)
+      // })
 
       // get user places
       .addCase(getUserPlaces.pending, state => {

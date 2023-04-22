@@ -22,7 +22,7 @@ const ContentPageLayout = ({
   const { currentUser, user } = useSelector(store => store.user)
 
   const contentContainerClasses = classnames(
-    'h-full bg-gradient-to-r from-slate-200 to-rose-50 text-dark-gray grid overflow-y-scroll',
+    'h-full bg-gradient-to-r from-slate-200 to-rose-50 text-dark-gray grid overflow-y-scroll pb-4',
     contentContainerClassName
   )
   const mapClasses = classnames('hidden', mapClassName)
