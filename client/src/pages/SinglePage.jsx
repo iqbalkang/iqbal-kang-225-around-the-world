@@ -78,7 +78,15 @@ const SinglePage = () => {
     return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />
   }
 
-  const renderLikes = likes?.map(like => <FollowingContainer key={like.id} {...like} singlePage placeId={placeId} />)
+  const renderLikes = () => {
+    if (likes?.length === 0)
+      return (
+        <FlexContainer center className='h-full text-light-gray'>
+          <p>No likes</p>
+        </FlexContainer>
+      )
+    return likes?.map(like => <FollowingContainer key={like.id} {...like} singlePage placeId={placeId} />)
+  }
 
   const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />)
 
@@ -95,7 +103,7 @@ const SinglePage = () => {
               People who liked {title}
             </Heading>
             {/* person */}
-            <div className=' overflow-scroll px-4 divide-y-2'>{renderLikes}</div>
+            <div className=' overflow-scroll px-4 divide-y-2 min-h-[200px] '>{renderLikes()}</div>
 
             {/* place stats */}
             <FlexContainer col className='bg-accent p-2 px-4 gap-1 text-off-white'>
@@ -125,7 +133,7 @@ const SinglePage = () => {
               <CountryWithRating rating={rating} country={country} className='text-md' isLabel />
             </FlexContainer>
             {/* tags */}
-            <FlexContainer gap className='mt-2 mb-4'>
+            <FlexContainer gap className='mt-2 mb-4 flex-wrap'>
               {renderTags}
             </FlexContainer>
 

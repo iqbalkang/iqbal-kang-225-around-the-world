@@ -68,7 +68,9 @@ const Reactions = ({ updateReaction, commentId, placeId }) => {
           onMouseEnter={handleOnMouseEnter.bind(null, index)}
         />
         {index === activeReaction && (
-          <span className='text-xs capitalize absolute left-0 -top-8 bg-white px-2 rounded-3xl'>{reaction[0]}</span>
+          <span className='text-xs capitalize absolute left-0 -top-8 bg-light-gray text-off-white px-2 rounded-3xl'>
+            {reaction[0]}
+          </span>
         )}
       </button>
     )

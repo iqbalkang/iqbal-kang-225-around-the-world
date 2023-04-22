@@ -42,6 +42,9 @@ export default {
       bottom: '30px',
       left: '0px',
       width: '200px',
+      maxHeight: '400px',
+      color: 'white',
+      overflowY: 'scroll',
     },
     item: {
       padding: '8px 15px',

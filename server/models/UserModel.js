@@ -92,7 +92,7 @@ class User {
   static async searchUser(name) {
     const dbQuery = `SELECT users.id, first_name, last_name, users.image 
                      FROM users
-                     WHERE first_name LIKE '${name}%'
+                     WHERE first_name ILIKE '${name}%'
                     `
 
     const data = await db.query(dbQuery)

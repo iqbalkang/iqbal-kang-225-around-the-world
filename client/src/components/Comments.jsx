@@ -27,7 +27,7 @@ const Comments = React.forwardRef((props, ref) => {
       <Heading h4>Comments</Heading>
 
       {/* comments container */}
-      <div className='space-y-6 mt-2 mb-6 max-h-[600px] overflow-y-scroll overflow-x-hidden'>{renderComments}</div>
+      <div className='space-y-6 pt-2 pb-6 max-h-[600px] overflow-y-scroll overflow-x-hidden'>{renderComments}</div>
 
       {/* comment form */}
       {/* <CommentForm marginLeft isLoading={isLoading} placeId={placeId} allUsers={allUsers} /> */}

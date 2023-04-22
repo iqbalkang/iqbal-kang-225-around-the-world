@@ -2,10 +2,27 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllPlaces } from '../features/places/PlacesThunks'
 import ContentPageLayout from '../components/ContentPageLayout'
+import customFetch from '../utils/axios/customFetch'
+import { toast } from 'react-toastify'
 
-const limit = 10
+const limit = 8
 
 const Places = () => {
+  const [allPlaces, setAllPlaces] = useState([])
+
+  const getAllPlaces = async () => {
+    let url
+
+    if (!userId) url = `/places?page=${currentPage}&limit=${limit}`
+    if (userId) url = `/places?user=${userId}&page=${currentPage}&limit=${limit}`
+
+    try {
+      const { data } = await customFetch.get(url)
+      setAllPlaces([...allPlaces, ...data.places])
+    } catch (error) {
+      toast.error(error.response.data.message)
+    }
+  }
   const dispatch = useDispatch()
   const { places } = useSelector(store => store.places)
   const { id: userId } = useSelector(store => store.user.user) || {}
@@ -25,13 +42,14 @@ const Places = () => {
   }, [places])
 
   useEffect(() => {
-    dispatch(getAllPlaces({ userId, currentPage, limit }))
+    // dispatch(getAllPlaces({ userId, currentPage, limit }))
+    getAllPlaces({ userId, currentPage, limit })
   }, [userId, currentPage])
 
   return (
     <ContentPageLayout
       title='all places'
-      data={places}
+      data={allPlaces}
       isPublic={true}
       isFollowedByCurrentUser={true}
       handleGetNextPage={handleGetNextPage}

@@ -30,7 +30,7 @@ const commentsSlice = createSlice({
         const { comment, message } = payload
         state.isLoading = false
         state.comments = [...state.comments, comment]
-        toast.success(message)
+        // toast.success(message)
       })
       .addCase(postComment.rejected, (state, { payload }) => {
         state.isLoading = false
