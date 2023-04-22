@@ -35,7 +35,7 @@ CREATE TABLE tags (
 CREATE TABLE comments (
   id SERIAL PRIMARY KEY,
   comment text,
-  created_at timestamp default now(),
+  created_at timestamptz default now(),
   user_id integer not null references users (id) on delete cascade,
   place_id integer not null references places (id) on delete cascade,
   deleted boolean default(false)

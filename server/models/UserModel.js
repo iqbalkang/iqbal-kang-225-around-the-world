@@ -19,7 +19,7 @@ class User {
 
     const dbQuery = `INSERT INTO users (first_name, last_name, email, password)
                    VALUES ($1,$2,$3,$4) RETURNING *`
-    const values = [this.firstName, this.lastName, this.email, hashedPassword]
+    const values = [this.firstName, this.lastName, this.email.toLowerCase(), hashedPassword]
 
     const data = await db.query(dbQuery, values)
     return data.rows[0]
@@ -27,7 +27,7 @@ class User {
 
   static async findOne(email) {
     const dbQuery = `SELECT * FROM users
-                     WHERE email = '${email}'`
+                     WHERE email = '${email.toLowerCase()}'`
     const data = await db.query(dbQuery)
     return data.rows[0]
   }
