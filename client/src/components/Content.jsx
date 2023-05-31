@@ -32,6 +32,7 @@ const Content = ({ title, data, updateCoordinates, className, handleGetNextPage 
     if (totalHeight === offHeight + scrollTop) handleGetNextPage()
 
     const rect = placeRefs.current[index]?.getBoundingClientRect()
+
     setCoordinates({ left: rect?.right, top: rect?.top })
   }
 
