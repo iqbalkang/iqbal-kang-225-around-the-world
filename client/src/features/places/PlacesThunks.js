@@ -1,5 +1,5 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import customFetch from '../../utils/axios/customFetch'
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import customFetch from '../../utils/axios/customFetch';
 
 export const postPlace = createAsyncThunk('places/postPlace', async (formData, thunkAPI) => {
   try {
@@ -7,45 +7,44 @@ export const postPlace = createAsyncThunk('places/postPlace', async (formData, t
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
-    })
-    return data
+    });
+    return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-})
+});
 
-// export const getAllPlaces = createAsyncThunk(
-//   'places/getAllPlaces',
-//   async ({ userId, currentPage, limit }, thunkAPI) => {
-//     let url
+export const getAllPlaces = createAsyncThunk(
+  'places/getAllPlaces',
+  async ({ userId, currentPage, limit }, thunkAPI) => {
+    let url;
+    if (!userId) url = `/places?page=${currentPage}&limit=${limit}`;
+    if (userId) url = `/places?user=${userId}&page=${currentPage}&limit=${limit}`;
 
-//     if (!userId) url = `/places?page=${currentPage}&limit=${limit}`
-//     if (userId) url = `/places?user=${userId}&page=${currentPage}&limit=${limit}`
-
-//     try {
-//       const { data } = await customFetch.get(url)
-//       return data
-//     } catch (error) {
-//       return thunkAPI.rejectWithValue(error.response.data.message)
-//     }
-//   }
-// )
+    try {
+      const { data } = await customFetch.get(url);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 
 export const getUserPlaces = createAsyncThunk(
   'places/getUserPlaces',
   async ({ userId, signedInUser, currentPage, limit }, thunkAPI) => {
-    let url = '/places/user-places/'
-    if (!signedInUser) url = url + `${userId}?page=${currentPage}&limit=${limit}`
-    if (signedInUser) url = url + `${userId}?signedInUser=${signedInUser}&page=${currentPage}&limit=${limit}`
+    let url = '/places/user-places/';
+    if (!signedInUser) url = url + `${userId}?page=${currentPage}&limit=${limit}`;
+    if (signedInUser) url = url + `${userId}?signedInUser=${signedInUser}&page=${currentPage}&limit=${limit}`;
 
     try {
-      const { data } = await customFetch.get(url)
-      return data
+      const { data } = await customFetch.get(url);
+      return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message)
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
-)
+);
 
 export const toggleLikedPlace = createAsyncThunk('places/toggleLikedPlace', async (placeId, thunkAPI) => {
   try {
@@ -53,12 +52,12 @@ export const toggleLikedPlace = createAsyncThunk('places/toggleLikedPlace', asyn
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
-    })
-    return placeId
+    });
+    return placeId;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-})
+});
 
 export const getUserFavorites = createAsyncThunk(
   'places/getUserFavorites',
@@ -68,82 +67,82 @@ export const getUserFavorites = createAsyncThunk(
         headers: {
           authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
         },
-      })
-      return data
+      });
+      return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message)
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
-)
+);
 
 export const getSinglePlace = createAsyncThunk('places/getSinglePlace', async ({ userId, placeId }, thunkAPI) => {
-  let url = `places/${placeId}`
-  if (userId) url = `${url}?user=${userId}`
+  let url = `places/${placeId}`;
+  if (userId) url = `${url}?user=${userId}`;
 
   try {
-    const { data } = await customFetch.get(url)
-    return data
+    const { data } = await customFetch.get(url);
+    return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-})
+});
 
 export const getSimilarPlacesForSignedInUsers = createAsyncThunk(
   'places/getSimilarPlaces',
   async (placeID, thunkAPI) => {
-    let url = '/places/auth/similar/' + placeID
+    let url = '/places/auth/similar/' + placeID;
 
     try {
       const { data } = await customFetch.get(url, {
         headers: {
           authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
         },
-      })
-      return data
+      });
+      return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.message)
+      return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
-)
+);
 
 export const getSimilarPlaces = createAsyncThunk('places/getSimilarPlaces', async (placeId, thunkAPI) => {
-  let url = '/places/similar/' + placeId
+  let url = '/places/similar/' + placeId;
 
   try {
-    const { data } = await customFetch.get(url)
-    return data
+    const { data } = await customFetch.get(url);
+    return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-})
+});
 
 export const deletePlace = createAsyncThunk('places/deletePlace', async (placeId, thunkAPI) => {
-  let url = '/places/' + placeId
+  let url = '/places/' + placeId;
 
   try {
     const { data } = await customFetch.delete(url, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
-    })
-    return placeId
+    });
+    return placeId;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-})
+});
 
 export const editPlace = createAsyncThunk('places/editPlace', async (formData, thunkAPI) => {
-  let url = '/places/' + formData.id
-  console.log(formData)
+  let url = '/places/' + formData.id;
+  console.log(formData);
 
   try {
     const { data } = await customFetch.patch(url, formData, {
       headers: {
         authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
       },
-    })
-    return data
+    });
+    return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    return thunkAPI.rejectWithValue(error.response.data.message);
   }
-})
+});
