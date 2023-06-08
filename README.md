@@ -12,8 +12,8 @@ This is a full-stack application designed to provide a practical learning experi
 
 
 <h2>Project Video</h2>
+res.cloudinary.com/dydbhumso/video/upload/v1686174794/atwvideo2_1_hxfwrd.mp4
 
-https://res.cloudinary.com/dydbhumso/video/upload/v1686174794/atwvideo2_1_hxfwrd.mp4
 
 
 <h2>Project Screenshots:</h2>
