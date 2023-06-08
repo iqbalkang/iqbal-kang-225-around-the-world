@@ -42,17 +42,17 @@ Here're some of the project's best features:
 
 <h2>Project Screenshots</h2>
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/realtimenotifications_cuq2nz.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/realtimenotifications_cuq2nz.png" alt="project-screenshot" width="800" height="450/">
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741149/interactivecommentreactions_jksyhf.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741149/interactivecommentreactions_jksyhf.png" alt="project-screenshot" width="800" height="450/">
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/followrestrictedposts_b5uie6.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/followrestrictedposts_b5uie6.png" alt="project-screenshot" width="800" height="450/">
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741147/tagteamup_dtxoyx.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741147/tagteamup_dtxoyx.png" alt="project-screenshot" width="800" height="450/">
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/trackableconnections_xqtwr6.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/trackableconnections_xqtwr6.png" alt="project-screenshot" width="800" height="450/">
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741150/mappingexploration_n6q8ey.png" alt="project-screenshot" width="800" height="400/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741150/mappingexploration_n6q8ey.png" alt="project-screenshot" width="800" height="450/">
 
 <h2>Conclusion</h2>
 
