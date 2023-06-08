@@ -17,7 +17,7 @@ This is a full-stack application designed to provide a practical learning experi
 Technologies used in the project:
 
 *   React for the front-end user interface
-*   Redux store for states management
+*   Redux store for state management
 *   Tailwind for efficient and scalable styling
 *   PostgreSQL for the database management
 *   NodeJs and Express for the back-end API development
