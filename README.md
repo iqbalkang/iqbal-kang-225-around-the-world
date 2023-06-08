@@ -2,7 +2,7 @@
 
 
 <p align="center">
-  <img src="https://socialify.git.ci/iqbalkang225/iqbal-kang-225-around-the-world/image?logo=https%3A%2F%2Fraw.githubusercontent.com%2Fiqbalkang225%2Fiqbal-kang-225-around-the-world%2F444975c05650980ae53b2b6fd9bbdce49cad87ea%2Fclient%2Fpublic%2Ffavicon.svg&name=1&owner=1&theme=Light" alt="iqbal-kang-225-around-the-world" width="640" height="320" />
+  <img src="https://socialify.git.ci/iqbalkang225/iqbal-kang-225-around-the-world/image?logo=https%3A%2F%2Fraw.githubusercontent.com%2Fiqbalkang225%2Fiqbal-kang-225-around-the-world%2F444975c05650980ae53b2b6fd9bbdce49cad87ea%2Fclient%2Fpublic%2Ffavicon.svg&name=1&owner=1&theme=Light" alt="iqbal-kang-225-around-the-world" height="320" />
 </p>
 
 
