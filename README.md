@@ -42,7 +42,7 @@ Here're some of the project's best features:
 
 <h2>Project Screenshots</h2>
 
-<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/realtimenotifications_cuq2nz.png" alt="project-screenshot" width="800" height="500/">
+<img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741148/realtimenotifications_cuq2nz.png" alt="project-screenshot" width="800" height="400/">
 
 <img src="https://res.cloudinary.com/dydbhumso/image/upload/v1685741149/interactivecommentreactions_jksyhf.png" alt="project-screenshot" width="300" height="400/">
 
