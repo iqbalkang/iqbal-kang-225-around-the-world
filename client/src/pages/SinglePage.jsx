@@ -1,41 +1,41 @@
-import React, { useRef, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
-import FlexContainer from '../components/FlexContainer'
-import Heading from '../components/Heading'
+import React, { useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import FlexContainer from '../components/FlexContainer';
+import Heading from '../components/Heading';
 import {
   getSimilarPlaces,
   getSimilarPlacesForSignedInUsers,
   getSinglePlace,
   toggleLikedPlace,
-} from '../features/places/PlacesThunks'
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
-import { BiMessageSquare } from 'react-icons/bi'
-import RoundButton from '../components/RoundButton'
-import CountryWithRating from '../components/CountryWithRating'
-import CustomDescriptionLink from '../components/CustomDescriptionLink'
-import Image from '../components/Image'
-import WebsiteContainer from '../components/WebsiteContainer'
-import { useState } from 'react'
-import LoginModal from '../components/LoginModal'
-import Gmap from '../components/Gmap'
+} from '../features/places/PlacesThunks';
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
+import { BiMessageSquare } from 'react-icons/bi';
+import RoundButton from '../components/RoundButton';
+import CountryWithRating from '../components/CountryWithRating';
+import CustomDescriptionLink from '../components/CustomDescriptionLink';
+import Image from '../components/Image';
+import WebsiteContainer from '../components/WebsiteContainer';
+import { useState } from 'react';
+import LoginModal from '../components/LoginModal';
+import Gmap from '../components/Gmap';
 
-import Comments from '../components/Comments'
-import FollowingContainer from '../components/FollowingContainer'
-import Place from '../components/Place'
-import Content from '../components/Content'
+import Comments from '../components/Comments';
+import FollowingContainer from '../components/FollowingContainer';
+import Place from '../components/Place';
+import Content from '../components/Content';
 
 const SinglePage = () => {
-  const { placeId } = useParams()
-  const dispatch = useDispatch()
-  const commentsRef = useRef()
+  const { placeId } = useParams();
+  const dispatch = useDispatch();
+  const commentsRef = useRef();
 
-  const [loginModal, setLoginModal] = useState(false)
+  const [loginModal, setLoginModal] = useState(false);
 
-  const { singlePlace, similarPlaces } = useSelector(store => store.places)
-  const { comments } = useSelector(store => store.comments)
-  const { user, isLoading } = useSelector(store => store.user) || {}
-  const { id: userId } = user || {}
+  const { singlePlace, similarPlaces } = useSelector((store) => store.places);
+  const { comments } = useSelector((store) => store.comments);
+  const { user, isLoading } = useSelector((store) => store.user) || {};
+  const { id: userId } = user || {};
 
   const {
     title,
@@ -52,31 +52,31 @@ const SinglePage = () => {
     lat,
     lng,
     userId: addedByUserId,
-  } = singlePlace || {}
+  } = singlePlace || {};
 
   useEffect(() => {
-    dispatch(getSinglePlace({ userId, placeId }))
-    user ? dispatch(getSimilarPlacesForSignedInUsers(placeId)) : dispatch(getSimilarPlaces(placeId))
-  }, [isFavorite, placeId])
+    dispatch(getSinglePlace({ userId, placeId }));
+    user ? dispatch(getSimilarPlacesForSignedInUsers(placeId)) : dispatch(getSimilarPlaces(placeId));
+  }, [isFavorite, placeId]);
 
   useEffect(() => {
-    if (!isLoading) setLoginModal(false)
-  }, [isLoading])
+    if (!isLoading) setLoginModal(false);
+  }, [isLoading]);
 
-  const handleToggleFavorite = placeId => {
-    if (!userId) return setLoginModal(true)
-    dispatch(toggleLikedPlace(placeId))
-  }
+  const handleToggleFavorite = (placeId) => {
+    if (!userId) return setLoginModal(true);
+    dispatch(toggleLikedPlace(placeId));
+  };
 
   const handleCommentsClick = () => {
-    commentsRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-  const closeLoginModal = () => setLoginModal(false)
+  const closeLoginModal = () => setLoginModal(false);
 
-  const favoriteIcon = isFavorite => {
-    return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />
-  }
+  const favoriteIcon = (isFavorite) => {
+    return isFavorite ? <AiFillHeart /> : <AiOutlineHeart />;
+  };
 
   const renderLikes = () => {
     if (likes?.length === 0)
@@ -84,11 +84,11 @@ const SinglePage = () => {
         <FlexContainer center className='h-full text-light-gray'>
           <p>No likes</p>
         </FlexContainer>
-      )
-    return likes?.map(like => <FollowingContainer key={like.id} {...like} singlePage placeId={placeId} />)
-  }
+      );
+    return likes?.map((like) => <FollowingContainer key={like.id} {...like} singlePage placeId={placeId} />);
+  };
 
-  const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />)
+  const renderTags = tags?.map((tag, index) => <Tag title={tag} key={index} />);
 
   return (
     <section className='bg-gradient-to-r from-slate-200 to-rose-50 text-dark-gray'>
@@ -159,10 +159,10 @@ const SinglePage = () => {
         {loginModal && <LoginModal closeModal={closeLoginModal} isLoading={isLoading} />}
       </WebsiteContainer>
     </section>
-  )
-}
+  );
+};
 
-export default SinglePage
+export default SinglePage;
 
 const ValueWithIcon = ({ children, value, text, onClick }) => {
   return (
@@ -174,22 +174,22 @@ const ValueWithIcon = ({ children, value, text, onClick }) => {
         {value} {text}
       </p>
     </FlexContainer>
-  )
-}
+  );
+};
 
 const Tag = ({ title }) => {
-  return <span className='bg-off-white text-accent text-xs rounded-3xl p-1 px-3 capitalize'>{title}</span>
-}
+  return <span className='bg-off-white text-accent text-xs rounded-3xl p-1 px-3 capitalize'>{title}</span>;
+};
 
 const SimilarPlaces = ({ similarPlaces }) => {
   return (
-    <FlexContainer col className='bg-off-white text-dark-gray p-6 rounded-3xl overflow-hidden mb-6'>
+    <FlexContainer gap col className='bg-off-white text-dark-gray p-6 rounded-3xl overflow-hidden mb-6'>
       <Heading h4>similar places</Heading>
-      <div className='grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))]'>
+      <div className='grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-6'>
         {similarPlaces.map((place, index) => (
           <Place key={index} {...place} mobilePlace />
         ))}
       </div>
     </FlexContainer>
-  )
-}
+  );
+};
