@@ -44,7 +44,7 @@ Here're some of the project's best features:
 
 <img src="https://atw-links.s3.us-west-1.amazonaws.com/userfeedbackplatform.png" alt="project-screenshot" width="800" height="450/">
 
-<img src="https://atw-links.s3.us-west-1.amazonaws.com/interactivedialogueflow.png" alt="project-screenshot" width="800" height="450/">
+<img src="https://atw-links.s3.us-west-1.amazonaws.com/interactivedialogueflow.png" alt="project-screenshot" width="800">
 
 <img src="https://atw-links.s3.us-west-1.amazonaws.com/interactivecommentreactions.png" alt="project-screenshot" width="800" height="450/">
 
