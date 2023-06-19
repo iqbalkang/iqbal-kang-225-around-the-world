@@ -48,11 +48,11 @@ Here're some of the project's best features:
 
 <img src="https://atw-links.s3.us-west-1.amazonaws.com/interactivecommentreactions.png" alt="project-screenshot" width="800" >
 
+<img src="https://atw-links.s3.us-west-1.amazonaws.com/tagteamup.png" alt="project-screenshot" width="800" >
+
 <img src="https://atw-links.s3.us-west-1.amazonaws.com/realtimenotifications.png" alt="project-screenshot" width="800" >
 
 <img src="https://atw-links.s3.us-west-1.amazonaws.com/followrestrictedposts.png" alt="project-screenshot" width="800" >
-
-<img src="https://atw-links.s3.us-west-1.amazonaws.com/tagteamup.png" alt="project-screenshot" width="800" >
 
 <img src="https://atw-links.s3.us-west-1.amazonaws.com/connect%26grow.png" alt="project-screenshot" width="800">
 
