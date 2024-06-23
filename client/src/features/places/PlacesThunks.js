@@ -25,6 +25,7 @@ export const getAllPlaces = createAsyncThunk(
       const { data } = await customFetch.get(url);
       return data;
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
