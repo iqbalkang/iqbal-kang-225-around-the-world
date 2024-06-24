@@ -51,9 +51,9 @@ const Alerts = () => {
 
   // Event Listener From Server
   useEffect(() => {
-    const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}/api/v1/sse`);
+    const eventSource = new EventSource(`${process.env.REACT_APP_SERVER_URL}/sse`);
 
-    console.log(eventSource);
+    // console.log(eventSource);
 
     eventSource.addEventListener('alert', (e) => {
       const { type, data } = JSON.parse(e.data);
