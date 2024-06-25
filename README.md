@@ -8,7 +8,7 @@ This is a full-stack application designed to provide a practical learning experi
 
 <h2>🚀 Hosted At</h2>
 
-[https://www.aroundtheworld.wiki/] (https://www.aroundtheworld.wiki/)
+https://www.aroundtheworld.wiki/
 
 
 
